@@ -19,5 +19,6 @@ from genomeBact import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('genomes/', views.genome_list),
+    path('genomes/', views.genome_list, name = 'genome-list'),
+    path('genomes/add/', views.genome_create, name='genome-create'),
 ]

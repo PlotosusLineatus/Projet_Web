@@ -11,11 +11,12 @@
     <p>Les génomes sont :</p>
                <ul>
                    <li>{{ genomes.0.specie }}</li> 
-            <!-- BOUCLE pour les éléments dans band -->
+            <!-- LOOP -->
                     {% for genome in genomes %}
                   <li>{{ genome.specie }}</li>
                   {% endfor %}
                </ul>
+    <a href="{% url 'genome-create' %}">Add a new genome</a>
     
 </body>
 </html>
