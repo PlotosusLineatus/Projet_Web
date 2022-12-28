@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# Register your models here.
+from genomeBact.models import Genome
+
+class GenomeAdmin(admin.ModelAdmin):
+    list_display = ('specie', 'chromosome', 'size') 
+
+admin.site.register(Genome)
