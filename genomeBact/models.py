@@ -6,7 +6,7 @@ class Genome(models.Model):
     specie = models.CharField(max_length=50, unique= True)     ## prokaryote only so unique = True
     chromosome = models.CharField(max_length= 15, primary_key= True)
     size =  models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100000000)])
-    start = models.IntegerField( default= 1, validators= [MaxValueValidator(size)])
+    start = models.IntegerField( default= 1, validators= [MinValueValidator(1)])
     # direction ? 
 
     def __str__(self):
@@ -15,6 +15,7 @@ class Genome(models.Model):
 #    def get_absolute_url(self):
 #        return reverse('model-detail-view', args=[str(self.chromosome)])
 
+"""
 
 class transcript(models.Model):
     transcript = models.CharField(max_length=50, primary_key= True)
@@ -35,3 +36,5 @@ class annotation(models.Model):
 
     def __str__(self):
         return self.gene
+
+"""
