@@ -6,8 +6,8 @@
     <p>Les génomes sont :</p>
                <ul>
             <!-- LOOP -->
-                    {% for genome in genomes %}
-                  <li>{{ genome.specie }}</li>
+                  {% for genome in genomes %}
+                  <li><a href="{% url 'genome-detail' genome.specie %}">{{ genome.specie }}</a></li>			
                   {% endfor %}
                </ul>
     <a href="{% url 'genome-create' %}">Add a new genome</a>
