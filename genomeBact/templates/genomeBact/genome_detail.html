@@ -1,0 +1,13 @@
+{% extends 'genomeBact/base.html' %}
+
+{% block content %}
+
+    <h2>{{ genome.specie }}</h2>
+        
+    <ul>
+    <li>Chromosome : {{ genome.chromosome }}</li>
+    <li>Size : {{ genome.start }} -> {{ genome.size }}</li>
+
+    <a href="{% url 'genome-list' %}">Return to genome list</a>
+
+{% endblock %}
