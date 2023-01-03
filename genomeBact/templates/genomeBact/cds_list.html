@@ -1,0 +1,14 @@
+{% extends 'genomeBact/base.html' %}
+
+{% block content %}
+
+    <h1>Transcripts of {{ genome.specie}} </h1>
+               <ul>
+            <!-- LOOP -->
+                  {% for cds in transcript %}
+                  <li>{{ cds.transcript }}</li>			
+                  {% endfor %}
+               </ul>
+    <a href="{% url 'cds-create' genome.specie %}">Add a new transcript</a>
+
+{% endblock %}

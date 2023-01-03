@@ -7,6 +7,8 @@
         
     <ul>
     <li>Chromosome : {{ genome.chromosome }}</li>
+    <li><a href="{% url 'cds-detail' genome.specie %}">Transcripts</a></li>
+
     <li>Size : {{ genome.start }} -> {{ genome.size }}</li>
 
     <a href="{% url 'genome-list' %}">Return to genome list</a>

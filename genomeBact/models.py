@@ -15,9 +15,7 @@ class Genome(models.Model):
 #    def get_absolute_url(self):
 #        return reverse('model-detail-view', args=[str(self.chromosome)])
 
-"""
-
-class transcript(models.Model):
+class Transcript(models.Model):
     transcript = models.CharField(max_length=50, primary_key= True)
     chromosome = models.ForeignKey(Genome, null= False, on_delete=models.CASCADE)
    # start =  models.IntegerChoices(validators=[MinValueValidator(Genome.start), MaxValueValidator(Genome.size)])
@@ -26,8 +24,8 @@ class transcript(models.Model):
     def __str__(self):
         return self.transcript
 
-class annotation(models.Model):
-    transcript = models.ForeignKey(transcript, null=False, on_delete=models.CASCADE)
+class Annotation(models.Model):
+    transcript = models.ForeignKey(Transcript, null=False, on_delete=models.CASCADE)
     gene = models.CharField(max_length= 15, primary_key=True)
     gene_biotype =  models.CharField(max_length=10)
     transcript_biotype = models.CharField(max_length= 15)
@@ -37,4 +35,3 @@ class annotation(models.Model):
     def __str__(self):
         return self.gene
 
-"""
