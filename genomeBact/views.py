@@ -23,3 +23,12 @@ def genome_create(request):
         form = GenomeForm()
 
     return render(request,'genomeBact/genome_create.html',{'form': form}) 
+
+def genome_delete(request, specie):
+    genome = Genome.objects.get(specie=specie)
+    
+    if request.method == 'POST':
+        genome.delete()
+        return redirect('genome-list')
+
+    return render(request,'genomeBact/genome_delete.html',{'genome': genome})

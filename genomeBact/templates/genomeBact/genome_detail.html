@@ -3,6 +3,7 @@
 {% block content %}
 
     <h2>{{ genome.specie }}</h2>
+    <a href="{% url 'genome-delete' genome.specie %}">Delete</a>	
         
     <ul>
     <li>Chromosome : {{ genome.chromosome }}</li>

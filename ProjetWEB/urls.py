@@ -22,4 +22,5 @@ urlpatterns = [
     path('genomes/', views.genome_list, name = 'genome-list'),
     path('genomes/add/', views.genome_create, name='genome-create'),
     path('genomes/<str:specie>/', views.genome_detail, name='genome-detail'),
+    path('genomes/<str:specie>/delete', views.genome_delete, name='genome-delete'),
 ]
