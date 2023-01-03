@@ -16,7 +16,7 @@ def cds_create(request, specie):
         if form.is_valid():
             form.instance.chromosome = genome
             new_cds = form.save()
-            return redirect('cds-detail', genome.specie)
+            return redirect('cds-list', genome.specie)
     else:
         form = TranscriptForm()
 
