@@ -7,8 +7,8 @@ import Bio
 class Genome(models.Model):
 
 
-    strain = models.CharField(max_length=50, default = "")  # Not unique because of several strains, experimental conditions etc : bact. adaptation very quick
-    chromosome = models.CharField(max_length= 30, primary_key= True, help_text = "Chromosome version name")
+    strain = models.CharField(max_length = 50, default = "")  # Not unique because of several strains, experimental conditions etc : bact. adaptation very quick
+    chromosome = models.CharField(max_length = 30, primary_key= True, help_text = "Chromosome version name")
     sequence = models.TextField(default = "", help_text = "Copy FASTA sequence here")
 
     def show(self):
