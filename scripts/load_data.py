@@ -17,10 +17,12 @@ def run():
 	# Get only genome files names
 	gen = [item for item in full if item not in protein]
 	gen = [item for item in gen if item not in cds]
-	
-	for file in gen:
-	
+
+	for file in gen: 
+
+		strain = file.split(".")[0]
 		for genome in SeqIO.parse(file, "fasta"):
-		
-			print(genome.description)
-		
+
+			g = Genome.objects.create(
+				strain = strain, 
+				chromosome = "")
