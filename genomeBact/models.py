@@ -1,7 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
-
+import Bio
 
 
 class Genome(models.Model):
@@ -17,7 +17,6 @@ class Genome(models.Model):
 
     @property
     def length(self): 
-
         return len(self.sequence)
         
 #    def get_absolute_url(self):
