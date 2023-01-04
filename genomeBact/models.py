@@ -3,9 +3,9 @@ from django.urls import reverse
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 class Genome(models.Model):
-    specie = models.CharField(max_length=50, unique= True)     ## prokaryote only so 'unique = True'
-    chromosome = models.CharField(max_length= 15, primary_key= True)
-    size =  models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100000000)])
+    specie = models.CharField(max_length=50, unique= True)    ## prokaryote only so 'unique = True'
+    chromosome = models.CharField(max_length= 30, primary_key= True, help_text = "Chromosome name")
+    size =  models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100000000)], help_text = "Size of chromosome")
     start = models.IntegerField( default= 1, validators= [MinValueValidator(1)])
     # direction ? 
 
