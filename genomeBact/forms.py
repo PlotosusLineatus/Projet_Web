@@ -1,5 +1,5 @@
 from django import forms
-from genomeBact.models import Genome, Transcript, Annotation 
+from genomeBact.models import Genome, Transcript 
 
 class GenomeForm(forms.ModelForm):
     class Meta:
@@ -11,8 +11,3 @@ class TranscriptForm(forms.ModelForm):
         model = Transcript
         #fields = '__all__'
         exclude = ('chromosome',)
-
-class AnnotationForm(forms.ModelForm):
-    class Meta:
-        model = Annotation
-        fields = '__all__'

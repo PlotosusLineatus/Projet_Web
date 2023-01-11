@@ -6,7 +6,7 @@ class Genome(models.Model):
     specie = models.CharField(max_length=50, unique= True)    ## prokaryote only so 'unique = True'
     chromosome = models.CharField(max_length= 30, primary_key= True, help_text = "Chromosome name")
     size =  models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100000000)], help_text = "Size of chromosome")
-    start = models.IntegerField( default= 1, validators= [MinValueValidator(1)])
+    start = models.IntegerField( default= 1, validators= [MinValueValidator(1),MaxValueValidator(100000000)])
     # direction ? 
 
     def __str__(self):
@@ -18,20 +18,14 @@ class Genome(models.Model):
 class Transcript(models.Model):
     transcript = models.CharField(max_length=50, primary_key= True)
     chromosome = models.ForeignKey(Genome, null= False, on_delete=models.CASCADE)
-   # start =  models.IntegerChoices(validators=[MinValueValidator(Genome.start), MaxValueValidator(Genome.size)])
-   # stop =  models.IntegerChoices(validators=[MinValueValidator(start), MaxValueValidator(Genome.size)])
-
-    def __str__(self):
-        return self.transcript
-
-class Annotation(models.Model):
-    transcript = models.ForeignKey(Transcript, null=False, on_delete=models.CASCADE)
-    gene = models.CharField(max_length= 15, primary_key=True)
+    start =  models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100000000)])
+    stop =  models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100000000)])
+    gene = models.CharField(max_length= 15, unique=True)
     gene_biotype =  models.CharField(max_length=10)
     transcript_biotype = models.CharField(max_length= 15)
     gene_symbol = models.CharField(max_length=10)
     description = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.gene
+        return self.transcript
 
