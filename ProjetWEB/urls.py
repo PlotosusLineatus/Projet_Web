@@ -15,7 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from genomeBact import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('genomes/', views.genome_list, name = 'genome-list'),
+    path('genomes/add/', views.genome_create, name='genome-create'),
+    path('genomes/<str:specie>/', views.genome_detail, name='genome-detail'),
+    path('genomes/<str:specie>/delete', views.genome_delete, name='genome-delete'),
+    path('genomes/<str:specie>/cds', views.cds_list, name='cds-list'),
+    path('genomes/<str:specie>/cds/add', views.cds_create, name='cds-create'),
+
 ]

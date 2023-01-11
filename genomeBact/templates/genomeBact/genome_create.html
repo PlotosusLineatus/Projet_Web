@@ -1,0 +1,17 @@
+{% extends 'genomeBact/base.html' %}
+
+{% block content %}
+
+    <p>Add a new genome.</p>
+
+    <form action="" method="post" novalidate>
+
+    {% csrf_token %}
+    {{  form.as_p }} 
+
+    <input type="submit" value="Envoyer">
+    </form>
+
+    <a href="{% url 'genome-list' %}">Return to genome list</a>
+
+{% endblock %}
