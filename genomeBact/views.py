@@ -11,12 +11,21 @@ def register(request):
     return render(request, 'genomeBact/register.html')
 
 def home(request):
-    
-    return render(request, 'genomeBact/home.html')
+    ## Pour ajouter des génomes (mais c'est pour nous ça) ##
+        if request.method == 'POST':
+            form = GenomeForm(request.POST)  
+            if form.is_valid():
+                new_genome = form.save()
+                return redirect('genome-detail', new_genome.specie)
+        else:
+            form = GenomeForm()
+
+        return render(request,'genomeBact/home.html',{'form': form})
+    #return render(request, 'genomeBact/home.html')
 
 def results(request):
     genome = Genome.objects.all()
-    return render(request, 'genomeBact/results.html',{'genomes': genome})
+    return render(request, 'genomeBact/results.html',{'genome': genome})
 
 def genome_detail(request, specie):
     genome = Genome.objects.get(specie=specie)
@@ -27,7 +36,8 @@ def transcript_list(request, specie):
     genome = Genome.objects.get(specie=specie)
     transcript = Transcript.objects.filter(chromosome = genome.chromosome)
 
-    return render(request, 'genomeBact/transcript_list.html',{'transcript': transcript, 'genome' : genome})
+    return render(request, 'genomeBact/transcript_list.html',{'genome': genome, 'transcript': transcript})
+
 
 def transcript_create(request, specie):
     genome = Genome.objects.get(specie=specie)
@@ -37,11 +47,12 @@ def transcript_create(request, specie):
         if form.is_valid():
             form.instance.chromosome = genome
             form.save()
-            return redirect('transcript-list', genome.specie)
+            #return redirect('transcript-list', genome.specie)
+            return redirect('genome-detail', genome.specie)
     else:
         form = TranscriptForm()
 
-    return render(request,'genomeBact/trasncript_create.html',{'form': form, 'genome' : genome}) 
+    return render(request,'genomeBact/transcript_create.html',{'form': form, 'genome' : genome}) 
 
 def transcript_detail(request, transcript):
     transcript = Transcript.objects.get(transcript=transcript)

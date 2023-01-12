@@ -1,0 +1,20 @@
+{% extends 'genomeBact/base.html' %}
+
+{% block content %}
+
+    <h1>HOME </h1>
+    <a href="{% url 'user_settings' %}"> User profile</a>
+
+    <p>(on peut y ajouter des génomes mais c'est pas censé être le cas ofc)</p>
+
+    <form action="" method="post" novalidate>
+
+    {% csrf_token %}
+    {{  form.as_p }} 
+
+    <input type="submit" value="Envoyer">
+    </form>
+
+    <a href="{% url 'results' %}">Go to results</a>
+
+{% endblock %}

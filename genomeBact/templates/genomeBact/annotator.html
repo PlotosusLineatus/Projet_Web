@@ -1,0 +1,12 @@
+{% extends 'genomeBact/base.html' %}
+
+{% block content %}
+
+    <h1>ANNOTATOR </h1>
+        <li>
+            <a href="{% url 'annot-list'%}">transcripts to annotate</a>
+        </li>
+
+        <a href="{% url 'user_settings'%}">Go back to my settings.</a>
+
+{% endblock %}

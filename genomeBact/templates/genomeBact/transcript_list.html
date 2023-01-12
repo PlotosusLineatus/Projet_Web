@@ -1,0 +1,18 @@
+{% extends 'genomeBact/base.html' %}
+
+{% block content %}
+
+    <h1>Transcripts of {{ genome.specie}} </h1>
+        <ul>
+            {% for transcript in transcript %}
+              <li>{{ transcript.transcript }}</li>			
+            {% endfor %}
+        </ul>
+
+    <a href="{% url 'transcript-create' genome.specie %}">Add a new transcript (ADMIN)</a>
+    
+    <ul>
+        <a href="{% url 'genome-detail' genome.specie %}">Return to genome details</a>
+    </ul>
+
+{% endblock %}

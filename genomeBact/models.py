@@ -3,10 +3,9 @@ from django.urls import reverse
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 class Genome(models.Model):
-    specie = models.CharField(max_length=50, unique= True)    ## prokaryote only so 'unique = True'
-    chromosome = models.CharField(max_length= 30, primary_key= True, help_text = "Chromosome name")
-    size =  models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100000000)], help_text = "Size of chromosome")
-    start = models.IntegerField( default= 1, validators= [MinValueValidator(1),MaxValueValidator(100000000)])
+    specie = models.CharField(max_length=50, unique= True, help_text='*')    ## prokaryote only so 'unique = True'
+    chromosome = models.CharField(max_length= 30, primary_key= True, help_text='*')
+    size =  models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100000000)], help_text='*')
     # direction ? 
 
     def __str__(self):
@@ -16,16 +15,18 @@ class Genome(models.Model):
 #        return reverse('model-detail-view', args=[str(self.chromosome)])
 
 class Transcript(models.Model):
-    transcript = models.CharField(max_length=50, primary_key= True)
+    transcript = models.CharField(max_length=50, primary_key= True, help_text='*')
     chromosome = models.ForeignKey(Genome, null= False, on_delete=models.CASCADE)
-    start =  models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100000000)])
-    stop =  models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100000000)])
-    gene = models.CharField(max_length= 15, unique=True)
-    gene_biotype =  models.CharField(max_length=10)
-    transcript_biotype = models.CharField(max_length= 15)
-    gene_symbol = models.CharField(max_length=10)
-    description = models.CharField(max_length=100)
-
+    
     def __str__(self):
         return self.transcript
+"""
+    start =  models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100000000)], help_text='*')
+    stop =  models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100000000)], help_text='*')
+    gene = models.CharField(max_length= 15, unique=True, help_text='*')
+    gene_biotype =  models.CharField(max_length=10, default="")
+    transcript_biotype = models.CharField(max_length= 15, default="")
+    gene_symbol = models.CharField(max_length=10, default="")
+    description = models.CharField(max_length=100, default="")
+"""
 

@@ -1,0 +1,23 @@
+{% extends 'genomeBact/base.html' %}
+
+{% block content %}
+
+    <h1>MY PROFILE</h1>
+    <p> Hi, I am just a reader...</p>
+
+        <li>
+            <a href="{% url 'validator'%}">No, I am a validator !</a>
+        </li>
+
+        <li>
+            <a href="{% url 'annotator'%}"> No, I am a annotator ! </a>
+        </li>
+
+        <li>
+            <a href="{% url 'admin'%}"> No, I am an admin ! </a>
+        </li>
+
+        <a href="{% url 'home'%}"> Go back home </a>
+
+
+{% endblock %}
