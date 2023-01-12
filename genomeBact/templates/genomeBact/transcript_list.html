@@ -5,7 +5,8 @@
     <h1>Transcripts of {{ genome.specie}} </h1>
         <ul>
             {% for transcript in transcript %}
-              <li>{{ transcript.transcript }}</li>			
+              <li>    <a href="{% url 'transcript-detail' specie=genome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a>
+                </li>			
             {% endfor %}
         </ul>
 
