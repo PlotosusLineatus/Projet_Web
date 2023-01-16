@@ -4,6 +4,17 @@ from django.core.validators import MaxValueValidator, MinValueValidator, RegexVa
 import Bio
 
 
+
+
+class testClass(models.Model):
+
+    field1 = models.CharField(default= "", max_length=50)
+
+    def show(self):
+
+        return ("Field : %s" % self.field1)
+
+
 class Genome(models.Model):
 
 
