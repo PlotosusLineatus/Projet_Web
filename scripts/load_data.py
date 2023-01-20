@@ -5,7 +5,7 @@ from django.db import transaction
 
 # Penser à regarder la disposition management/commands comme alternative à runscript
 
-def get_term(description):
+def get_start_stop(description):
     
     import re
     
@@ -38,9 +38,6 @@ def get_chromosome(description):
         
         print("Mauvais parsing du header du génome de  : %s" % description)
         return None
-
-
-
 
 def get_data(absolute_path = "/home/sherman/Documents/M2/WEB/data"):
 
@@ -86,7 +83,7 @@ def get_data(absolute_path = "/home/sherman/Documents/M2/WEB/data"):
                 
             seq_dict[seq.name] = {}
         
-            terms = get_term(seq.description)
+            terms = get_start_stop(seq.description)
             
             seq_dict[seq.name]["start"] = terms[0]
             seq_dict[seq.name]["stop"] = terms[1]
@@ -140,6 +137,8 @@ def run():
 
 
     if (Transcript.objects.all().exists() | Genome.objects.all().exists()):
+
+        print("La base de données n'est pas vide, le chargement des données initiales requiert vider cette dernière")
 
         management.call_command("flush")
 
