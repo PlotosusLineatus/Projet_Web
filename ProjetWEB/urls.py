@@ -29,17 +29,17 @@ urlpatterns = [
     path('admin/', views.admin, name = 'admin'),
     path('settings/', views.settings, name = 'user_settings'),
     path('validator/', views.validator, name='validator'),
-    path('validator/assign', views.assign_transcript, name='assign-transcript'),
-    path('validator/transcripts', views.transcript_list_state, name='transcript-state'),
-    path('validator/validation', views.transcript_to_validate, name='transcript-validation'),
+    path('validator/assign/', views.assign_transcript, name='assign-transcript'),
+    path('validator/transcripts/', views.transcript_list_state, name='transcript-state'),
+    path('validator/validation/', views.transcript_to_validate, name='transcript-validation'),
 
     path('annotator/', views.annotator, name='annotator'),
-    path('annotator/transcripts', views.transcript_to_annot, name='annot-list'),
+    path('annotator/transcripts/', views.transcript_to_annot, name='annot-list'),
 
     # BD #
-    path('<str:specie>/', views.genome_detail, name='genome-detail'),
-    path('<str:specie>/transcripts', views.transcript_list, name='transcript-list'),
-    path('<str:specie>/transcripts/add', views.transcript_create, name='transcript-create'),
-    path('<str:specie>/<str:transcript>', views.transcript_detail, name='transcript-detail'),
-    path('<str:specie>/<str:transcript>/annotations', views.transcript_annot, name='transcript-annot'),
+    path('sp/<str:specie>/', views.genome_detail, name='genome-detail'),
+    path('sp/<str:specie>/transcripts/', views.transcript_list, name='transcript-list'),
+    path('sp/<str:specie>/transcripts/add/', views.transcript_create, name='transcript-create'),
+    path('sp/<str:specie>/<str:transcript>/', views.transcript_detail, name='transcript-detail'),
+    path('sp/<str:specie>/<str:transcript>/annotations/', views.transcript_annot, name='transcript-annot'),
 ]
