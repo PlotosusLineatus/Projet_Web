@@ -38,7 +38,7 @@
   --bs-success: #198754;
   --bs-info: #0dcaf0;
   --bs-warning: #ffc107;
-  --bs-danger: #dc3545;
+  --bs-danger: #C97064;
   --bs-light: #f8f9fa;
   --bs-dark: #212529;
   --bs-primary-rgb: 0, 133, 161;
@@ -240,7 +240,7 @@ a {
   text-decoration: none;
 }
 a:hover {
-  color: #0085A1;
+  color: #C97064;
 }
 
 a:not([href]):not([class]), a:not([href]):not([class]):hover {
@@ -3148,8 +3148,8 @@ textarea.form-control-lg {
 
 .btn-danger {
   color: #fff;
-  background-color: #dc3545;
-  border-color: #dc3545;
+  background-color: #C97064;
+  border-color: #C97064;
 }
 .btn-danger:hover {
   color: #fff;
@@ -3362,8 +3362,8 @@ textarea.form-control-lg {
 }
 
 .btn-outline-danger {
-  color: #dc3545;
-  border-color: #dc3545;
+  color: #C97064;
+  border-color: #C97064;
 }
 .btn-outline-danger:hover {
   color: #fff;
@@ -11246,3 +11246,4 @@ header.masthead .site-heading .h1 {
     font-size: 2.25rem;
   }
 }
+
