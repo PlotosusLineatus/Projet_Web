@@ -42,8 +42,8 @@ class Transcript(models.Model):
     
 
     # One unique ID per CDS / Protein 
-    name = models.CharField(max_length=50, unique = True)
-    genome = models.ForeignKey(Genome, related_name = "transcript", on_delete = models.CASCADE)
+    transcript = models.CharField(max_length=50, unique = True, help_text='Chromosome version name')
+    chromosome = models.ForeignKey(Genome, related_name = "transcript", on_delete = models.CASCADE)
     seq_cds = models.TextField(default = "",
                                 validators=[RegexValidator(regex='^[ARNDCQEGHILKMFPSTWYV]+$')])
 
@@ -55,3 +55,5 @@ class Transcript(models.Model):
     @property
     def length(self):
         return (self.stop - self.start)+1
+
+

@@ -151,8 +151,7 @@ def run():
                                 chromosome = genome_dict[strain]["chromosome"],
                                 specie = strain))
 
-    with transaction.atomic():
-        Genome.objects.bulk_create(genomes_data)
+    Genome.objects.bulk_create(genomes_data)
 
 
 
@@ -160,7 +159,7 @@ def run():
 
     for temp_strain in genome_dict.keys():
 
-        current_genome = Genome.objects.get(specie = temp_strain)
+        current_chromosome = Genome.objects.get(specie = temp_strain)
 
         transcripts_of_current_genome = []
 
@@ -168,8 +167,8 @@ def run():
 
             if ( transcripts_dict[tsc_name]["specie"] == temp_strain ):
 
-                transcripts_of_current_genome.append(Transcript(name = tsc_name, 
-                                                                genome = current_genome,
+                transcripts_of_current_genome.append(Transcript(transcript = tsc_name, 
+                                                                chromosome = current_chromosome,
                                                                 seq_cds = transcripts_dict[tsc_name]["AA"],
                                                                 seq_nt = transcripts_dict[tsc_name]["NT"],
                                                                 start = transcripts_dict[tsc_name]["start"],

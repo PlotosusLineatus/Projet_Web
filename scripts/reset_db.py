@@ -1,5 +1,4 @@
 
-# RESET WHOLE DATABASE AND LOAD DATA FROM SOURCE FILES
 
 def run():
 
@@ -14,6 +13,7 @@ def run():
     db_path = current_dir + "/db.sqlite3"
 
     if os.path.isfile(db_path):
+        print("Removing existing database ... ")
         os.remove(db_path)
 
 
@@ -23,6 +23,7 @@ def run():
 
 
     if files:
+        print("Removing existing migrations ... ")
         for file in files:
             os.remove(file)
 

@@ -34,7 +34,7 @@ def genome_detail(request, specie):
 
 def transcript_list(request, specie):
     genome = Genome.objects.get(specie=specie)
-    transcript = Transcript.objects.filter(chromosome = genome.chromosome)
+    transcript = Transcript.objects.filter(chromosome = genome.id)
 
     return render(request, 'genomeBact/transcript_list.html',{'genome': genome, 'transcript': transcript})
 
