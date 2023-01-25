@@ -1,32 +1,59 @@
 from django.db import models
 from django.urls import reverse
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
+
+'''
+   _____ ______ _   _  ____  __  __ ______ 
+  / ____|  ____| \ | |/ __ \|  \/  |  ____|
+ | |  __| |__  |  \| | |  | | \  / | |__   
+ | | |_ |  __| | . ` | |  | | |\/| |  __|  
+ | |__| | |____| |\  | |__| | |  | | |____ 
+  \_____|______|_| \_|\____/|_|  |_|______|
+                                                                        
+'''
 
 class Genome(models.Model):
-    specie = models.CharField(max_length=50, unique= True, help_text='*')    ## prokaryote only so 'unique = True'
-    chromosome = models.CharField(max_length= 30, primary_key= True, help_text='*')
-    size =  models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100000000)], help_text='*')
-    # direction ? 
 
-    def __str__(self):
-        return self.chromosome
-        
-#    def get_absolute_url(self):
-#        return reverse('model-detail-view', args=[str(self.chromosome)])
 
+    specie = models.CharField(max_length = 50, unique = True)
+    chromosome = models.CharField(max_length = 30, help_text = "Chromosome version name", default = "")
+    sequence = models.TextField(default = "",
+                                help_text = "Copy FASTA sequence here",
+                                validators=[RegexValidator(regex='^[ATCGN]+$', message = "Sequence must be ATGCN")])
+
+
+    @property
+    def length(self):
+        return len(self.sequence)
+
+
+
+
+''' _____ 
+           _   _  _____  _____ _____  _____ _____ _______ 
+ |__   __|  __ \     /\   | \ | |/ ____|/ ____|  __ \|_   _|  __ \__   __|
+    | |  | |__) |   /  \  |  \| | (___ | |    | |__) | | | | |__) | | |   
+    | |  |  _  /   / /\ \ | . ` |\___ \| |    |  _  /  | | |  ___/  | |   
+    | |  | | \ \  / ____ \| |\ A|____) | |____| | \ \ _| |_| |      | |   
+    |_|  |_|  \_\/_/    \_\_| \_|_____/ \_____|_|  \_\_____|_|      |_|   
+                                                                          
+'''                                                                  
 class Transcript(models.Model):
-    transcript = models.CharField(max_length=50, primary_key= True, help_text='*')
-    chromosome = models.ForeignKey(Genome, null= False, on_delete=models.CASCADE)
     
-    def __str__(self):
-        return self.transcript
-"""
-    start =  models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100000000)], help_text='*')
-    stop =  models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100000000)], help_text='*')
-    gene = models.CharField(max_length= 15, unique=True, help_text='*')
-    gene_biotype =  models.CharField(max_length=10, default="")
-    transcript_biotype = models.CharField(max_length= 15, default="")
-    gene_symbol = models.CharField(max_length=10, default="")
-    description = models.CharField(max_length=100, default="")
-"""
+
+    # One unique ID per CDS / Protein 
+    transcript = models.CharField(max_length=50, unique = True, help_text='Chromosome version name')
+    chromosome = models.ForeignKey(Genome, related_name = "transcript", on_delete = models.CASCADE)
+    seq_cds = models.TextField(default = "",
+                                validators=[RegexValidator(regex='^[ARNDCQEGHILKMFPSTWYV]+$')])
+
+    seq_nt = models.TextField(default = "",
+                                validators=[RegexValidator(regex='^[ATCGN]+$', message = "Sequence must be ATGCN")])
+    start = models.IntegerField(null = True)
+    stop = models.IntegerField(null = True)
+
+    @property
+    def length(self):
+        return (self.stop - self.start)+1
+
 
