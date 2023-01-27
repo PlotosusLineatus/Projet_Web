@@ -54,6 +54,7 @@ def transcript_create(request, specie):
 
     return render(request,'genomeBact/transcript_create.html',{'form': form, 'genome' : genome}) 
 
+
 def transcript_detail(request, specie, transcript):
     genome = Genome.objects.get(specie=specie)
     transcript = Transcript.objects.get(transcript=transcript)
