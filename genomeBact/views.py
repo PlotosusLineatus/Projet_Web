@@ -96,3 +96,5 @@ def annotator(request):
 def transcript_to_annot(request):
     
     return render(request,'genomeBact/transcript_to_annot.html')
+
+    
