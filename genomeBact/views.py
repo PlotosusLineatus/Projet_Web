@@ -1,14 +1,37 @@
 from django.shortcuts import redirect, render
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 from genomeBact.models import Genome,Transcript
-from genomeBact.forms import GenomeForm, TranscriptForm
+from genomeBact.forms import GenomeForm, TranscriptForm, CreateUserForm
 
-def login(request):
-    
-    return render(request, 'genomeBact/login.html')
+def user_login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username') 
+        password = request.POST.get('password') 
+
+        user = authenticate(request, username= username, password= password )
+        
+        if user is not None:
+            login(request, user)
+            return redirect('home')
+        else:   
+            messages.info(request, "Username or password is incorrect" )
+           #return render(request, 'genomeBact/login.html', context)
+
+    context = {}
+    return render(request, 'genomeBact/login.html', context)
 
 def register(request):
-    
-    return render(request, 'genomeBact/register.html')
+    if request.method == 'POST':
+        form = CreateUserForm(request.POST)  
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = CreateUserForm()
+
+    context = {'form':form}
+    return render(request, 'genomeBact/register.html', context)
 
 def home(request):
     ## Pour ajouter des génomes (mais c'est pour nous ça) ##

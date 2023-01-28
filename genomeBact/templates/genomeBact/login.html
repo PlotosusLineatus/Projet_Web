@@ -19,7 +19,8 @@
                     <div class="col-md-5 mx-auto">
                         <div class="card card-body">
                                                     
-                            <form id="submitForm" action="/home/" method="post" data-parsley-validate="" data-parsley-errors-messages-disabled="true" novalidate="" _lpchecked="1"><input type="hidden" name="_csrf" value="7635eb83-1f95-4b32-8788-abec2724a9a4">
+                            <form id="submitForm" action="" method="post" data-parsley-validate="" data-parsley-errors-messages-disabled="true" novalidate="" _lpchecked="1"><input type="hidden" name="_csrf" value="7635eb83-1f95-4b32-8788-abec2724a9a4">
+                                {% csrf_token %}
                                 <div class="form-group required">
                                     <lSabel for="username">Username / Email</lSabel>
                                     <input type="text" class="form-control text-lowercase" id="username" required="" name="username" value="">
@@ -33,6 +34,11 @@
                                     <button class="btn btn-primary btn-block" type="submit">Log In</button>
                                 </div>
                             </form>
+
+                            {% for message in messages %}
+                                <p id="messages"> {{ message }}</p>
+                            {% endfor %}
+
                             <p class="small-xl pt-3 text-center">
                                 <span class="text-muted">Still not a member?</span>
                                 <a href="/register">Register</a>
