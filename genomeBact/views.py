@@ -1,7 +1,11 @@
 from django.shortcuts import redirect, render
-from genomeBact.models import Genome,Transcript
-from genomeBact.forms import GenomeForm, TranscriptForm, UploadFileForm
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.http import HttpResponse
+
+from genomeBact.models import Genome,Transcript
+from genomeBact.forms import GenomeForm, TranscriptForm, UploadFileForm, CreateUserForm
 from Bio import SeqIO
 from io import StringIO
 
