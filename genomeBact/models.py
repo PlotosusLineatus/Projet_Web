@@ -16,7 +16,7 @@ class Genome(models.Model):
 
 
     specie = models.CharField(max_length = 50, unique = True)
-    chromosome = models.CharField(max_length = 30, help_text = "Chromosome version name", default = "")
+    chromosome = models.CharField(max_length = 30, help_text = "Chromosome version name", default = "", primary_key=True)
     sequence = models.TextField(default = "",
                                 help_text = "Copy FASTA sequence here",
                                 validators=[RegexValidator(regex='^[ATCGN]+$', message = "Sequence must be ATGCN")])
