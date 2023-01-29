@@ -3,6 +3,12 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
+from django.http import HttpResponse
+
+from genomeBact.models import Genome,Transcript
+from genomeBact.forms import GenomeForm, TranscriptForm, UploadFileForm, CreateUserForm
+from Bio import SeqIO
+from io import StringIO
 
 from .models import Genome,Transcript
 from .forms import GenomeForm, TranscriptForm, CreateUserForm
@@ -152,4 +158,25 @@ def transcript_to_annot(request):
     
     return render(request,'genomeBact/transcript_to_annot.html')
 
-    
+
+### NOT CURRENTLY WORKING NEED TO ADD GENOME FOR WHICH TRANSCRIPTS ARE UPLOADED ###
+def transcript_upload(request):
+
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid() :
+            
+            file = request.FILES['file'] # Returns HttpRequest object
+
+            # Convert byte to text mode for BioPython SeqIO
+            stringio = StringIO(file.read().decode("utf-8")) 
+            for record in SeqIO.parse(stringio, 'fasta'):
+                t = Transcript(sequence = record.description)
+                t.save()
+            
+     
+        return HttpResponse(" Chargement réussi ! ")
+    else:
+        form = UploadFileForm()
+
+    return render(request, 'polls/transcript_upload.html', {'form': form})
