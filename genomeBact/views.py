@@ -119,6 +119,7 @@ def transcript_annot(request, transcript):
     return render(request,'genomeBact/transcript_annot.html',{'transcript': transcript})
 
 @login_required(login_url='login')
+@admin_only
 def admin(request):
 
     return render(request,'genomeBact/admin.html')
