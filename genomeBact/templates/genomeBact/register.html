@@ -16,25 +16,27 @@
             <div class="card-body p-4 p-md-5">
               <h3 class="mb-4 pb-2 pb-md-0 mb-md-5 px-md-2">Registration Infos</h3>
   
-              <form class="px-md-2">
+              <form class="px-md-2" method="post">
   
+                {% csrf_token %}
+
                 <div class="form-outline mb-4">
-                  <input type="text" id="form3Example1q" class="form-control" />
-                  <label class="form-label" for="form3Example1q">Name</label>
+                  <label class="form-label" for="form3Example1q"> {{ form.username.label }} </label>
+                  <input type="text" class="form-control" required="" id="form3Example1q" name="username" placeholder=" Username...">
                 </div>
   
                 <div class="form-outline mb-4">
-                    <input type="text" id="form3Example1q" class="form-control" />
                     <label class="form-label" for="form3Example1q">Mail</label>
+                    <input type="text" id="form3Example1q" class="form-control" />
                   </div>
   
                 <div class="mb-4">
   
-                  <select class="select">
+                  <select class="select" name="group">
                     <option value="1" disabled>Role</option>
-                    <option value="2">Lecteur</option>
-                    <option value="3">Annotateur</option>
-                    <option value="4">Validateur</option>
+                    <option value="Lecteur">Lecteur</option>
+                    <option value="Annotateur">Annotateur</option>
+                    <option value="Validateur">Validateur</option>
                   </select>
   
                 </div>
@@ -43,14 +45,18 @@
                   <div class="col-md-6">
   
                     <div class="form-outline">
-                      <input type="text" id="form3Example1w" class="form-control" />
-                      <label class="form-label" for="form3Example1w">Password</label>
+                      <label class="form-label" for="form3Example1w"> {{ form.password1.label}} </label>
+                      <input type="password" class="form-control" required="" id="form3Example1q" name="password1" placeholder=" Password...">
+
                     </div>
-  
+                    <div class="form-outline">
+                      <label class="form-label" for="form3Example1w"> {{ form.password2.label}} </label>
+                      <input type="password" class="form-control" required="" id="form3Example1q" name="password2" placeholder=" ...">
+                    </div>
                   </div>
                 </div>
   
-                <button type="submit" class="btn btn-success btn-lg mb-1">Submit</button>
+                <button type="submit" class="btn btn-success btn-lg mb-1" name="Create User">Submit</button>
   
               </form>
   

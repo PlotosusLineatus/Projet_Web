@@ -19,8 +19,9 @@ from genomeBact import views
 
 urlpatterns = [
 
-    path('', views.login, name = 'login'),
+    path('', views.user_login, name = 'login'),
     path('register/', views.register, name = 'register'),
+    path('logout/', views.user_logout, name = 'logout'),
     path('home/', views.home, name = 'home'),
     path('results/', views.results, name='results'),
 
