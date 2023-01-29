@@ -1,14 +1,21 @@
 {% extends 'genomeBact/base.html' %}
 
 {% block content %}
-
-    <h1>RESULTS</h1>
-    <p>genomes are : </p>
+<header class="masthead" style="background-color: #8DAA9D">
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="post-heading">
+            <h1>Collection : </h1>
+            <h2 class="subheading"> Ensemble des génomes</h2>
+        </div>
+    </div>
+</header>
+    <div class="container px-4 px-lg-5">
         <ul>
             {% for genome in genome %}
-                <li><a href="{% url 'genome-detail' genome.specie %}">{{ genome.specie }}</a></li>			
+                <li><h5><a href="{% url 'genome-detail' genome.specie %}">{{ genome.specie }}</a></h5></li>			
             {% endfor %}
         </ul>
-    <a href="{% url 'home' %}">Return to Home (= Add a new genome) </a>
+    </div>
+
 
 {% endblock %}

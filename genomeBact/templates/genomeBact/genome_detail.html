@@ -1,15 +1,87 @@
 {% extends 'genomeBact/base.html' %}
 
 {% block content %}
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+            <div class="container px-4 px-lg-5">
+                <a class="navbar-brand" href="/home">Le projet OUAF</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/home">Home</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/admin">Admin</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/settings">Parameters</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/results">Collection</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Page Header-->
+        <header class="masthead" style="background: url('/static/genomeBact/p1.png')">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-3 col-lg-8 col-xl-10">
+                        <div class="post-heading">
+                            <h1>{{ genome.specie }}</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
 
-    <h2>{{ genome.specie }}</h2>
-        
-    <ul>
-    <li>Chromosome : {{ genome.chromosome }}</li>
+<div class="container px-4 px-lg-5">
+    <h2>Infos </h2>
+        <table class="table-info">
+            <tr>
+                <td>Chromosome</td>
+                <td>{{ genome.chromosome }}</td>
+            </tr>
+            <tr>
+                <td>Length</td>
+                <td>{{ genome.length }}</td>
+            </tr>
+        </table>
+    <h2> Séquence </h2>
+        <button id="toggle-button" onclick="toggleGenomeSequence()">Show/Hide</button>
+        <div id="genome_sequence" style="display: none;">
+        <p>{{ genome.sequence }}</pre>
+        </div>
+</div>
+<div class="container px-4 px-lg-5">
+    <h2> CDS </h2>
+        <table>
+            <tr>
+              <th>CDS</th>
+              <th>Start</th>
+            </tr>
+            {% for transcript in transcript %}
+              <tr class="cds" onclick="window.location='{% url 'transcript-detail' specie=genome.specie transcript=transcript.transcript %}'">
+                <td>{{ transcript.transcript }}</td>
+                <td>{{ transcript.start }}</td>
+              </tr>
+            {% endfor %}
+          </table>
+</div>
     <li><a href="{% url 'transcript-list' genome.specie %}">Transcripts</a></li>
 
-    <li>Length : {{ genome.length }}</li>
 
     <a href="{% url 'results' %}">Return to Results (= genome list)</a>
 
 {% endblock %}
+
+<script>
+    function toggleGenomeSequence() {
+      var sequenceDiv = document.getElementById("genome_sequence");
+      var toggleButton = document.getElementById("toggle-button");
+      if (sequenceDiv.style.display === "none") {
+        sequenceDiv.style.display = "block";
+        toggleButton.innerHTML = "Hide Genome Sequence";
+      } else {
+        sequenceDiv.style.display = "none";
+        toggleButton.innerHTML = "Show Genome Sequence";
+      }
+    }
+    </script>
