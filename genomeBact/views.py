@@ -1,50 +1,54 @@
 from django.shortcuts import redirect, render
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from genomeBact.models import Genome,Transcript
-from genomeBact.forms import GenomeForm, TranscriptForm, CreateUserForm
+from django.contrib.auth.models import Group
 
-def user_login(request):
-    if request.user.is_authenticated:
-        return redirect('home')
-    else : 
-        if request.method == 'POST':
-            username = request.POST.get('username') 
-            password = request.POST.get('password') 
-
-            user = authenticate(request, username= username, password= password )
-
-            if user is not None:
-                login(request, user)
-                return redirect('home')
-            else:   
-                messages.info(request, "Username or password is incorrect" )
-            #return render(request, 'genomeBact/login.html', context)
-
-        context = {}
-        return render(request, 'genomeBact/login.html', context)
+from .models import Genome,Transcript
+from .forms import GenomeForm, TranscriptForm, CreateUserForm
+from .decorators import unauthenticated_user, allowed_users, admin_only
 
 def user_logout(request):
     logout(request)
     return redirect('login')
 
-def register(request):
-    if request.user.is_authenticated:
-        return redirect('home')
-    else:
-        if request.method == 'POST':
-            form = CreateUserForm(request.POST)  
-            if form.is_valid():
-                form.save()
-                user = form.cleaned_data.get('username')
-                messages.success(request, 'Account was created for ' + user )
-                return redirect('login')
-        else:
-            form = CreateUserForm()
+@unauthenticated_user
+def user_login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username') 
+        password = request.POST.get('password') 
 
-        context = {'form':form}
-        return render(request, 'genomeBact/register.html', context)
+        user = authenticate(request, username= username, password= password )
+
+        if user is not None:
+            login(request, user)
+            return redirect('home')
+        else:   
+            messages.info(request, "Username or password is incorrect" )
+
+    context = {}
+    return render(request, 'genomeBact/login.html', context)
+
+@unauthenticated_user
+def register(request):
+    if request.method == 'POST':
+        form = CreateUserForm(request.POST)  
+        if form.is_valid():
+            user = form.save()
+
+            group = request.POST.get('group')
+            group = Group.objects.get(name = group)
+            user.groups.add(group)
+
+            username = form.cleaned_data.get('username')
+            messages.success(request, 'Account was created for ' + username)
+            
+            return redirect('login')
+    else:
+        form = CreateUserForm()
+
+    context = {'form':form}
+    return render(request, 'genomeBact/register.html', context)
 
 @login_required(login_url='login')
 def home(request):
@@ -61,6 +65,7 @@ def home(request):
     #return render(request, 'genomeBact/home.html')
 
 @login_required(login_url='login')
+@allowed_users(allowed_roles=['Lecteur'])
 def results(request):
     genome = Genome.objects.all()
     return render(request, 'genomeBact/results.html',{'genome': genome})
