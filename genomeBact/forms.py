@@ -11,3 +11,9 @@ class TranscriptForm(forms.ModelForm):
         model = Transcript
         #fields = '__all__'
         exclude = ('chromosome',)
+
+
+class UploadFileForm(forms.Form):
+
+    file = forms.FileField()
+
