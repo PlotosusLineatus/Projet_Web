@@ -40,7 +40,6 @@
             </div>
         </nav>
 
-
         </html>     
         <header class="masthead" style="background-color: #45425A">
             <div class="container position-relative px-4 px-lg-5">
@@ -60,8 +59,11 @@
             
             <!-- Tab content -->
             <div id="toannot" class="tabcontent">
-                <h3>A Annoter</h3>
+                <h3>A Annoter [OU PAS c'est un test]</h3>
                 <p>woof</p>
+                {% for transcript in transcripts%}
+                    {{ transcript.chromosome }}
+                {% endfor %}
             </div>
             
             <div id="assign" class="tabcontent">

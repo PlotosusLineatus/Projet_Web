@@ -1,7 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
-
+from django.contrib.auth.models import User
 '''
    _____ ______ _   _  ____  __  __ ______ 
   / ____|  ____| \ | |/ __ \|  \/  |  ____|
@@ -27,7 +27,12 @@ class Genome(models.Model):
         return len(self.sequence)
 
 
+class Profile(models.Model):
+    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
+    name = models.CharField(max_length=200 , null=True)
 
+    def __str__(self):
+        return self.name
 
 ''' _____ 
            _   _  _____  _____ _____  _____ _____ _______ 
@@ -39,7 +44,7 @@ class Genome(models.Model):
                                                                           
 '''                                                                  
 class Transcript(models.Model):
-    
+    STATUS = ( ('assigned','assigned'), ('annotated','annotated'), ('validated','validated'), ('empty','empty'))    
 
     # One unique ID per CDS / Protein 
     transcript = models.CharField(max_length=50, unique = True, help_text='Chromosome version name')
@@ -52,8 +57,12 @@ class Transcript(models.Model):
     start = models.IntegerField(null = True)
     stop = models.IntegerField(null = True)
 
+    status = models.CharField(max_length=200, choices=STATUS, default='empty')
+    annotator = models.ForeignKey(Profile, null=True, on_delete=models.SET_NULL)
+
     @property
     def length(self):
         return (self.stop - self.start)+1
+
 
 

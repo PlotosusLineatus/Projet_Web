@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.http import HttpResponse
 
-from genomeBact.models import Genome,Transcript
+from genomeBact.models import Genome,Transcript, Profile
 from genomeBact.forms import GenomeForm, TranscriptForm, UploadFileForm, CreateUserForm
 from Bio import SeqIO
 from io import StringIO
@@ -45,8 +45,10 @@ def register(request):
             group = request.POST.get('group')
             group = Group.objects.get(name = group)
             user.groups.add(group)
-
             username = form.cleaned_data.get('username')
+            
+            Profile.objects.create(user = user, name=user.username)
+
             messages.success(request, 'Account was created for ' + username)
             
             return redirect('login')
@@ -126,8 +128,11 @@ def admin(request):
 
 @login_required(login_url='login')
 def settings(request):
-    
-    return render(request,'genomeBact/user_settings.html')
+    transcripts = request.user.profile.transcript_set.all()
+    print('____________TRANSCRIPTS: ', transcripts)
+
+    context = {'transcripts':transcripts}
+    return render(request,'genomeBact/user_settings.html', context)
 
 @login_required(login_url='login')
 def validator(request):
