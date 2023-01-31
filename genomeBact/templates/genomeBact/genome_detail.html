@@ -57,7 +57,7 @@
               <th>CDS</th>
               <th>Start</th>
             </tr>
-            {% for transcript in transcript %}
+            {% for transcript in transcripts %}
               <tr class="cds" onclick="window.location='{% url 'transcript-detail' specie=genome.specie transcript=transcript.transcript %}'">
                 <td>{{ transcript.transcript }}</td>
                 <td>{{ transcript.start }}</td>
