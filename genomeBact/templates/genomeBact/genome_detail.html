@@ -31,57 +31,76 @@
                 </div>
             </div>
         </header>
-
-<div class="container px-4 px-lg-5">
-    <h2>Infos </h2>
-        <table class="table-info">
-            <tr>
-                <td>Chromosome</td>
-                <td>{{ genome.chromosome }}</td>
-            </tr>
-            <tr>
-                <td>Length</td>
-                <td>{{ genome.length }}</td>
-            </tr>
-        </table>
-    <h2> Séquence </h2>
-        <button id="toggle-button" onclick="toggleGenomeSequence()">Show/Hide</button>
-        <div id="genome_sequence" style="display: none;">
-        <p>{{ genome.sequence }}</pre>
+        <!-- Page content-->
+        <div class="container mt-5">
+            <a href="{% url 'results' %}">Résultats précédents</a>
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- Post content-->
+                    <article>
+                        <!-- Séquence-->
+                        <section class="mb-5">
+                            <h2 class="fw-bolder mb-4 mt-5">Séquence</h2>
+                            <!-- Page Header <p class="fs-5 mb-4"><pre>{{ genome.sequence|linebreaks }}</pre></p> -->
+                        </section>
+                    </article>
+                    <!--Liste des tCDS-->
+                    <section class="mb-5">
+                        <div class="card bg-light">
+                            
+                            <div class="card-body">
+                                <h2 class="fw-bolder mb-4 mt-2"><a href="{% url 'transcript-list' genome.specie %}">Liste des annotations </a></h2>
+                                <!-- Single comment-->
+                                <div class="d-flex">
+                                    <div class="ms-3">
+                                        <div class="fw-bold">ID du CDS</div>
+                                        Nom du CDS
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <!-- Side widgets-->
+                <div class="col-lg-4">
+                    <!-- Widget BLAST-->
+                    <div class="card mb-4">
+                        <div class="card-header">Autres ressources :</div>
+                        <div class="card-body">
+                            <div class="input-group">
+                                <button class="btn btn-warning" id="button-blatp" type="button">BLASTp</button>
+                                <button class="btn btn-primary" id="button-blastn" type="button">BLASTn</button>
+                                <button class="btn btn-danger" id="button-uniprot" type="button">Uniprot</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Categories widget-->
+                    <div class="card mb-4">
+                        <div class="card-header">Infos</div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <ul class="list-unstyled mb-0">
+                                        <h5>Chromosome</h6>
+                                        <h5>Length</h6>
+                                    </ul>
+                                </div>
+                                <div class="col-sm-6">
+                                    <ul class="list-unstyled mb-0">
+                                        <h6>{{ genome.chromosome }}</h6>
+                                        <h6>{{ genome.length }}</h6>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Side widget-->
+                    <div class="card mb-4">
+                        <div class="card-header">Commentaire de l'admin</div>
+                        <div class="card-body">wow</div>
+                    </div>
+                </div>
+            </div>
         </div>
-</div>
-<div class="container px-4 px-lg-5">
-    <h2> CDS </h2>
-        <table>
-            <tr>
-              <th>CDS</th>
-              <th>Start</th>
-            </tr>
-            {% for transcript in transcript %}
-              <tr class="cds" onclick="window.location='{% url 'transcript-detail' specie=genome.specie transcript=transcript.transcript %}'">
-                <td>{{ transcript.transcript }}</td>
-                <td>{{ transcript.start }}</td>
-              </tr>
-            {% endfor %}
-          </table>
-</div>
-    <li><a href="{% url 'transcript-list' genome.specie %}">Transcripts</a></li>
-
-
-    <a href="{% url 'results' %}">Return to Results (= genome list)</a>
-
+</html>
 {% endblock %}
-
-<script>
-    function toggleGenomeSequence() {
-      var sequenceDiv = document.getElementById("genome_sequence");
-      var toggleButton = document.getElementById("toggle-button");
-      if (sequenceDiv.style.display === "none") {
-        sequenceDiv.style.display = "block";
-        toggleButton.innerHTML = "Hide Genome Sequence";
-      } else {
-        sequenceDiv.style.display = "none";
-        toggleButton.innerHTML = "Show Genome Sequence";
-      }
-    }
-    </script>
