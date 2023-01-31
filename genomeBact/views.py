@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 
 from genomeBact.models import Genome,Transcript
 from genomeBact.forms import GenomeForm, TranscriptForm, UploadFileForm, CreateUserForm
@@ -58,23 +58,39 @@ def register(request):
 
 @login_required(login_url='login')
 def home(request):
-    ## Pour ajouter des génomes (mais c'est pour nous ça) ##
-        if request.method == 'POST':
-            form = GenomeForm(request.POST)  
-            if form.is_valid():
-                new_genome = form.save()
-                return redirect('genome-detail', new_genome.specie)
-        else:
-            form = GenomeForm()
 
-        return render(request,'genomeBact/home.html',{'form': form})
+    # Dans HOME Noémie a mis un petit formulaire de recherche 
+    if request.method == "POST":    
+        # Si l'utilisateur valide la recherche en cliquant sur le boutton
+        if "sub_search" in request.POST:
+            # On regarde si le code d'accession contient des char
+            if request.POST.get("accession") != "":
+                accession = request.POST.get("accession")
+                # Si l'utilisateur a sélectionné " Genome " ( au lieu de " Transcript ")
+                if request.POST.get("query_type") == "Genome":
+
+                    # Je veux retourner sur la page results en renvoyant ce que l'utilisateur a entré pour sa recherche
+                    return render('genomeBact/results.html/', context = {"user_input" : accession})
+                    
+
+    return render(request,'genomeBact/home.html')
     #return render(request, 'genomeBact/home.html')
 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['Lecteur'])
-def results(request):
-    genome = Genome.objects.all()
-    return render(request, 'genomeBact/results.html',{'genome': genome})
+# If user don't search anything from home page, return full list of genomes
+def results(request, user_input = None):
+
+    # On accède à la page normalement si l'input de l'user est inexistant  
+    if user_input == None:
+        genome = Genome.objects.all()
+        return render(request, 'genomeBact/results.html',{'genome': genome}) 
+
+    # Sinon, on utilise l'input de l'user pour filtrer les génomes sur leur num d'accession
+    else:
+        genome = Genome.objects.filter(chromosome__contains = user_input)
+       
+
 
 @login_required(login_url='login')
 def genome_detail(request, specie):
