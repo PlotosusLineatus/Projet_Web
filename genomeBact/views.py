@@ -59,11 +59,13 @@ def register(request):
 @login_required(login_url='login')
 def home(request):
 
+    # Ici on ne prend évidemment pas tous les scénarios en compte, juste un pour voir comment ça fonctionne
+
     # Dans HOME Noémie a mis un petit formulaire de recherche 
     if request.method == "POST":    
         # Si l'utilisateur valide la recherche en cliquant sur le boutton
         if "sub_search" in request.POST:
-            # On regarde si le code d'accession contient des char
+            # On regarde si le code d'accession contient quelque chose
             if request.POST.get("accession") != "":
                 accession = request.POST.get("accession")
                 # Si l'utilisateur a sélectionné " Genome " ( au lieu de " Transcript ")
