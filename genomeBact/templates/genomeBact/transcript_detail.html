@@ -9,6 +9,8 @@
         <li> Specie = {{ transcript.chromosome }}</li>
         <li> start = {{ transcript.start }}</li>
         <li> stop = {{ transcript.stop }}</li>
+        <li> Status = {{ transcript.status }}</li>
+        <li> annotator = {{ transcript.annotator }}</li>
     </li>
     
     <a href="{% url 'transcript-list' genome.specie %}">Return to transcript list</a>

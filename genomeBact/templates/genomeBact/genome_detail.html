@@ -57,13 +57,15 @@
               <th>CDS</th>
               <th>Start</th>
             </tr>
+            <!--
             {% for transcript in transcripts %}
               <tr class="cds" onclick="window.location='{% url 'transcript-detail' specie=genome.specie transcript=transcript.transcript %}'">
                 <td>{{ transcript.transcript }}</td>
                 <td>{{ transcript.start }}</td>
               </tr>
             {% endfor %}
-          </table>
+            -->
+        </table>
 </div>
     <li><a href="{% url 'transcript-list' genome.specie %}">Transcripts</a></li>
 
