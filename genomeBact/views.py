@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.urls import reverse
 
 
@@ -75,10 +75,9 @@ def home(request):
 
             # Si l'utilisateur a sélectionné " Genome " ( au lieu de " Transcript ")
             if query_type == "Genome":
-                context = {'user_input' : user_input}
+                request.session['user_input'] = user_input ## j'enregistre dans les cookies {'user_input' = user_input}
                 # Je veux retourner sur la page results en renvoyant ce que l'utilisateur a entré pour sa recherche
-                #c'était un test, mais ça ne marche pas de cette façon
-                return redirect(reverse('results', kwargs={ 'user_input': user_input }))
+                return redirect( 'results')
 
     return render(request,'genomeBact/home.html')
 
@@ -86,16 +85,17 @@ def home(request):
 @allowed_users(allowed_roles=['Lecteur'])
 # If user don't search anything from home page, return full list of genomes
 def results(request):
-    user_input = '' #A retirer
-
-    # On accède à la page normalement si l'input de l'user est inexistant  
-    if user_input == "":
-        genome = Genome.objects.all()
+    if 'user_input' in request.session:
+        user_input = request.session['user_input'] ## je récupère la variable dans les cookies
+        del request.session['user_input'] ## Je supprime les cookies car on en a plus besoin
+        # Sinon, on utilise l'input de l'user pour filtrer les génomes sur leur num d'accession
+        genome = Genome.objects.filter(chromosome__contains = user_input)
         return render(request, 'genomeBact/results.html',{'genome': genome}) 
 
-    # Sinon, on utilise l'input de l'user pour filtrer les génomes sur leur num d'accession
-    genome = Genome.objects.filter(chromosome__contains = user_input)
+    # On accède à la page normalement si l'input de l'user est inexistant  
+    genome = Genome.objects.all()
     return render(request, 'genomeBact/results.html',{'genome': genome}) 
+
        
 
 
