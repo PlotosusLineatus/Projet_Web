@@ -4,6 +4,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.http import HttpResponse, HttpResponseNotFound
+from django.urls import reverse
+
 
 from genomeBact.models import Genome,Transcript
 from genomeBact.forms import GenomeForm, TranscriptForm, UploadFileForm, CreateUserForm
@@ -63,34 +65,37 @@ def home(request):
 
     # Dans HOME Noémie a mis un petit formulaire de recherche 
     if request.method == "POST":    
-        # Si l'utilisateur valide la recherche en cliquant sur le boutton
-        if "sub_search" in request.POST:
-            # On regarde si le code d'accession contient quelque chose
-            if request.POST.get("accession") != "":
-                accession = request.POST.get("accession")
-                # Si l'utilisateur a sélectionné " Genome " ( au lieu de " Transcript ")
-                if request.POST.get("query_type") == "Genome":
 
-                    # Je veux retourner sur la page results en renvoyant ce que l'utilisateur a entré pour sa recherche
-                    return render('genomeBact/results.html/', context = {"user_input" : accession})
-                    
+        # Si l'utilisateur valide la recherche en cliquant sur le boutton
+        user_input = request.POST.get('accession') 
+
+        # On regarde si le code d'accession contient quelque chose
+        if user_input is not None:
+            query_type = request.POST.get("query_type")
+
+            # Si l'utilisateur a sélectionné " Genome " ( au lieu de " Transcript ")
+            if query_type == "Genome":
+                context = {'user_input' : user_input}
+                # Je veux retourner sur la page results en renvoyant ce que l'utilisateur a entré pour sa recherche
+                #c'était un test, mais ça ne marche pas de cette façon
+                return redirect(reverse('results', kwargs={ 'user_input': user_input }))
 
     return render(request,'genomeBact/home.html')
-    #return render(request, 'genomeBact/home.html')
 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['Lecteur'])
 # If user don't search anything from home page, return full list of genomes
-def results(request, user_input = None):
+def results(request):
+    user_input = '' #A retirer
 
     # On accède à la page normalement si l'input de l'user est inexistant  
-    if user_input == None:
+    if user_input == "":
         genome = Genome.objects.all()
         return render(request, 'genomeBact/results.html',{'genome': genome}) 
 
     # Sinon, on utilise l'input de l'user pour filtrer les génomes sur leur num d'accession
-    else:
-        genome = Genome.objects.filter(chromosome__contains = user_input)
+    genome = Genome.objects.filter(chromosome__contains = user_input)
+    return render(request, 'genomeBact/results.html',{'genome': genome}) 
        
 
 
