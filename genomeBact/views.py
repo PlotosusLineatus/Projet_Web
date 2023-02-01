@@ -61,17 +61,14 @@ def register(request):
 @login_required(login_url='login')
 def home(request):
 
-    # Ici on ne prend évidemment pas tous les scénarios en compte, juste un pour voir comment ça fonctionne
-
-    # Dans HOME Noémie a mis un petit formulaire de recherche 
+   
     if request.method == "POST":    
 
-        # Si l'utilisateur valide la recherche en cliquant sur le boutton
-        user_input = request.POST.get('accession') 
+        user_input = request.POST.get('accession', None)
 
         # On regarde si le code d'accession contient quelque chose
         if user_input is not None:
-            query_type = request.POST.get("query_type")
+            query_type = request.POST.get("query_type", None)
 
             # Si l'utilisateur a sélectionné " Genome " ( au lieu de " Transcript ")
             if query_type == "Genome":
@@ -80,6 +77,8 @@ def home(request):
                 return redirect( 'results')
 
     return render(request,'genomeBact/home.html')
+
+
 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['Lecteur'])
@@ -92,9 +91,10 @@ def results(request):
         genome = Genome.objects.filter(chromosome__contains = user_input)
         return render(request, 'genomeBact/results.html',{'genome': genome}) 
 
-    # On accède à la page normalement si l'input de l'user est inexistant  
-    genome = Genome.objects.all()
-    return render(request, 'genomeBact/results.html',{'genome': genome}) 
+    else:
+        # On accède à la page normalement si l'input de l'user est inexistant  
+        genome = Genome.objects.all()
+        return render(request, 'genomeBact/results.html',{'genome': genome}) 
 
        
 
