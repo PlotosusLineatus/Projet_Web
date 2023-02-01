@@ -9,12 +9,16 @@
         </div>
     </div>
 </header>
+
+<!-- Liste des génomes-->
     <div class="container px-4 px-lg-5">
-        <ul>
+        <div class="post-preview">
             {% for genome in genome %}
-                <li><h5><a href="{% url 'genome-detail' genome.specie %}">{{ genome.specie }}</a></h5></li>			
+                <h2><a href="{% url 'genome-detail' genome.specie %}">{{ genome.specie }}</a></h5>
+                <p class=" "post-meta>0% completed</p>
+                <hr class="my-4" />
             {% endfor %}
-        </ul>
+        </div>
     </div>
 
 

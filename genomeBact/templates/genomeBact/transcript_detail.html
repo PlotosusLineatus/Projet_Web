@@ -2,6 +2,7 @@
 
 {% block content %}
 
+
     <h1>Transcript {{ transcript.transcript}} </h1>
 
     <li>
@@ -14,5 +15,113 @@
         
     <a href="{% url 'transcript-list' genome.specie %}">Return to transcript list</a>
     <a id="myLink" href = test.html></a>
+
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+            <div class="container px-4 px-lg-5">
+                <a class="navbar-brand" href="/home">Le projet OUAF</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/home">Home</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/admin">Admin</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/settings">Parameters</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/results">Collection</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Page Header-->
+        <header class="masthead" style="background: url('/static/genomeBact/p2.png')">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-3 col-lg-8 col-xl-10">
+                        <div class="post-heading">
+                            <h1 style =>{{ transcript.transcript }}</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Page content-->
+        <div class="container mt-5">
+            <a href="{% url 'transcript-list' genome.specie %}">Résultats précédents</a>
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- Post content-->
+                    <article>
+                        <!-- Séquence-->
+                        <section class="mb-5">
+                            <h2 class="fw-bolder mb-4 mt-5">Séquences</h2>
+                            <h5>Séquence nucléotidique</h5>
+                            <p> WOW</p>
+                            <h5>Séquence peptidique</h5>
+                            <p>WOW2</p>
+                            <!-- <p class="fs-5 mb-4"><span style = "word-break : break-all;">{{ genome.sequence }}</span></p> -->
+                        </section>
+                    </article>
+                    <!--Liste des tCDS-->
+                    <section class="mb-5">
+                        <div class="card bg-light">
+                            
+                            <div class="card-body">
+                                <h2 class="fw-bolder mb-4 mt-2"><a href="{% url 'transcript-list' genome.specie %}">Annotations </a></h2>
+                                <!-- Single comment-->
+                                <div class="d-flex">
+                                    <div class="d-flex flex-row user-info">
+                                        <div class="d-flex flex-column justify-content-start ml-2">
+                                            <span class="fw-bold">Pseudo Annot</span>
+                                            <span class="text-secondary">Role + date </span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2">
+                                        <p class="text-primary">L'annotation est annotée. wowowowowowo</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <!-- Side widgets-->
+                <div class="col-lg-4">
+                    <!-- Widget BLAST-->
+                    <div class="card mb-4">
+                        <div class="card-header">Autres ressources :</div>
+                        <div class="card-body">
+                            <div class="input-group">
+                                <button class="btn btn-danger" id="button-blatp" type="button">BLASTp</button>
+                                <button class="btn btn-danger" id="button-blastn" type="button">BLASTn</button>
+                                <button class="btn btn-danger" id="button-uniprot" type="button">Uniprot</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Categories widget-->
+                    <div class="card mb-4">
+                        <div class="card-header">Infos</div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <ul class="list-unstyled mb-0">
+                                        <li> transcript : {{ transcript.transcript }}</li>
+                                        <li> Specie : {{ transcript.chromosome }}</li>
+                                        <li> start : {{ transcript.start }}</li>
+                                        <li> stop : {{ transcript.stop }}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Side widget-->
+                    <div class="card mb-4">
+                        <div class="card-header">Statut</div>
+                        <div class="card-body">bof</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
 {% endblock %}
