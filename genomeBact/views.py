@@ -132,7 +132,7 @@ def transcript_create(request, specie):
 def transcript_detail(request, specie, transcript):
     genome = Genome.objects.get(specie=specie)
     transcript = Transcript.objects.get(transcript=transcript)
-
+    
     return render(request,'genomeBact/transcript_detail.html',{'genome':genome,'transcript': transcript})
 
 @login_required(login_url='login')
