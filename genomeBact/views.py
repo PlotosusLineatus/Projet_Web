@@ -79,8 +79,13 @@ def results(request):
 @login_required(login_url='login')
 def genome_detail(request, specie):
     genome = Genome.objects.get(specie=specie)
+    transcript = Transcript.objects.filter(chromosome = genome.chromosome)
 
-    return render(request,'genomeBact/genome_detail.html',{'genome': genome})
+    sequence = genome.sequence
+
+
+
+    return render(request,'genomeBact/genome_detail.html',{'genome': genome, 'transcript': transcript})
 
 @login_required(login_url='login')
 def transcript_list(request, specie):

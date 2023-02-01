@@ -25,7 +25,7 @@
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-3 col-lg-8 col-xl-10">
                         <div class="post-heading">
-                            <h1>{{ genome.specie }}</h1>
+                            <h1 style =>{{ genome.specie }}</h1>
                         </div>
                     </div>
                 </div>
@@ -40,8 +40,8 @@
                     <article>
                         <!-- Séquence-->
                         <section class="mb-5">
-                            <h2 class="fw-bolder mb-4 mt-5">Séquence</h2>
-                            <!-- Page Header <p class="fs-5 mb-4"><pre>{{ genome.sequence|linebreaks }}</pre></p> -->
+                            <h2 class="fw-bolder mb-4 mt-5">Visualisation</h2>
+                            <!-- <p class="fs-5 mb-4"><span style = "word-break : break-all;">{{ genome.sequence }}</span></p> -->
                         </section>
                     </article>
                     <!--Liste des tCDS-->
@@ -53,7 +53,10 @@
                                 <!-- Single comment-->
                                 <div class="d-flex">
                                     <div class="ms-3">
-                                        <div class="fw-bold">ID du CDS</div>
+                                        <div class="fw-bold">{% for transcript in transcript %}
+                                            <li>    <a href="{% url 'transcript-detail' specie=genome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a>
+                                              </li>			
+                                          {% endfor %}</div>
                                         Nom du CDS
                                     </div>
                                 </div>
@@ -68,8 +71,8 @@
                         <div class="card-header">Autres ressources :</div>
                         <div class="card-body">
                             <div class="input-group">
-                                <button class="btn btn-warning" id="button-blatp" type="button">BLASTp</button>
-                                <button class="btn btn-primary" id="button-blastn" type="button">BLASTn</button>
+                                <button class="btn btn-danger" id="button-blatp" type="button">BLASTp</button>
+                                <button class="btn btn-danger" id="button-blastn" type="button">BLASTn</button>
                                 <button class="btn btn-danger" id="button-uniprot" type="button">Uniprot</button>
                             </div>
                         </div>
@@ -102,5 +105,4 @@
                 </div>
             </div>
         </div>
-</html>
 {% endblock %}
