@@ -3,7 +3,9 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
+from django.urls import reverse
+
 
 from genomeBact.models import Genome,Transcript
 from genomeBact.forms import GenomeForm, TranscriptForm, UploadFileForm, CreateUserForm
@@ -58,23 +60,44 @@ def register(request):
 
 @login_required(login_url='login')
 def home(request):
-    ## Pour ajouter des génomes (mais c'est pour nous ça) ##
-        if request.method == 'POST':
-            form = GenomeForm(request.POST)  
-            if form.is_valid():
-                new_genome = form.save()
-                return redirect('genome-detail', new_genome.specie)
-        else:
-            form = GenomeForm()
 
-        return render(request,'genomeBact/home.html',{'form': form})
-    #return render(request, 'genomeBact/home.html')
+   
+    if request.method == "POST":    
+
+        user_input = request.POST.get('accession', None)
+
+        # On regarde si le code d'accession contient quelque chose
+        if user_input is not None:
+            query_type = request.POST.get("query_type", None)
+
+            # Si l'utilisateur a sélectionné " Genome " ( au lieu de " Transcript ")
+            if query_type == "Genome":
+                request.session['user_input'] = user_input ## j'enregistre dans les cookies {'user_input' = user_input}
+                # Je veux retourner sur la page results en renvoyant ce que l'utilisateur a entré pour sa recherche
+                return redirect( 'results')
+
+    return render(request,'genomeBact/home.html')
+
+
 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['Lecteur'])
+# If user don't search anything from home page, return full list of genomes
 def results(request):
-    genome = Genome.objects.all()
-    return render(request, 'genomeBact/results.html',{'genome': genome})
+    if 'user_input' in request.session:
+        user_input = request.session['user_input'] ## je récupère la variable dans les cookies
+        del request.session['user_input'] ## Je supprime les cookies car on en a plus besoin
+        # Sinon, on utilise l'input de l'user pour filtrer les génomes sur leur num d'accession
+        genome = Genome.objects.filter(chromosome__contains = user_input)
+        return render(request, 'genomeBact/results.html',{'genome': genome}) 
+
+    else:
+        # On accède à la page normalement si l'input de l'user est inexistant  
+        genome = Genome.objects.all()
+        return render(request, 'genomeBact/results.html',{'genome': genome}) 
+
+       
+
 
 @login_required(login_url='login')
 def genome_detail(request, specie):
@@ -114,7 +137,7 @@ def transcript_create(request, specie):
 def transcript_detail(request, specie, transcript):
     genome = Genome.objects.get(specie=specie)
     transcript = Transcript.objects.get(transcript=transcript)
-
+    
     return render(request,'genomeBact/transcript_detail.html',{'genome':genome,'transcript': transcript})
 
 @login_required(login_url='login')
