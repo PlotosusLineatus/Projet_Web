@@ -90,15 +90,14 @@
                         <div class="card bg-light">
                             
                             <div class="card-body">
-                                <h2 class="fw-bolder mb-4 mt-2"><a href="{% url 'transcript-list' genome.specie %}">Liste des annotations </a></h2>
+                                <h2 class="fw-bolder mb-4 mt-2"><a href="{% url 'transcript-list' genome.specie %}">Liste des transcripts </a></h2>
                                 <!-- Single comment-->
                                 <div class="d-flex">
                                     <div class="ms-3">
-                                        <div class="fw-bold">{% for transcript in transcript %}
+                                        <div class="fw-bold">{% for transcript in transcripts %}
                                             <li>    <a href="{% url 'transcript-detail' specie=genome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a>
                                               </li>			
                                           {% endfor %}</div>
-                                        Nom du CDS
                                     </div>
                                 </div>
                             </div>
@@ -147,10 +146,5 @@
             </div>
         </div>
 
-
-<div class="container px-4 px-lg-5">
-    <h2> CDS </h2>
-    <li><a href="{% url 'transcript-list' genome.specie %}">Transcripts</a></li>
-</div>
 
 {% endblock %}
