@@ -7,7 +7,7 @@ from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.urls import reverse
 
 
-from genomeBact.models import Genome,Transcript
+from genomeBact.models import Genome,Transcript, Profile
 from genomeBact.forms import GenomeForm, TranscriptForm, UploadFileForm, CreateUserForm
 from Bio import SeqIO
 from io import StringIO
@@ -47,8 +47,10 @@ def register(request):
             group = request.POST.get('group')
             group = Group.objects.get(name = group)
             user.groups.add(group)
-
             username = form.cleaned_data.get('username')
+            
+            Profile.objects.create(user = user, name=user.username)
+
             messages.success(request, 'Account was created for ' + username)
             
             return redirect('login')
@@ -102,20 +104,18 @@ def results(request):
 @login_required(login_url='login')
 def genome_detail(request, specie):
     genome = Genome.objects.get(specie=specie)
-    transcript = Transcript.objects.filter(chromosome = genome.chromosome)
+    transcripts = Transcript.objects.filter(chromosome = genome.chromosome)
 
     sequence = genome.sequence
 
-
-
-    return render(request,'genomeBact/genome_detail.html',{'genome': genome, 'transcript': transcript})
-
+    return render(request,'genomeBact/genome_detail.html',{'genome': genome, 'transcripts' : transcripts})
+    
 @login_required(login_url='login')
 def transcript_list(request, specie):
     genome = Genome.objects.get(specie=specie)
-    transcript = Transcript.objects.filter(chromosome = genome.chromosome)
+    transcripts = Transcript.objects.filter(chromosome = genome.chromosome)
 
-    return render(request, 'genomeBact/transcript_list.html',{'genome': genome, 'transcript': transcript})
+    return render(request, 'genomeBact/transcript_list.html',{'genome': genome, 'transcripts': transcripts})
 
 @login_required(login_url='login')
 def transcript_create(request, specie):
@@ -154,8 +154,40 @@ def admin(request):
 
 @login_required(login_url='login')
 def settings(request):
-    
-    return render(request,'genomeBact/user_settings.html')
+    transcripts = request.user.profile.transcript_set.all()
+    print('____________TRANSCRIPTS: ', transcripts)
+    #AAC73112
+
+    if request.method == 'POST':
+        print("\n ___________POST   \n")
+        annotator = request.POST.get('annotator')
+        transcript_annot = request.POST.get('transcript_annot')
+        
+        if annotator != None and transcript_annot!= None:
+            '''
+            if (Transcript.objects.get(transcript=transcript_annot).DoesNotExist() 
+                    and Profile.objects.get(name=annotator).DoesNotExist()):
+                messages.info(request, " Please enter a VALID User and Transcript" )  
+             
+            else:
+            '''
+            transcript = Transcript.objects.get(transcript=transcript_annot)
+            annotator = Profile.objects.get(name=annotator)
+            print(annotator.name)
+            print(transcript.transcript)
+
+            Transcript.objects.filter(transcript=transcript_annot).update(annotator = annotator)
+            Transcript.objects.filter(transcript=transcript_annot).update(status = 'assigned')
+            
+            print("\n   ---"+transcript.status + " "+ annotator.name +"    ---    \n")
+            messages.success(request, transcript_annot +' was assigned for ' + annotator.name)
+            #return redirect('home')
+
+        else:
+            messages.info(request, " Please enter a User AND a Transcript" )
+
+    context = {'transcripts':transcripts}
+    return render(request,'genomeBact/user_settings.html', context)
 
 @login_required(login_url='login')
 def validator(request):

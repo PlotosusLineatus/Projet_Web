@@ -40,7 +40,6 @@
             </div>
         </nav>
 
-
         </html>     
         <header class="masthead" style="background-color: #45425A">
             <div class="container position-relative px-4 px-lg-5">
@@ -51,6 +50,10 @@
             </div>
         </header>
     
+        {% for message in messages %}
+            <p id="messages"> {{ message }}</p>
+            {% endfor %}
+
         <div class="container px-4 px-lg-5">
             <div class="tab">
                 <button class="tablinks" onclick="openTab(event, 'toannot')">Liste des CDS</button>
@@ -60,8 +63,17 @@
             
             <!-- Tab content -->
             <div id="toannot" class="tabcontent">
-                <h3>A Annoter</h3>
+                <h3>A Annoter [OU PAS c'est un test]</h3>
                 <p>woof</p>
+                {% for transcript in transcripts %}
+                    {{ transcript.transcript }}
+                {% endfor %}
+                <form action="" method="POST" name="form_content">
+                    {% csrf_token %}
+                    <input type="text" class="form-control search-slt" name= "transcript_annot" placeholder="Enter Transcript">
+                    <input type="text" class="form-control search-slt" name= "annotator" placeholder="Enter User">
+                    <input type="submit" value="Assign">
+                </form>
             </div>
             
             <div id="assign" class="tabcontent">

@@ -40,7 +40,8 @@ def get_chromosome(description):
         return None
 
 #def get_data(absolute_path = "/Users/Soeur/Documents/ECOLE/ORSAY/M2/9.web/PROJET/data_less"):
-def get_data(absolute_path = "/home/noemie/Documents/data"):
+#def get_data(absolute_path = "/home/noemie/Documents/data"):
+def get_data(absolute_path = "/home/sherman/Documents/M2/WEB/data"):
 
 
     import os
