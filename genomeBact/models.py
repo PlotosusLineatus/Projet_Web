@@ -16,7 +16,7 @@ class Genome(models.Model):
 
 
     specie = models.CharField(max_length = 50, unique = True)
-    chromosome = models.CharField(max_length = 30, help_text = "Chromosome version name", default = "", primary_key=True)
+    chromosome = models.CharField(max_length = 30, help_text = "Chromosome version name", primary_key=True)
     sequence = models.TextField(default = "",
                                 help_text = "Copy FASTA sequence here",
                                 validators=[RegexValidator(regex='^[ATCGN]+$', message = "Sequence must be ATGCN")])
@@ -57,7 +57,15 @@ class Transcript(models.Model):
     start = models.IntegerField(null = True)
     stop = models.IntegerField(null = True)
 
+    ## Annotations
+    gene = models.CharField(max_length= 15,unique=True, null=True)
+    gene_biotype =  models.CharField(max_length=10, null=True)
+    transcript_biotype = models.CharField(max_length= 15, null=True)
+    gene_symbol = models.CharField(max_length=10, null=True)
+    description = models.CharField(max_length=100, null=True)    
+
     status = models.CharField(max_length=200, choices=STATUS, default='empty')
+    status_date = models.DateTimeField(null = True)
     annotator = models.ForeignKey(Profile, null=True, on_delete=models.SET_NULL)
 
     @property

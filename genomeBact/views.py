@@ -83,9 +83,9 @@ def home(request):
 
 
 @login_required(login_url='login')
-@allowed_users(allowed_roles=['Lecteur'])
-# If user don't search anything from home page, return full list of genomes
+#@allowed_users(allowed_roles=['Lecteur'])
 def results(request):
+    # If user don't search anything from home page, return full list of genomes
     if 'user_input' in request.session:
         user_input = request.session['user_input'] ## je récupère la variable dans les cookies
         del request.session['user_input'] ## Je supprime les cookies car on en a plus besoin

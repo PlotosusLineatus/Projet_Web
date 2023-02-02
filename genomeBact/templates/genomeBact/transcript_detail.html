@@ -62,11 +62,12 @@
                                     <div class="d-flex flex-row user-info">
                                         <div class="d-flex flex-column justify-content-start ml-2">
                                             <span class="fw-bold">Pseudo Annot : {{ transcript.annotator }}</span>
-                                            <span class="text-secondary">Role + date </span>
-                                        </div>
-                                    </div>
-                                    <div class="mt-2">
-                                        <p class="text-primary">L'annotation est annotée. wowowowowowo</p>
+                                            <span class="text-secondary"> Date : {{ transcript.status_date }} </span>
+                                            <li>Gene : {{ transcript.gene }}</li>
+                                            <li>Gene biotype : {{ transcript.gene_biotype }}</li>
+                                            <li>Biotype : {{ transcript.transcript_biotype }}</li>
+                                            <li>Gene symbol : {{ transcript.gene_symbol }}</li>
+                                            <li>Description :  {{ transcript.description }}</li>
                                     </div>
                                 </div>
                             </div>
@@ -94,7 +95,7 @@
                                 <div class="col-sm-6">
                                     <ul class="list-unstyled mb-0">
                                         <li> transcript : {{ transcript.transcript }}</li>
-                                        <li> Specie : {{ transcript.chromosome }}</li>
+                                        <li> Specie : {{ transcript.chromosome.chromosome }}</li>
                                         <li> start : {{ transcript.start }}</li>
                                         <li> stop : {{ transcript.stop }}</li>
                                     </ul>
