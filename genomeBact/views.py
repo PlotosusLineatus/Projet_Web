@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.urls import reverse
 
@@ -154,39 +154,31 @@ def admin(request):
 
 @login_required(login_url='login')
 def settings(request):
-    transcripts = request.user.profile.transcript_set.all()
-    print('____________TRANSCRIPTS: ', transcripts)
-    #AAC73112
+    transcripts_to_annotate = request.user.profile.transcript_set.all()
+    transcripts_to_assign = Transcript.objects.filter(status = 'empty')
+    transcripts_to_validate = Transcript.objects.filter(status = 'annotated')
+    annotators = User.objects.filter(groups__name='Annotateur')
 
     if request.method == 'POST':
-        print("\n ___________POST   \n")
-        annotator = request.POST.get('annotator')
-        transcript_annot = request.POST.get('transcript_annot')
+        annotator_chosen = request.POST.get('annotator')
+        transcript_chosen = request.POST.get('transcript_annot')
         
-        if annotator != None and transcript_annot!= None:
-            '''
-            if (Transcript.objects.get(transcript=transcript_annot).DoesNotExist() 
-                    and Profile.objects.get(name=annotator).DoesNotExist()):
-                messages.info(request, " Please enter a VALID User and Transcript" )  
-             
-            else:
-            '''
-            transcript = Transcript.objects.get(transcript=transcript_annot)
-            annotator = Profile.objects.get(name=annotator)
-            print(annotator.name)
-            print(transcript.transcript)
+        ### ASSIGNING A TRANSCRIPT
+        if annotator_chosen != None and transcript_chosen!= None:
+    
+            transcript_chosen = Transcript.objects.get(transcript=transcript_chosen)
+            annotator_chosen = Profile.objects.get(name=annotator_chosen)
 
-            Transcript.objects.filter(transcript=transcript_annot).update(annotator = annotator)
-            Transcript.objects.filter(transcript=transcript_annot).update(status = 'assigned')
+            Transcript.objects.filter(transcript=transcript_chosen).update(annotator = annotator_chosen)
+            Transcript.objects.filter(transcript=transcript_chosen).update(status = 'assigned')
             
-            print("\n   ---"+transcript.status + " "+ annotator.name +"    ---    \n")
-            messages.success(request, transcript_annot +' was assigned for ' + annotator.name)
-            #return redirect('home')
+            messages.success(request, transcript_chosen.transcript +' was assigned for ' + annotator_chosen.name + ".")
 
         else:
             messages.info(request, " Please enter a User AND a Transcript" )
 
-    context = {'transcripts':transcripts}
+
+    context = {'transcripts_to_annotate':transcripts_to_annotate, 'transcripts_to_assign':transcripts_to_assign, 'annotators':annotators,'transcripts_to_validate':transcripts_to_validate}
     return render(request,'genomeBact/user_settings.html', context)
 
 @login_required(login_url='login')
