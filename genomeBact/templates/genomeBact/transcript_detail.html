@@ -2,20 +2,6 @@
 
 {% block content %}
 
-
-    <h1>Transcript {{ transcript.transcript}} </h1>
-
-    <li>
-        <li> transcript = {{ transcript.transcript }}</li>
-        <li> Specie = {{ transcript.chromosome }}</li>
-        <li> start = {{ transcript.start }}</li>
-        <li> stop = {{ transcript.stop }}</li>
-        <li> Status = {{ transcript.status }}</li>
-        <li> annotator = {{ transcript.annotator }}</li>
-    </li>
-   
-        
-    <a href="{% url 'transcript-list' genome.specie %}">Return to transcript list</a>
     <a id="myLink" href = test.html></a>
 
         <!-- Navigation-->
@@ -75,7 +61,7 @@
                                 <div class="d-flex">
                                     <div class="d-flex flex-row user-info">
                                         <div class="d-flex flex-column justify-content-start ml-2">
-                                            <span class="fw-bold">Pseudo Annot</span>
+                                            <span class="fw-bold">Pseudo Annot : {{ transcript.annotator }}</span>
                                             <span class="text-secondary">Role + date </span>
                                         </div>
                                     </div>
@@ -119,7 +105,7 @@
                     <!-- Side widget-->
                     <div class="card mb-4">
                         <div class="card-header">Statut</div>
-                        <div class="card-body">bof</div>
+                        <div class="card-body"> {{ transcript.status }}</div>
                     </div>
                 </div>
             </div>
