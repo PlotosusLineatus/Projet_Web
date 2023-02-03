@@ -2,20 +2,6 @@
 
 {% block content %}
 
-
-    <h1>Transcript {{ transcript.transcript}} </h1>
-
-    <li>
-        <li> transcript = {{ transcript.transcript }}</li>
-        <li> Specie = {{ transcript.chromosome }}</li>
-        <li> start = {{ transcript.start }}</li>
-        <li> stop = {{ transcript.stop }}</li>
-    </li>
-   
-        
-    <a href="{% url 'transcript-list' genome.specie %}">Return to transcript list</a>
-    <a id="myLink" href = test.html></a>
-
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
             <div class="container px-4 px-lg-5">
@@ -85,18 +71,32 @@
                         </div>
                     </section>
                 </div>
+                
                 <!-- Side widgets-->
                 <div class="col-lg-4">
                     <!-- Widget BLAST-->
                     <div class="card mb-4">
-                        <div class="card-header">Autres ressources :</div>
-                        <div class="card-body">
-                            <div class="input-group">
-                                <button class="btn btn-danger" id="button-blatp" type="button">BLASTp</button>
-                                <button class="btn btn-danger" id="button-blastn" type="button">BLASTn</button>
-                                <button class="btn btn-danger" id="button-uniprot" type="button">Uniprot</button>
+                        <form action="" method="POST" name="ressources">
+                            {% csrf_token %}
+                            <div class="card-header">Autres ressources :</div>
+                            <div class="card-body">
+                                <div class="input-group">
+                                    <a type="button" class="btn btn-danger" id = "a1"
+                                        href="https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastn&PAGE_TYPE=BlastSearch&LINK_LOC=blasthome&QUERY={{transcript.seq_nt}}&JOB_TITLE={{transcript.transcript}}"
+                                        value="button" target="_blank" class="button">BLASTn
+                                    </a>
+                                    <a type="button" class="btn btn-danger" id = "a2"
+                                        href="https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastp&PAGE_TYPE=BlastSearch&LINK_LOC=blasthome&QUERY={{transcript.seq_cds}}&JOB_TITLE={{transcript.transcript}}"
+                                        value="facebook" target="_blank" class="button">BLASTp
+                                    </a>
+                                    <a type="button" class="btn btn-danger" id = "a3"
+                                        href="https://www.uniprot.org/uniprotkb?query={{transcript.transcript}}"
+                                        value="facebook" target="_blank" class="button">Uniprot
+                                    </a>
+                                </div
                             </div>
-                        </div>
+                        </form>
+
                     </div>
                     <!-- Categories widget-->
                     <div class="card mb-4">
