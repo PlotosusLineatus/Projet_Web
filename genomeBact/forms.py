@@ -14,6 +14,18 @@ class TranscriptForm(forms.ModelForm):
         #fields = '__all__'
         exclude = ('chromosome',)
 
+class AnnotForm(forms.ModelForm):
+
+    gene = forms.CharField(required=False)
+    gene_biotype =  forms.CharField(required=False)
+    transcript_biotype = forms.CharField(required=False)
+    gene_symbol = forms.CharField(required=False)
+    description = forms.CharField(required=False)
+    
+    class Meta:
+        model = Transcript
+        fields = ['gene', 'gene_biotype', 'transcript_biotype', 'gene_symbol', 'description']
+
 class UploadFileForm(forms.Form):
 
     file = forms.FileField()

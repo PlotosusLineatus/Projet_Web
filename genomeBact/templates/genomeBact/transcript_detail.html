@@ -54,24 +54,84 @@
                     <!--Liste des tCDS-->
                     <section class="mb-5">
                         <div class="card bg-light">
-                            
+                            <script type="text/javascript">
+                                function showDiv(){
+                                    let elements = document.querySelectorAll('[id^="modify_"]');
+                                    elements.forEach(element => {
+                                        element.style.display = 'block';
+                                    });
+                                    document.getElementById('button_modify').style.display = 'none';
+                                    document.getElementById('display-annot').style.display = 'none';
+                                }
+                                function hideDiv(){
+                                    let elements = document.querySelectorAll('[id^="modify_"]');
+                                    elements.forEach(element => {
+                                        element.style.display = 'none';
+                                    });
+                                    document.getElementById('button_modify').style.display = 'Block';
+                                    document.getElementById('display-annot').style.display = 'Block';
+                                }
+                            </script>
+                                
                             <div class="card-body">
-                                <h2 class="fw-bolder mb-4 mt-2"><a href="{% url 'transcript-list' genome.specie %}">Annotations </a></h2>
+                                <h2 class="fw-bolder mb-4 mt-2"><a href="{% url 'transcript-list' genome.specie %}">Annotations </a></h2>      
+                                {% for message in messages %}
+                                    <p id="messages"> {{ message }}</p>
+                                {% endfor %}                    
                                 <!-- Single comment-->
                                 <div class="d-flex">
-                                    <div class="d-flex flex-row user-info">
-                                        <div class="d-flex flex-column justify-content-start ml-2">
-                                            <span class="fw-bold">Pseudo Annot : {{ transcript.annotator }}</span>
-                                            <span class="text-secondary"> Date : {{ transcript.status_date }} </span>
-                                            <li>Gene : {{ transcript.gene }}</li>
-                                            <li>Gene biotype : {{ transcript.gene_biotype }}</li>
-                                            <li>Biotype : {{ transcript.transcript_biotype }}</li>
-                                            <li>Gene symbol : {{ transcript.gene_symbol }}</li>
-                                            <li>Description :  {{ transcript.description }}</li>
+                                    <div class="d-flex flex-row user-info" >
+                                        <div class="d-flex flex-column justify-content-start ml-2" >
+                                            <div id="display-annot">
+                                                <span class="fw-bold">Pseudo Annot : {{ transcript.annotator }}</span>
+                                                <span class="text-secondary"> Date : {{ transcript.status_date }} </span>
+                                                <li>Gene : {{ transcript.gene }}</li>
+                                                <li>Gene biotype : {{ transcript.gene_biotype }}</li>
+                                                <li>Biotype : {{ transcript.transcript_biotype }}</li>
+                                                <li>Gene symbol : {{ transcript.gene_symbol }}</li>
+                                                <li>Description :  {{ transcript.description }}</li>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
+                                </div> 
+                                
+                                <form action="" method="POST" name="form_content"  id='modify_annot' style="display:none;">
+                                    {% csrf_token %}
+                                    <div>
+                                        <div class="form-outline mb-4">
+                                            <label class="form-label" for="form3Example1q"> Gene </label>
+                                            <input type="text" class="form-control" required="" id="form3Example1q" name="gene" value="{{transcript.gene}}">
+                                        </div>
+                            
+                                        <div class="form-outline mb-4">
+                                            <label class="form-label" for="form3Example1q"> Gene biotype </label>
+                                            <input type="text" id="form3Example1q" class="form-control" name="gene_biotype" value="{{transcript.gene_biotype}}"/>
+                                        </div>
+
+                                        <div class="form-outline mb-4">
+                                            <label class="form-label" for="form3Example1q"> Transcript biotype </label>
+                                            <input type="text" id="form3Example1q" class="form-control" name="transcript_biotype" value="{{transcript.transcript_biotype}}"/>
+                                        </div>
+
+                                        <div class="form-outline mb-4">
+                                            <label class="form-label" for="form3Example1q"> Gene symbol </label>
+                                            <input type="text" id="form3Example1q" class="form-control" name="gene_symbol" value="{{transcript.gene_symbol}}"/>
+                                        </div>
+
+                                        <div class="form-outline mb-4">
+                                            <label class="form-label" for="form3Example1q"> Description </label>
+                                            <input type="text" id="form3Example1q" class="form-control" name="description" value="{{transcript.description}}"/>
+                                        </div>
+                                    </div>
+                    
+                                    <input type="submit" value="Submit changes" style="float: right;">  
+                                </form>   
+                                
+                                <button id="button_modify" style="float: right;" onclick="showDiv()">Modify</button>
+                                <button id="modify_cancel" style="float: right; display: none;" onclick="hideDiv()">Cancel</button>  
                             </div>
-                        </div>
+                            <input type="text" class="form-control" id='modify_annot' name="description" value="{{ transcript.description }}" style="display:none;"/>
+
                     </section>
                 </div>
                 <!-- Side widgets-->

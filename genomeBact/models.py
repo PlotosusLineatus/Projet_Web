@@ -58,11 +58,11 @@ class Transcript(models.Model):
     stop = models.IntegerField(null = True)
 
     ## Annotations
-    gene = models.CharField(max_length= 15,unique=True, null=True)
-    gene_biotype =  models.CharField(max_length=10, null=True)
-    transcript_biotype = models.CharField(max_length= 15, null=True)
-    gene_symbol = models.CharField(max_length=10, null=True)
-    description = models.CharField(max_length=100, null=True)    
+    gene = models.CharField(max_length= 15, default = "")
+    gene_biotype =  models.CharField(max_length=10, default = "")
+    transcript_biotype = models.CharField(max_length= 15, default = "")
+    gene_symbol = models.CharField(max_length=10, default = "")
+    description = models.CharField(max_length=100, default = "")    
 
     status = models.CharField(max_length=200, choices=STATUS, default='empty')
     status_date = models.DateTimeField(null = True)

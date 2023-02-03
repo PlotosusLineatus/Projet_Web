@@ -7,13 +7,11 @@ from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.urls import reverse
 
 
-from genomeBact.models import Genome,Transcript, Profile
-from genomeBact.forms import GenomeForm, TranscriptForm, UploadFileForm, CreateUserForm
 from Bio import SeqIO
 from io import StringIO
 
-from .models import Genome,Transcript
-from .forms import GenomeForm, TranscriptForm, CreateUserForm
+from .models import Genome,Transcript,Profile
+from .forms import GenomeForm, TranscriptForm, UploadFileForm, CreateUserForm, AnnotForm
 from .decorators import unauthenticated_user, allowed_users, admin_only
 
 def user_logout(request):
@@ -62,7 +60,6 @@ def register(request):
 
 @login_required(login_url='login')
 def home(request):
-
    
     if request.method == "POST":    
 
@@ -136,10 +133,29 @@ def transcript_create(request, specie):
 @login_required(login_url='login')
 def transcript_detail(request, specie, transcript):
     genome = Genome.objects.get(specie=specie)
-    transcript = Transcript.objects.get(transcript=transcript)
-    
-    return render(request,'genomeBact/transcript_detail.html',{'genome':genome,'transcript': transcript})
+    cds = Transcript.objects.get(transcript=transcript)
 
+    if request.method == 'POST':
+        form = AnnotForm(request.POST)  
+        if form.is_valid():
+            annotations = form.save(commit=False)
+            gene = annotations.gene
+            gene_biotype = annotations.gene_biotype
+            biotype = annotations.biotype
+            gene_symbol = annotations.gene_symbol
+            description = annotations.description
+
+            Transcript.objects.filter(transcript=transcript).update(gene = gene, gene_biotype=gene_biotype, biotype=biotype, gene_symbol=gene_symbol, description=description)
+            
+            messages.success(request, 'Annotations were saved.')
+            
+            return HttpResponseRedirect(request.path_info)
+    else:
+        form = AnnotForm()
+
+    context = {'genome':genome,'transcript': cds, 'form':form}
+    return render(request, 'genomeBact/transcript_detail.html', context)
+    
 @login_required(login_url='login')
 def transcript_annot(request, transcript):
     transcript = Transcript.objects.get(transcript=transcript)
