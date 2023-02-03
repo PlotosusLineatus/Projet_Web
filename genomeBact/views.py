@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group, User
+from django.db.models.functions import Now
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.urls import reverse
 
@@ -137,15 +138,24 @@ def transcript_detail(request, specie, transcript):
 
     if request.method == 'POST':
         form = AnnotForm(request.POST)  
-        if form.is_valid():
+
+        if 'Validate' in request.POST:
+            Transcript.objects.filter(transcript=transcript).update(status = 'validated', status_date = Now(), annotator=None)
+            messages.success(request, 'Annotations were validated.')
+            return HttpResponseRedirect(request.path_info)
+        elif 'to_validate' in request.POST:
+            Transcript.objects.filter(transcript=transcript).update(status = 'annotated')
+            messages.success(request, 'Annotations were send for validation.')
+            return HttpResponseRedirect(request.path_info)
+        elif form.is_valid():
             annotations = form.save(commit=False)
             gene = annotations.gene
             gene_biotype = annotations.gene_biotype
-            biotype = annotations.biotype
+            transcript_biotype = annotations.transcript_biotype
             gene_symbol = annotations.gene_symbol
             description = annotations.description
 
-            Transcript.objects.filter(transcript=transcript).update(gene = gene, gene_biotype=gene_biotype, biotype=biotype, gene_symbol=gene_symbol, description=description)
+            Transcript.objects.filter(transcript=transcript).update(gene = gene, gene_biotype=gene_biotype, transcript_biotype=transcript_biotype, gene_symbol=gene_symbol, description=description, status_date = Now())
             
             messages.success(request, 'Annotations were saved.')
             
@@ -170,7 +180,7 @@ def admin(request):
 
 @login_required(login_url='login')
 def settings(request):
-    transcripts_to_annotate = request.user.profile.transcript_set.all()
+    transcripts_to_annotate = request.user.profile.to_annotate.all()
     transcripts_to_assign = Transcript.objects.filter(status = 'empty')
     transcripts_to_validate = Transcript.objects.filter(status = 'annotated')
     annotators = User.objects.filter(groups__name='Annotateur')
@@ -181,17 +191,17 @@ def settings(request):
         
         ### ASSIGNING A TRANSCRIPT
         if annotator_chosen != None and transcript_chosen!= None:
-    
-            transcript_chosen = Transcript.objects.get(transcript=transcript_chosen)
-            annotator_chosen = Profile.objects.get(name=annotator_chosen)
-
-            Transcript.objects.filter(transcript=transcript_chosen).update(annotator = annotator_chosen)
+                
+            #transcript_chosen = Transcript.objects.get(transcript=transcript_chosen)
+            
+            Transcript.objects.filter(transcript=transcript_chosen).update(annotator = Profile.objects.get(name=annotator_chosen))
+            Transcript.objects.filter(transcript=transcript_chosen).update(validator = Profile.objects.get(name=request.user.username))
             Transcript.objects.filter(transcript=transcript_chosen).update(status = 'assigned')
             
-            messages.success(request, transcript_chosen.transcript +' was assigned for ' + annotator_chosen.name + ".")
+            messages.success(request, transcript_chosen +' was assigned for ' + annotator_chosen + ".")
 
         else:
-            messages.info(request, " Please enter a User AND a Transcript" )
+            messages.info(request, " Please select an Annotator AND a Transcript" )
 
 
     context = {'transcripts_to_annotate':transcripts_to_annotate, 'transcripts_to_assign':transcripts_to_assign, 'annotators':annotators,'transcripts_to_validate':transcripts_to_validate}

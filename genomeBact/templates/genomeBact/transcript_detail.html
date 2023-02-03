@@ -61,6 +61,7 @@
                                         element.style.display = 'block';
                                     });
                                     document.getElementById('button_modify').style.display = 'none';
+                                    document.getElementById('button_validate').style.display = 'none';
                                     document.getElementById('display-annot').style.display = 'none';
                                 }
                                 function hideDiv(){
@@ -69,6 +70,7 @@
                                         element.style.display = 'none';
                                     });
                                     document.getElementById('button_modify').style.display = 'Block';
+                                    document.getElementById('button_validate').style.display = 'Block';
                                     document.getElementById('display-annot').style.display = 'Block';
                                 }
                             </script>
@@ -77,7 +79,15 @@
                                 <h2 class="fw-bolder mb-4 mt-2"><a href="{% url 'transcript-list' genome.specie %}">Annotations </a></h2>      
                                 {% for message in messages %}
                                     <p id="messages"> {{ message }}</p>
-                                {% endfor %}                    
+                                {% endfor %}
+
+                                {% if request.user.username == transcript.validator.name and transcript.status == 'annotated' %}
+                                <form action="" method="POST">
+                                    {% csrf_token %}
+                                    <input type="submit" name="Validate" value="Validate" style="float: right;">
+                                </form>  
+                                {% endif %}
+                                                 
                                 <!-- Single comment-->
                                 <div class="d-flex">
                                     <div class="d-flex flex-row user-info" >
@@ -87,7 +97,7 @@
                                                 <span class="text-secondary"> Date : {{ transcript.status_date }} </span>
                                                 <li>Gene : {{ transcript.gene }}</li>
                                                 <li>Gene biotype : {{ transcript.gene_biotype }}</li>
-                                                <li>Biotype : {{ transcript.transcript_biotype }}</li>
+                                                <li>Transcript biotype : {{ transcript.transcript_biotype }}</li>
                                                 <li>Gene symbol : {{ transcript.gene_symbol }}</li>
                                                 <li>Description :  {{ transcript.description }}</li>
                                             </div>
@@ -127,10 +137,15 @@
                                     <input type="submit" value="Submit changes" style="float: right;">  
                                 </form>   
                                 
+                                {% if request.user.username == transcript.annotator.name and transcript.status != 'annotated' %}
                                 <button id="button_modify" style="float: right;" onclick="showDiv()">Modify</button>
+                                <form action="" method="POST" id="button_validate" style="float: right;">
+                                    {% csrf_token %}
+                                    <input type="submit" name="to_validate" value="To validate">
+                                </form>
+                                {% endif %}
                                 <button id="modify_cancel" style="float: right; display: none;" onclick="hideDiv()">Cancel</button>  
                             </div>
-                            <input type="text" class="form-control" id='modify_annot' name="description" value="{{ transcript.description }}" style="display:none;"/>
 
                     </section>
                 </div>
@@ -167,6 +182,9 @@
                     <div class="card mb-4">
                         <div class="card-header">Statut</div>
                         <div class="card-body"> {{ transcript.status }}</div>
+                        {% if transcript.status == 'validated' %}
+                            <span class="text-secondary"> validated by : {{ transcript.validator }}</span>
+                        {% endif %}
                     </div>
                 </div>
             </div>

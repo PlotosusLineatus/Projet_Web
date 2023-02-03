@@ -65,7 +65,7 @@
                 <h3>A Annoter</h3>
                 <p>woof</p>
                 {% for transcript in transcripts_to_annotate %}
-                    {{ transcript.transcript }}
+                    <a href="{% url 'transcript-detail' specie=transcript.chromosome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a>
                 {% endfor %}
             </div>
             

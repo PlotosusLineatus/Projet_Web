@@ -14,7 +14,6 @@ from django.contrib.auth.models import User
 
 class Genome(models.Model):
 
-
     specie = models.CharField(max_length = 50, unique = True)
     chromosome = models.CharField(max_length = 30, help_text = "Chromosome version name", primary_key=True)
     sequence = models.TextField(default = "",
@@ -29,7 +28,7 @@ class Genome(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
-    name = models.CharField(max_length=200 , null=True)
+    name = models.CharField(max_length=30 , unique=True)
 
     def __str__(self):
         return self.name
@@ -66,7 +65,8 @@ class Transcript(models.Model):
 
     status = models.CharField(max_length=200, choices=STATUS, default='empty')
     status_date = models.DateTimeField(null = True)
-    annotator = models.ForeignKey(Profile, null=True, on_delete=models.SET_NULL)
+    annotator = models.ForeignKey(Profile, null=True, on_delete=models.SET_NULL, related_name="to_annotate")
+    validator = models.ForeignKey(Profile, null=True, on_delete=models.SET_NULL)
 
     @property
     def length(self):
