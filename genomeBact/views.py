@@ -144,8 +144,12 @@ def transcript_detail(request, specie, transcript):
             messages.success(request, 'Annotations were validated.')
             return HttpResponseRedirect(request.path_info)
         elif 'to_validate' in request.POST:
-            Transcript.objects.filter(transcript=transcript).update(status = 'annotated')
+            Transcript.objects.filter(transcript=transcript).update(status = 'annotated', status_date = Now())
             messages.success(request, 'Annotations were send for validation.')
+            return HttpResponseRedirect(request.path_info)
+        elif 'reject_validation' in request.POST:
+            Transcript.objects.filter(transcript=transcript).update(status = 'assigned', status_date = Now())
+            messages.success(request, 'Annotations were send back to '+ cds.annotator.name )
             return HttpResponseRedirect(request.path_info)
         elif form.is_valid():
             annotations = form.save(commit=False)
@@ -189,19 +193,20 @@ def settings(request):
         annotator_chosen = request.POST.get('annotator')
         transcript_chosen = request.POST.get('transcript_annot')
         
-        ### ASSIGNING A TRANSCRIPT
-        if annotator_chosen != None and transcript_chosen!= None:
+        if( request.user.groups.all()[0].name == 'Validateur'):
+            ### ASSIGNING A TRANSCRIPT
+            if annotator_chosen != None and transcript_chosen!= None:
+                    
+                #transcript_chosen = Transcript.objects.get(transcript=transcript_chosen)
                 
-            #transcript_chosen = Transcript.objects.get(transcript=transcript_chosen)
-            
-            Transcript.objects.filter(transcript=transcript_chosen).update(annotator = Profile.objects.get(name=annotator_chosen))
-            Transcript.objects.filter(transcript=transcript_chosen).update(validator = Profile.objects.get(name=request.user.username))
-            Transcript.objects.filter(transcript=transcript_chosen).update(status = 'assigned')
-            
-            messages.success(request, transcript_chosen +' was assigned for ' + annotator_chosen + ".")
+                Transcript.objects.filter(transcript=transcript_chosen).update(annotator = Profile.objects.get(name=annotator_chosen))
+                Transcript.objects.filter(transcript=transcript_chosen).update(validator = Profile.objects.get(name=request.user.username))
+                Transcript.objects.filter(transcript=transcript_chosen).update(status = 'assigned')
+                
+                messages.success(request, transcript_chosen +' was assigned for ' + annotator_chosen + ".")
 
-        else:
-            messages.info(request, " Please select an Annotator AND a Transcript" )
+            else:
+                messages.info(request, " Please select an Annotator AND a Transcript" )
 
 
     context = {'transcripts_to_annotate':transcripts_to_annotate, 'transcripts_to_assign':transcripts_to_assign, 'annotators':annotators,'transcripts_to_validate':transcripts_to_validate}

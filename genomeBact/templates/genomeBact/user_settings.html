@@ -55,9 +55,13 @@
                 <p id="messages"> {{ message }}</p>
             {% endfor %}
             <div class="tab">
+                {% if request.user.groups.all.0.name == 'Annotateur' %}
                 <button class="tablinks" onclick="openTab(event, 'toannot')">Liste des CDS</button>
-                <button class="tablinks" onclick="openTab(event, 'assign')">Assigner des CDS</button>
+                {% endif %}
+                {% if request.user.groups.all.0.name == 'Validateur' %}
                 <button class="tablinks" onclick="openTab(event, 'validate')">Valider des CDS</button>
+                <button class="tablinks" onclick="openTab(event, 'assign')">Assigner des CDS</button>
+                {% endif %}
             </div>
             
             <!-- Tab content -->
@@ -65,7 +69,12 @@
                 <h3>A Annoter</h3>
                 <p>woof</p>
                 {% for transcript in transcripts_to_annotate %}
+                    {% if transcript.status == "assigned" %}
                     <a href="{% url 'transcript-detail' specie=transcript.chromosome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a>
+                    {% else %}
+                    <h3>En attente de validation</h3>
+                    <a href="{% url 'transcript-detail' specie=transcript.chromosome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a>
+                    {% endif %}
                 {% endfor %}
             </div>
             
@@ -101,8 +110,8 @@
                 <h3>A valider</h3>
                 <p>grouf</p>
                 {% for transcript in transcripts_to_validate %}
-                    {{ transcript.transcript }}
-                    {{ transcript.status_date }}
+                <a href="{% url 'transcript-detail' specie=transcript.chromosome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a>                    
+                {{ transcript.status_date }}
                 {% endfor %}
             </div>
         </div>
