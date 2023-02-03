@@ -621,8 +621,8 @@ progress {
 }
 
 .figure-caption {
-  font-size: 0.875em;
-  color: #6c757d;
+  font-size: 0.95em;
+  color: #45425a;
 }
 
 .container,
@@ -4212,7 +4212,7 @@ textarea.form-control-lg {
     overflow-y: visible;
   }
 }
-@media (min-width: 1200px) {
+@media (min-width: 1200px) {color
   .navbar-expand-xl {
     flex-wrap: nowrap;
     justify-content: flex-start;
