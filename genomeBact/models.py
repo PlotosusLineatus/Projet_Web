@@ -53,7 +53,11 @@ class Transcript(models.Model):
     stop = models.IntegerField(null = True)
 
     @property
-    def length(self):
-        return (self.stop - self.start)+1
+    def nt_length(self):
+        return len(self.seq_nt)
+
+    @property
+    def pep_length(self):
+        return len(self.seq_cds)
 
 

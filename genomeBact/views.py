@@ -61,10 +61,11 @@ def register(request):
 @login_required(login_url='login')
 def home(request):
 
-   
+    print("oui")
     if request.method == "POST":    
 
         user_input = request.POST.get('accession', None)
+        
 
         # On regarde si le code d'accession contient quelque chose
         if user_input is not None:
@@ -72,9 +73,15 @@ def home(request):
 
             # Si l'utilisateur a sélectionné " Genome " ( au lieu de " Transcript ")
             if query_type == "Genome":
-                request.session['user_input'] = user_input ## j'enregistre dans les cookies {'user_input' = user_input}
+                request.session["user_input"] = user_input ## j'enregistre dans les cookies {'user_input' = user_input}
                 # Je veux retourner sur la page results en renvoyant ce que l'utilisateur a entré pour sa recherche
-                return redirect( 'results')
+                return redirect("results")
+
+            if query_type == "Transcript":
+
+                request.sesion["user-input"] = user_input
+
+                return redirect("transcript_detail")
 
     return render(request,'genomeBact/home.html')
 
@@ -134,11 +141,12 @@ def transcript_create(request, specie):
     return render(request,'genomeBact/transcript_create.html',{'form': form, 'genome' : genome}) 
 
 @login_required(login_url='login')
-def transcript_detail(request, specie, transcript):
-    genome = Genome.objects.get(specie=specie)
+def transcript_detail(request, specie, transcript, context = None):
+
+    
     transcript = Transcript.objects.get(transcript=transcript)
     
-    return render(request,'genomeBact/transcript_detail.html',{'genome':genome,'transcript': transcript})
+    return render(request,'genomeBact/transcript_detail.html',{'genome':specie,'transcript': transcript})
 
 @login_required(login_url='login')
 def transcript_annot(request, transcript):
