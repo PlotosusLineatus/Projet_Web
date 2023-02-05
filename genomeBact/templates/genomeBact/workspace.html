@@ -1,0 +1,142 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Home - Projet OUAF</title>
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="{% static 'genomeBact/styleshome.css' %}" rel="stylesheet" />
+        <link href="{% static 'genomeBact/stylestab.css' %}" rel="stylesheet" />
+        <script src="{% static 'genomeBact/tab.js' %}"></script>
+
+    </head>
+    <body>
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+            <div class="container px-4 px-lg-5">
+                <a class="navbar-brand" href="/home">Le projet OUAF</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/home">Home</a></li>
+                        {% if request.user.groups.all.0.name == None %}
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/admin">Admin</a></li>
+                        {% endif %}
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/settings"> Parameters</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/results">Collection</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        </html>     
+        <header class="masthead" style="background-color: #45425A">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="post-heading">
+                    <h1>Profil : </h1>
+                    <h2 class="subheading"> Gestion des projets</h2>
+                </div>
+            </div>
+        </header>
+
+        <div class="container px-4 px-lg-5">
+            {% for message in messages %}
+                <p id="messages"> {{ message }}</p>
+            {% endfor %}
+            <div class="tab">
+                {% if request.user.groups.all.0.name == 'Annotateur' %}
+                <button class="tablinks" onclick="openTab(event, 'toannot')">Liste des CDS</button>
+                {% endif %}
+                {% if request.user.groups.all.0.name == 'Validateur' %}
+                <button class="tablinks" onclick="openTab(event, 'validate')">Valider des CDS</button>
+                <button class="tablinks" onclick="openTab(event, 'assign')">Assigner des CDS</button>
+                {% endif %}
+            </div>
+            
+            <!-- Tab content -->
+            <div id="toannot" class="tabcontent">
+                <h3>A Annoter</h3>
+                <p>woof</p>
+                {% for transcript in transcripts_to_annotate %}
+                    {% if transcript.status == "assigned" %}
+                    <a href="{% url 'transcript-detail' specie=transcript.chromosome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a>
+                    {% else %}
+                    <h3>En attente de validation</h3>
+                    <a href="{% url 'transcript-detail' specie=transcript.chromosome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            
+            <div id="assign" class="tabcontent">
+                <h3>A assigner</h3>
+                <p>ouaf</p>
+                <div class="col-lg-12 col-md-3 col-sm-12 p-0">
+                    <form action="" method="POST" name="form_content">
+                        {% csrf_token %}
+                        <style>
+                            select:invalid { color: gray; }
+                        </style>
+                        <select class="form-control search-slt" name="transcript_annot" required >
+                            <option value="" disabled selected hidden> Select transcript</option>
+                            {% for transcript in transcripts_to_assign %}
+                                <option value="{{ transcript.transcript }}">{{ transcript.transcript }}</option>
+                            {% endfor %}
+                        </select>
+                        <select class="form-control search-slt" name="annotator" required>
+                            <option value="" disabled selected hidden>Select User</option>
+                            {% for annotator in annotators %}
+                                <option value="{{ annotator.username }}">{{ annotator.username }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="col-lg-12 col-md-3 col-sm-12 p-0">
+                            <input type="submit" value="Assign">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div id="validate" class="tabcontent">
+                <h3>A valider</h3>
+                <p>grouf</p>
+                {% for transcript in transcripts_to_validate %}
+                <a href="{% url 'transcript-detail' specie=transcript.chromosome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a>                    
+                {{ transcript.status_date }}
+                {% endfor %}
+            </div>
+        </div>
+    
+
+
+        <footer class="border-top">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <ul class="list-inline text-center">
+                            <li class="list-inline-item">
+                                <a href="https://github.com/PlotosusLineatus/Projet_Web">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </body>
+</html>

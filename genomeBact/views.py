@@ -11,7 +11,7 @@ from django.urls import reverse
 from Bio import SeqIO
 from io import StringIO
 
-from .models import Genome,Transcript,Profile
+from .models import Genome,Transcript,Profile, Connexion
 from .forms import GenomeForm, TranscriptForm, UploadFileForm, CreateUserForm, AnnotForm
 from .decorators import unauthenticated_user, allowed_users, admin_only
 
@@ -29,6 +29,7 @@ def user_login(request):
 
         if user is not None:
             login(request, user)
+            Connexion.objects.create(user = user, date=Now())
             return redirect('home')
         else:   
             messages.info(request, "Username or password is incorrect" )
@@ -183,8 +184,9 @@ def admin(request):
     return render(request,'genomeBact/admin.html')
 
 @login_required(login_url='login')
-def settings(request):
+def workspace(request):
     transcripts_to_annotate = request.user.profile.to_annotate.all()
+    #transcripts_to_annotate = request.user.profile.transcript_set.all()
     transcripts_to_assign = Transcript.objects.filter(status = 'empty')
     transcripts_to_validate = Transcript.objects.filter(status = 'annotated')
     annotators = User.objects.filter(groups__name='Annotateur')
@@ -210,7 +212,16 @@ def settings(request):
 
 
     context = {'transcripts_to_annotate':transcripts_to_annotate, 'transcripts_to_assign':transcripts_to_assign, 'annotators':annotators,'transcripts_to_validate':transcripts_to_validate}
-    return render(request,'genomeBact/user_settings.html', context)
+    return render(request,'genomeBact/workspace.html', context)
+
+@login_required(login_url='login')
+def settings(request):
+    all_con = request.user.connexion_set.all()
+
+    context = {'connexions': all_con}
+    return render(request, 'genomeBact/user_settings.html', context)
+
+
 
 @login_required(login_url='login')
 def validator(request):
