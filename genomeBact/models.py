@@ -4,6 +4,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator, RegexVa
 from django.contrib.auth.models import User
 
 User._meta.get_field('email')._unique = True
+User._meta.get_field('email')._required = True
 
 '''
    _____ ______ _   _  ____  __  __ ______ 

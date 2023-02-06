@@ -12,7 +12,7 @@ from Bio import SeqIO
 from io import StringIO
 
 from .models import Genome,Transcript,Profile, Connexion
-from .forms import GenomeForm, TranscriptForm, UploadFileForm, CreateUserForm, AnnotForm
+from .forms import GenomeForm, TranscriptForm, UploadFileForm, CreateUserForm, AnnotForm, ProfileForm
 from .decorators import unauthenticated_user, allowed_users, admin_only
 
 def user_logout(request):
@@ -49,7 +49,7 @@ def user_login(request):
 def register(request):
     if request.method == 'POST':
         form = CreateUserForm(request.POST)  
-        if form.is_valid() and request.POST.get('email')!= None:
+        if form.is_valid():
             user = form.save()
 
             group = request.POST.get('group')
@@ -81,7 +81,6 @@ def home(request):
         if user_input is not None:
             query_type = request.POST.get("query_type", None)
 
-            # Si l'utilisateur a sélectionné " Genome " ( au lieu de " Transcript ")
             if query_type == "Genome":
                 request.session['user_input'] = user_input ## j'enregistre dans les cookies {'user_input' = user_input}
                 # Je veux retourner sur la page results en renvoyant ce que l'utilisateur a entré pour sa recherche

@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from genomeBact.models import Genome, Transcript 
+from genomeBact.models import Genome, Transcript , Profile
 
 class GenomeForm(forms.ModelForm):
     class Meta:
@@ -34,3 +34,8 @@ class CreateUserForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2']
+
+class ProfileForm(forms.Form):
+    class Meta:
+        model = Profile
+        fields = ['first_name', 'last_name', 'phone_number']
