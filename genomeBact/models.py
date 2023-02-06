@@ -2,6 +2,9 @@ from django.db import models
 from django.urls import reverse
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.contrib.auth.models import User
+
+User._meta.get_field('email')._unique = True
+
 '''
    _____ ______ _   _  ____  __  __ ______ 
   / ____|  ____| \ | |/ __ \|  \/  |  ____|

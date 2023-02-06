@@ -31,8 +31,16 @@ def user_login(request):
             login(request, user)
             Connexion.objects.create(user = user, date=Now())
             return redirect('home')
-        else:   
-            messages.info(request, "Username or password is incorrect" )
+        else :
+            try:
+                username = User.objects.get(email=username)
+                user = authenticate(request, username= username.username, password= password )
+                login(request, user)
+                Connexion.objects.create(user = user, date=Now())
+                return redirect('home')           
+            except User.DoesNotExist:
+                messages.info(request, "Username or password is incorrect" )
+            
 
     context = {}
     return render(request, 'genomeBact/login.html', context)
@@ -41,7 +49,7 @@ def user_login(request):
 def register(request):
     if request.method == 'POST':
         form = CreateUserForm(request.POST)  
-        if form.is_valid():
+        if form.is_valid() and request.POST.get('email')!= None:
             user = form.save()
 
             group = request.POST.get('group')
@@ -54,6 +62,8 @@ def register(request):
             messages.success(request, 'Account was created for ' + username)
             
             return redirect('login')
+        else:
+            messages.error(request, form.errors)
     else:
         form = CreateUserForm()
 
@@ -82,7 +92,6 @@ def home(request):
 
 
 @login_required(login_url='login')
-#@allowed_users(allowed_roles=['Lecteur'])
 def results(request):
     # If user don't search anything from home page, return full list of genomes
     if 'user_input' in request.session:
@@ -98,8 +107,6 @@ def results(request):
         return render(request, 'genomeBact/results.html',{'genome': genome}) 
 
        
-
-
 @login_required(login_url='login')
 def genome_detail(request, specie):
     genome = Genome.objects.get(specie=specie)
@@ -117,6 +124,7 @@ def transcript_list(request, specie):
     return render(request, 'genomeBact/transcript_list.html',{'genome': genome, 'transcripts': transcripts})
 
 @login_required(login_url='login')
+@allowed_users(allowed_roles=['Admin','Validateur'])
 def transcript_create(request, specie):
     genome = Genome.objects.get(specie=specie)
 
@@ -184,6 +192,7 @@ def admin(request):
     return render(request,'genomeBact/admin.html')
 
 @login_required(login_url='login')
+@allowed_users(allowed_roles=['Admin', 'Validateur','Annotateur'])
 def workspace(request):
     transcripts_to_annotate = request.user.profile.to_annotate.all()
     #transcripts_to_annotate = request.user.profile.transcript_set.all()
@@ -255,6 +264,8 @@ def transcript_to_annot(request):
 
 
 ### NOT CURRENTLY WORKING NEED TO ADD GENOME FOR WHICH TRANSCRIPTS ARE UPLOADED ###
+@login_required(login_url='login')
+@admin_only
 def transcript_upload(request):
 
     if request.method == 'POST':
