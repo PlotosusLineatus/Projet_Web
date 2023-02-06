@@ -95,7 +95,7 @@ def home(request):
 
 
 
-                return HttpResponseRedirect("results")
+                return redirect("results")
 
             if query_type == "Transcript":
 
@@ -124,18 +124,16 @@ def download_transcripts(request):
 # If user don't search anything from home page, return full list of genomes
 def results(request):
 
-    keys = ["accession","specie","max_length","min_length","substring"]
+    keys = ["accession","specie","substring"]
 
-    if ("accession" or "specie" or "max_length" or "min_length" or "substring") in request.session.keys():
+    if ("accession" or "specie" or "substring") in request.session.keys():
 
         accession = request.session["accession"] ## je récupère la variable dans les cookies
         specie = request.session["specie"]
-        max_length = request.session["max_length"]
-        min_length = request.session["min_length"]
         substring = request.session["substring"]
         substring = substring.upper()
 
-        genome = Genome.objects.filter(Q(specie__contains = specie) & Q(sequence__contains = substring) & Q(chromosome__contains = accession) & Q(length__gte =min_length) & Q(length_lte = max_length))
+        genome = Genome.objects.filter(Q(specie__contains = specie) & Q(sequence__contains = substring) & Q(chromosome__contains = accession))
 
 
         for key in keys:
