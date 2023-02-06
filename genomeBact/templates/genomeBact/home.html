@@ -71,26 +71,26 @@
             <div class="container px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7"></div>
-                        <form action="" method="POST" name="form_content">
+                        <form action="" method="POST">
                             {% csrf_token %}
                             <h2>Let's find your dream transcript! </h2>
                             
                             <div class="form-outline">
-                                <input type="search" class="form-control" placeholder="Accession number" aria-label="Search" name="accession" value=""/>
+                                <input type="text" class="form-control" placeholder="Accession number"  name="accession" />
                             </div>
                             <div class="form-outline">
-                                <input type="search" class="form-control" placeholder="Minimum length" aria-label="Search" name="max_length" value=""/>
+                                <input type="number" class="form-control" placeholder="Minimum length"  name="max_length" />
                             </div>
                             <div class="form-outline">
-                                <input type="search" class="form-control" placeholder="Maximum length" aria-label="Search" name="min_length" value=""/>
-                            </div>
-
-                            <div class="form-outline">
-                                <input type="search" class="form-control" placeholder="Specie" aria-label="Search" name="specie" value=""/>
+                                <input type="number" class="form-control" placeholder="Maximum length"  name="min_length" />
                             </div>
 
                             <div class="form-outline">
-                                <input type="search" class="form-control" placeholder="Substring" aria-label="Search" name="substring"/>
+                                <input type="text" class="form-control" placeholder="Specie"  name="specie"/>
+                            </div>
+
+                            <div class="form-outline">
+                                <input type="text" class="form-control" placeholder="Substring" name="substring"/>
                             </div>
                             
                             <div class="col-lg-12 col-md-3 col-sm-12 p-0">

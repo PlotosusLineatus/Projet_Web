@@ -5,6 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.urls import reverse
+from django.db.models import Q
+import csv
 
 
 from genomeBact.models import Genome,Transcript
@@ -15,6 +17,8 @@ from io import StringIO
 from .models import Genome,Transcript
 from .forms import GenomeForm, TranscriptForm, CreateUserForm
 from .decorators import unauthenticated_user, allowed_users, admin_only
+
+from scripts.utils import get_max_length
 
 def user_logout(request):
     logout(request)
@@ -61,41 +65,82 @@ def register(request):
 @login_required(login_url='login')
 def home(request):
 
-    print("oui")
     if request.method == "POST":    
-
-        user_input = request.POST.get('accession', None)
-        
-
+      
+    
         # On regarde si le code d'accession contient quelque chose
-        if user_input is not None:
-            query_type = request.POST.get("query_type", None)
+        if request.POST.keys() is not None:
+
+            query_type = request.POST.get("query_type")
 
             # Si l'utilisateur a sélectionné " Genome " ( au lieu de " Transcript ")
             if query_type == "Genome":
-                request.session["user_input"] = user_input ## j'enregistre dans les cookies {'user_input' = user_input}
-                # Je veux retourner sur la page results en renvoyant ce que l'utilisateur a entré pour sa recherche
-                return redirect("results")
+
+                request.session["accession"] = request.POST.get("accession", "")
+                request.session["specie"] = request.POST.get("specie", "")
+
+                if request.POST.get("substring") is not None:
+                    if len(request.POST.get("substring")) < 3:
+                        request.session["substring"] = ""
+                    
+                    else:
+                        request.session["substring"] = request.POST.get("substring")
+                else:
+                    request.session["substring"] = request.POST.get("substring")
+
+                max_length = request.POST.get("max_length")
+                request.session["max_length"] = int(max_length) if max_length.strip() else 0
+                min_length = request.POST.get("min_length")
+                request.session["min_length"] = int(min_length) if min_length.strip() else 0
+
+
+
+                return HttpResponseRedirect("results")
 
             if query_type == "Transcript":
 
-                request.sesion["user-input"] = user_input
+                request.sesion["accession"] = request.POST.get("accession", "")
 
                 return redirect("transcript_detail")
 
     return render(request,'genomeBact/home.html')
 
+def download_transcripts(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="transcripts.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Accession', 'Sequence'])
+
+    transcripts = Transcript.objects.all()
+    for transcript in transcripts:
+        writer.writerow([transcript.transcript, transcript.seq_cds])
+
+    return response
 
 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['Lecteur'])
 # If user don't search anything from home page, return full list of genomes
 def results(request):
-    if 'user_input' in request.session:
-        user_input = request.session['user_input'] ## je récupère la variable dans les cookies
-        del request.session['user_input'] ## Je supprime les cookies car on en a plus besoin
-        # Sinon, on utilise l'input de l'user pour filtrer les génomes sur leur num d'accession
-        genome = Genome.objects.filter(chromosome__contains = user_input)
+
+    keys = ["accession","specie","max_length","min_length","substring"]
+
+    if ("accession" or "specie" or "max_length" or "min_length" or "substring") in request.session.keys():
+
+        accession = request.session["accession"] ## je récupère la variable dans les cookies
+        specie = request.session["specie"]
+        max_length = request.session["max_length"]
+        min_length = request.session["min_length"]
+        substring = request.session["substring"]
+        substring = substring.upper()
+
+        genome = Genome.objects.filter(Q(specie__contains = specie) & Q(sequence__contains = substring) & Q(chromosome__contains = accession) & Q(length__gte =min_length) & Q(length_lte = max_length))
+
+
+        for key in keys:
+            del request.session[key] ## Je supprime les cookies car on en a plus besoin
+
         return render(request, 'genomeBact/results.html',{'genome': genome}) 
 
     else:
@@ -141,12 +186,12 @@ def transcript_create(request, specie):
     return render(request,'genomeBact/transcript_create.html',{'form': form, 'genome' : genome}) 
 
 @login_required(login_url='login')
-def transcript_detail(request, specie, transcript, context = None):
+def transcript_detail(request, specie, transcript):
 
-    
+    genome = Genome.objects.get(specie=specie)
     transcript = Transcript.objects.get(transcript=transcript)
     
-    return render(request,'genomeBact/transcript_detail.html',{'genome':specie,'transcript': transcript})
+    return render(request,'genomeBact/transcript_detail.html',{'genome':genome,'transcript': transcript})
 
 @login_required(login_url='login')
 def transcript_annot(request, transcript):
