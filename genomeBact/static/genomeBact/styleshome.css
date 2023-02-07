@@ -341,7 +341,18 @@ button:focus:not(:focus-visible) {
   outline: 0;
 }
 
-input,
+input {
+  width: 100%;
+  padding:10px; 
+  border:2px solid #ccc; 
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  color: #fff;
+  background-color: #C97064;
+  border-color: #C97064;
+  margin : 5px;
+}
+
 button,
 select,
 optgroup,
@@ -2105,6 +2116,7 @@ progress {
   --bs-table-hover-color: #000;
   color: #000;
   border-color: #dfe0e1;
+  width: 100%;
 }
 
 .table-dark {
@@ -5469,10 +5481,9 @@ textarea.form-control-lg {
   }
 }
 .tooltip {
-  position: absolute;
+  position: relative;
   z-index: 1080;
   display: block;
-  margin: 0;
   font-family: "Lora", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   font-style: normal;
   font-weight: 400;
@@ -5489,8 +5500,25 @@ textarea.form-control-lg {
   line-break: auto;
   font-size: 0.875rem;
   word-wrap: break-word;
-  opacity: 0;
+  opacity: 1;
 }
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 500px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 10px 10;
+  border-radius: 6px;
+  position: absolute;
+  z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
 .tooltip.show {
   opacity: 0.9;
 }
