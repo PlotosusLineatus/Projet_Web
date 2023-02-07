@@ -25,3 +25,11 @@ En vous plaçant à la base du dossier, lancez les commandes suivantes
     python manage.py runserver
 ```
 Ouvrez votre navigateur et rendez vous à l'adresse indiquée. 
+
+# Utilisation de OUAF
+## Création d'un utilisateur
+
+Vous ne pouvez pas accédez à l'application si vous n'êtes pas inscrit. Cliquez sur `register` et créez votre compte. Vous pouvez choisir le rôle qui vous sied le mieux entre:
+- **Lecteur** : accès à la base de données sans possibilités d'interactions ou de modification du contenu.
+- **Annotateur**: droits du lecteur + possibilité d'annoter des séquences
+- **Validateur**: droit de l'annotateur + affecter et valider des annotations
