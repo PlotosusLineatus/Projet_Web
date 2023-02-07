@@ -64,13 +64,30 @@
                                 <div class="d-flex">
                                     <div class="d-flex flex-row">
                                         <div class="d-flex flex-column justify-content-start ml-2">
-                                            <span class="fw-bold">Pseudo Annot</span>
-                                            <span class="text-secondary">Role + date </span>
+                                            <span class="fw-bold">{{ transcript.annotator }}</span>
+                                            <span class="text-secondary mb-3">{{ transcript.status_date}} </span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="d-flex">
-                                    <p class="text-dark">L'annotation est annotée. wowowowowowowooooooooooooooooooooooooowowowo wowowowwwwwwwwwwwwwwwwwowowowowooooooooooo ooooooooo</p>
+                                    <table class="table-light row">
+                                        <tr> 
+                                            <td class="figure-caption">Gene : </td>
+                                            <td class="text-end"> {{ transcript.gene }} </td>
+                                        </tr>
+                                        <tr> 
+                                            <td class="figure-caption">Gene Biotype : </td>
+                                            <td class="text-end"> {{ transcript.gene_biotype }} </td>
+                                        </tr>
+                                        <tr> 
+                                            <td class="figure-caption">Transcript Biotype : </td>
+                                            <td class="text-end"> {{ transcript.transcript_biotype }} </td>
+                                        </tr>
+                                        <tr> 
+                                            <td class="figure-caption">Description :  </td>
+                                            <td class="text-end"> {{ transcript.description }} </td>
+                                        </tr>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -130,7 +147,7 @@
                     <!-- Side widget-->
                     <div class="card mb-4">
                         <div class="card-header fw-bolder">Statut</div>
-                        <div class="card-body">bof</div>
+                        <div class="card-body">{{ transcript.status }}</div>
                     </div>
                 </div>
             </div>
