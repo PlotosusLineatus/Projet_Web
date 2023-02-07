@@ -15,7 +15,7 @@
         <div class="post-preview">
             {% for genome in genome %}
                 <h2><a href="{% url 'genome-detail' genome.specie %}">{{ genome.specie }}</a></h5>
-                <p class=" "post-meta>0% completed</p>
+                <p class=" "post-meta>Nb de CDS</p>
                 <hr class="my-4" />
             {% endfor %}
         </div>
