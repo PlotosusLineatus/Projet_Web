@@ -101,21 +101,22 @@
                         <form action="" method="POST" name="ressources">
                             {% csrf_token %}
                             <div class="card-header">Autres ressources :</div>
-                            <div class="card-body">
-                                <div class="input-group">
-                                    <a type="button" class="btn btn-danger" id = "a1"
-                                        href="https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastn&PAGE_TYPE=BlastSearch&LINK_LOC=blasthome&QUERY={{transcript.seq_nt}}&JOB_TITLE={{transcript.transcript}}"
-                                        value="button" target="_blank" class="button">BLASTn
-                                    </a>
-                                    <a type="button" class="btn btn-danger" id = "a2"
-                                        href="https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastp&PAGE_TYPE=BlastSearch&LINK_LOC=blasthome&QUERY={{transcript.seq_cds}}&JOB_TITLE={{transcript.transcript}}"
-                                        value="facebook" target="_blank" class="button">BLASTp
-                                    </a>
-                                    <a type="button" class="btn btn-danger" id = "a3"
-                                        href="https://www.uniprot.org/uniprotkb?query={{transcript.transcript}}"
-                                        value="facebook" target="_blank" class="button">Uniprot
-                                    </a>
-                                </div
+                                <div class="card-body">
+                                    <div class="input-group">
+                                        <a type="button" class="btn btn-danger" id = "a1"
+                                            href="https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastn&PAGE_TYPE=BlastSearch&LINK_LOC=blasthome&QUERY={{transcript.seq_nt}}&JOB_TITLE={{transcript.transcript}}"
+                                            value="button" target="_blank" class="button">BLASTn
+                                        </a>
+                                        <a type="button" class="btn btn-danger" id = "a2"
+                                            href="https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastp&PAGE_TYPE=BlastSearch&LINK_LOC=blasthome&QUERY={{transcript.seq_cds}}&JOB_TITLE={{transcript.transcript}}"
+                                            value="facebook" target="_blank" class="button">BLASTp
+                                        </a>
+                                        <a type="button" class="btn btn-danger" id = "a3"
+                                            href="https://www.uniprot.org/uniprotkb?query={{transcript.transcript}}"
+                                            value="facebook" target="_blank" class="button">Uniprot
+                                        </a>
+                                    </div
+                                </div>
                             </div>
                         </form>
 
