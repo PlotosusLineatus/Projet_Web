@@ -29,6 +29,7 @@ def user_login(request):
 
         if user is not None:
             login(request, user)
+            #Profile.objects.filter(name=username).last_connexion = Now()
             Connexion.objects.create(user = user, date=Now())
             return redirect('home')
         else :
@@ -36,6 +37,7 @@ def user_login(request):
                 username = User.objects.get(email=username)
                 user = authenticate(request, username= username.username, password= password )
                 login(request, user)
+                #Profile.objects.filter(email=username).last_connexion = Now()
                 Connexion.objects.create(user = user, date=Now())
                 return redirect('home')           
             except User.DoesNotExist:
@@ -52,12 +54,12 @@ def register(request):
         if form.is_valid():
             user = form.save()
 
-            group = request.POST.get('group')
-            group = Group.objects.get(name = group)
+            group_name = request.POST.get('group')
+            group = Group.objects.get(name = group_name)
             user.groups.add(group)
             username = form.cleaned_data.get('username')
             
-            Profile.objects.create(user = user, name=user.username)
+            Profile.objects.create(user = user, name=user.username, group = group_name)
 
             messages.success(request, 'Account was created for ' + username)
             
@@ -187,8 +189,21 @@ def transcript_annot(request, transcript):
 @login_required(login_url='login')
 @admin_only
 def admin(request):
+    nb_val = User.objects.filter(groups__name = "Validateur").count()
+    nb_annot  = User.objects.filter(groups__name = "Annotateur").count()
+    nb_read = User.objects.filter(groups__name = "Lecteur").count()
 
-    return render(request,'genomeBact/admin.html')
+    all_val = Profile.objects.filter(group = "Validateur")
+    all_annot = Profile.objects.filter(group = "Annotateur")
+    all_read = Profile.objects.filter(group = "Lecteur")
+
+    nb_to_assign = Transcript.objects.filter(status = 'empty').count()
+    nb_to_val = Transcript.objects.filter(status = 'annotated').count()
+    nb_to_annot = Transcript.objects.filter(status = 'assigned').count()
+
+    context = {"nb_val":nb_val, "nb_annot":nb_annot, "nb_read":nb_read, "all_val":all_val, "all_annot":all_annot, "all_read":all_read,
+               "nb_to_assign":nb_to_assign, "nb_to_val":nb_to_val, "nb_to_annot":nb_to_annot }
+    return render(request,'genomeBact/admin.html', context)
 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['Admin', 'Validateur','Annotateur'])
