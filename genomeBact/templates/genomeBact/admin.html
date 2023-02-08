@@ -58,6 +58,10 @@
 
         <!-- Page content-->        
         <div class="container px-4 px-lg-5">
+            {% for message in messages %}
+                <p id="messages"> {{ message }}</p>
+            {% endfor %}
+
             <div class="tab">
                 <button class="tablinks" onclick="openTab(event, 'Users')" >Users</button>
                 <button class="tablinks" onclick="openTab(event, 'Database')">Database</button>
@@ -220,22 +224,17 @@
                             </div>
                             <!-- Categories widget-->
                             <div class="card mb-4">
-                                <div class="card-header">Infos</div>
+                                <div class="card-header">User</div>
                                 <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <ul class="list-unstyled mb-0">
-                                                <li> transcript : </li>
-                                            </ul>
+                                    <form method="POST" action="">
+                                        {% csrf_token %}
+                                        <div class="input-group">
+                                            <button class="btn btn-danger" id="button-blatp" type="submit">add User</button>
                                         </div>
-                                    </div>
+                                    </form>
                                 </div>
                             </div>
-                            <!-- Side widget-->
-                            <div class="card mb-4">
-                                <div class="card-header">Statut</div>
-                                <div class="card-body"> ddd</div>
-                            </div>
+                            
                         </div>
                     </div>
                 </div>

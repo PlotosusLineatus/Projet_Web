@@ -53,7 +53,7 @@ def user_login(request):
     context = {}
     return render(request, 'genomeBact/login.html', context)
 
-@unauthenticated_user
+#@unauthenticated_user
 def register(request):
     if request.method == 'POST':
         form = CreateUserForm(request.POST)  
@@ -69,6 +69,9 @@ def register(request):
 
             messages.success(request, 'Account was created for ' + username)
             
+            #if( request.user.groups.all()[0].name == None):
+            return redirect('admin')
+            #else :
             return redirect('login')
         else:
             messages.error(request, form.errors)
@@ -356,6 +359,9 @@ def transcript_annot(request, transcript):
 @login_required(login_url='login')
 @admin_only
 def admin(request):
+    if request.method == 'POST':
+        return redirect('register')
+
     nb_val = User.objects.filter(groups__name = "Validateur").count()
     nb_annot  = User.objects.filter(groups__name = "Annotateur").count()
     nb_read = User.objects.filter(groups__name = "Lecteur").count()
