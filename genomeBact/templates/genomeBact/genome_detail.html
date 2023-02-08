@@ -49,15 +49,14 @@
                         <div class="card bg-light">
                             
                             <div class="card-body">
-                                <h2 class="fw-bolder mb-4 mt-2"><a href="{% url 'transcript-list' genome.specie %}">Liste des annotations </a></h2>
+                                <h2 class="fw-bolder mb-4 mt-2">Liste des annotations </h2>
                                 <!-- Single comment-->
-                                <div class="d-flex">
-                                    <div class="ms-3">
+                                <div class="d-flex navbar-nav-scroll">
+                                    <div class="ms-3 ">
                                         <div class="fw-bold">{% for transcript in transcript %}
-                                            <li>    <a href="{% url 'transcript-detail' specie=genome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a>
-                                              </li>			
+                                            <p>    <a href="{% url 'transcript-detail' specie=genome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a>
+                                            </p>			
                                           {% endfor %}</div>
-                                        Nom du CDS
                                     </div>
                                 </div>
                             </div>
@@ -68,13 +67,17 @@
                 <div class="col-lg-4">
                     <!-- Widget BLAST-->
                     <div class="card mb-4">
-                        <div class="card-header">Autres ressources :</div>
+                        <div class="card-header">Autre ressource :</div>
                         <div class="card-body">
                             <div class="input-group">
+
+                                <button class="btn btn-danger" id="button-uniprot" type="button">Uniprot</button>
+                                <!--
                                 <a type="button" class="btn btn-danger" id = "a3"
                                         href="https://www.uniprot.org/uniprotkb?query={{genome.specie}}"
                                         value="facebook" target="_blank" class="button">Uniprot
                                 </a>
+                                -->
                             </div>
                         </div>
                     </div>
