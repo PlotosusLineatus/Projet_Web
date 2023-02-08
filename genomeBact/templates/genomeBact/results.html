@@ -11,6 +11,8 @@
 </header>
 
 <!-- Liste des génomes -->
+
+{% if genomes %}
 <div class="container px-4 px-lg-5">
     <div class="post-preview">
         {% for genome in genomes %}
@@ -19,21 +21,24 @@
         {% endfor %}
     </div>
 </div>
+{% endif %}
 
+{% if transcripts %}
 <!-- Liste des transcripts -->
-<div class="container px-4 px-lg-5">
+<pre class="container px-4 px-lg-5">
     <div class="post-preview">
         {% for transcript in transcripts %}
-              <li>    <a href="{% url 'transcript-detail' specie=genome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a>
+              <li>    <a href="{% url 'transcript-detail' specie=transcript.chromosome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a>
                 </li>			
         {% endfor %}
     </div>
-</div>
+</pre>
+{% endif %}
 <!-- Télécharger Fasta -->
+
 <form action="" method="POST">
     {% csrf_token %}
     <input type="submit" value="Download the database" name="download">
 </form>
-    
 
 {% endblock %}

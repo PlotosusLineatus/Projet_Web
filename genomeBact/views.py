@@ -98,6 +98,7 @@ def home(request):
             request.session["start"] = request.POST.get("start")
             request.session["stop"] = request.POST.get("stop")
 
+
             # Que des brin sens autorisés dans la DB
             if request.session["start"] > request.session["stop"]:
 
@@ -132,13 +133,6 @@ def home(request):
                 request.session["sub_pep"]  = ""
 
             return redirect("results")
-
-            
-
-
-
-                    # Pour plus tard : transcripts = Transcript.objects.filter(chromosome__in = genomes)
-                    # retourne les trancripts des ( )
 
 
     else:
@@ -199,13 +193,23 @@ def results(request):
     genomes = None
     transcripts = None
 
-    accession = request.session["accession"] 
+    accession = request.session["accession"]
     specie = request.session["specie"]
     sub_nt = request.session["sub_nt"]
     sub_nt = sub_nt.upper() # Just in case
     sub_pep = request.session["sub_pep"]
+    sub_pep = sub_pep.upper()
+
 
     # For some reason request.session doesn't store request.POST.get(name, default_integer) default output as integer but rather as ''
+
+    start = request.session["start"]
+    if start == '':
+        start = 0
+    stop = request.session["stop"]
+    if stop == '':
+        stop = get_max_length()
+
     max_ = request.session["max"]
     if max_ == '':
         max_ = get_max_length()
@@ -229,21 +233,20 @@ def results(request):
 
     if request.session["query_type"] == "Transcript":
     
-        query_max = Q(length__gte = min_)
-        query_min = Q(length__lte = max_)
-        query_access = Q(chromosome__contains = accession)
+        query_max = Q(length_nt__gte = min_)
+        query_min = Q(length_nt__lte = max_)
+        query_access = Q(transcript__contains = accession)
         query_sub_nt = Q(seq_nt__contains = sub_nt)
-        query_specie = Q(specie__contains = specie)
-        query_sub_pep = Q(seq_cds__contaisn = sub_pep)
+        query_sub_pep = Q(seq_cds__contains = sub_pep)
 
 
         temp_genomes = Genome.objects.filter(specie__contains = specie)
         query_sub_species = Q(chromosome__in = temp_genomes)
         
-        transcripts = Genome.objects.filter(query_max & query_min & query_access & query_sub_nt & query_sub_pep & query_sub_species)
+        transcripts = Transcript.objects.filter(query_max & query_min & query_access & query_sub_nt & query_sub_pep & query_sub_species)
 
-    #for key in keys:
-    #    del request.session[key]ATGCTAGTAGGGCTTGC
+
+        print("\n" + str(len(transcripts)) + "\n")
 
     if genomes == transcripts:
 
