@@ -140,7 +140,7 @@ def run():
                                                                 seq_nt = transcripts_dict[tsc_name]["NT"],
                                                                 start = transcripts_dict[tsc_name]["start"],
                                                                 stop = transcripts_dict[tsc_name]["stop"],
-                                                                length_nt = len(transcripts_dict[tsc_name]["NT"]),
-                                                                length_pep = len(transcripts_dict[tsc_name]["AA"])))
+                                                                length_nt = int(len(transcripts_dict[tsc_name]["NT"])),
+                                                                length_pep = int(len(transcripts_dict[tsc_name]["AA"]))))
 
         Transcript.objects.bulk_create(transcripts_of_current_genome)
