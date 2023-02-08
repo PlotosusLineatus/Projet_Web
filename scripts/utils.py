@@ -126,7 +126,7 @@ def get_data(absolute_path = "/home/sherman/Documents/M2/WEB/data"):
 
     return full_dict
 
-def get_max_length(): 
+def get_max_length() -> int:
 
     _list = []
     g = Genome.objects.all()
