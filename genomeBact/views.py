@@ -14,7 +14,7 @@ from Bio import SeqIO
 from io import StringIO
 
 from .models import Genome,Transcript,Profile, Connexion
-from .forms import GenomeForm, TranscriptForm, UploadFileForm, CreateUserForm, AnnotForm, ProfileForm
+from .forms import GenomeForm, TranscriptForm, UploadFileForm, CreateUserForm, AnnotForm, ProfileForm, ModifyUserForm
 from .decorators import unauthenticated_user, allowed_users, admin_only
 
 from scripts.utils import get_max_length
@@ -80,6 +80,43 @@ def register(request):
 
     context = {'form':form}
     return render(request, 'genomeBact/register.html', context)
+
+@login_required(login_url='login')
+def user_detail(request):
+
+    '''
+    if( request.user.groups.all()[0].name == 'Admin'):
+    '''
+    username = request.user.username
+    #user = User.objects.get(username = 'r')
+    if request.method == 'POST':
+        form_profile = ProfileForm(request.POST)  
+        form_user = ModifyUserForm(request.POST)
+        if form_profile.is_valid() and form_user.is_valid() :
+                print("ouiiiiiiiiiiiiiiiiiiiiiinnnnnnnnnnnnnnnnnnnnnnnn")
+            #if 'Update' in request.POST:
+                #user = form_user.cleaned_data
+                #last_name = user["last_name"]
+                #first_name = user["first_name"]
+                #phone = user["phone_number"]
+
+                a = form_profile.cleaned_data
+                a = form_user.cleaned_data
+                print("ouiiiiiiiiiiiiiiiiiiiiiinnnnnnnnnnnnnnnnnnnnnnnn")
+                print(a)
+                # User.objects.filter(username=username).get().email
+                #Profile.objects.filter(name=username).update(last_name = last_name, first_name=first_name, phone_number=phone)
+                messages.success(request, 'The profile was updated')
+            
+                return HttpResponseRedirect(request.path_info)
+                return redirect('admin')
+    else:
+        form_profile = ProfileForm()
+        form_user = ModifyUserForm()
+
+    user1 = Profile.objects.filter(name = request.user.username).get()
+    context = {'user' : user1, "form_profile":form_profile, "form_user":form_user}
+    return render(request, 'genomeBact/user_detail.html', context)
 
 @login_required(login_url='login')
 def home(request):

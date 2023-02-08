@@ -92,7 +92,7 @@
                                 {% for message in messages %}
                                     <p id="messages"> {{ message }}</p>
                                 {% endfor %}
-
+w
                                 {% if request.user.username == transcript.validator.name and transcript.status == 'annotated' %}
                                 <form action="" method="POST">
                                     {% csrf_token %}

@@ -1,0 +1,189 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Home - Projet OUAF</title>
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="{% static 'genomeBact/styleshome.css' %}" rel="stylesheet" />
+        <link href="{% static 'genomeBact/stylestab.css' %}" rel="stylesheet" />
+        <link href="{% static 'genomeBact/user_detail.css' %}" rel="stylesheet" />
+        <script src="{% static 'genomeBact/tab.js' %}"></script>
+
+    </head>
+    <body>
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+            <div class="container px-4 px-lg-5">
+                <a class="navbar-brand" href="/home">Le projet OUAF</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/home">Home</a></li>
+                        {% if request.user.groups.all.0.name == None %}
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/admin">Admin</a></li>
+                        {% endif %}
+                        {% if request.user.groups.all.0.name != 'Lecteur' %}
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/workspace">Work space</a></li>
+                        {% endif %}
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/results">Collection</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        </html>     
+        <header class="masthead" style="background-color: #45425A">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="post-heading">
+                    <h1>Profil : </h1>
+                    <h2 class="subheading"> Paramètres utilisateurs</h2>
+                </div>
+            </div>
+        </header>
+
+        <div class="container px-4 px-lg-5">
+            {% for message in messages %}
+                <p id="messages"> {{ message }}</p>
+            {% endfor %}
+        </div>
+
+        <form action="" method="POST">
+            {% csrf_token %}
+        <div class="container">
+            <div class="row gutters">
+            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="account-settings">
+                        <div class="user-profile">
+                            <div class="user-avatar">
+                                <img src="https://almenas.es/wp-content/uploads/2020/10/teckel.jpg">
+                            </div>
+                            <h5 class="user-name">{{ user.username }}</h5>
+                            <h6 class="user-email"> mail </h6>
+                        </div>
+                        <div class="about">
+                            <h5>About</h5>
+                            <p>I'm Yuki. Full Stack Designer I enjoy creating user-centric, delightful and human experiences.</p>
+                        </div>
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 button-wrapper">
+                            <div class="text-center ">
+                                <button type="button" id="submit" name="submit" class="btn btn-secondary">Change password</button>
+                            </div>
+                            <div class="text-center ">
+                                <button type="button" id="submit" name="submit" class="btn btn-danger"> Delete Account</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+            <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+            <div class="card h-100">
+                {% for message in messages %}
+                <p id="messages"> {{ message }}</p>
+                {% endfor %}
+                <div class="card-body">
+                    <div class="row gutters">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <h6 class="mb-2 text-primary">Personal Details</h6>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="first_name">First Name</label>
+                                {{ form_profile.first_name.errors }}
+                                {{form_profile.first_name}}
+                                <p class=" text-center"> {{ user.first_name }} </p>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="last_name">Last Name</label>
+                                {{form_profile.last_name.errors}}
+                                {{form_profile.last_name}}
+                                <p class=" text-center"> {{ user.last_name }} </p>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                {{form_user.email.errors}}
+                                {{form_user.email}}
+                                <p class=" text-center"> {{ user.user.email }} </p>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="phone_number">Phone</label>
+                                {{form_profile.phone_number.errors}}
+                                {{form_profile.phone_number}}
+                                <p class=" text-center"> {{ user.phone_number }} </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row gutters">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <h6 class="mt-3 mb-2 text-primary">Work</h6>
+                        </div>
+                        
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label for="group">{{ user.user.group }}</label>
+                                <select class="select" name="group">
+                                    <option value="1" disabled>Role</option>
+                                    <option value="Lecteur">Lecteur</option>
+                                    <option value="Annotateur">Annotateur</option>
+                                    <option value="Validateur">Validateur</option>
+                                </select>
+                                efejp
+            
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row gutters">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="text-right" style="float: right;">
+                                <button type="submit" id="Cancel" name="Cancel" class="btn btn-secondary">Cancel</button>
+                                <button type="submit" id="Update" name="Update" class="btn btn-primary">Update</button>
+                                <button type="submit" id="Modify" name="Modify" class="btn btn-primary">Modify</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+            </div>
+        </div>  
+        </form>
+            
+    <!-- Footer-->
+    <footer class="border-top">
+        <div class="container px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    <ul class="list-inline text-center">
+                        <li class="list-inline-item">
+                    
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    </body>
+</html>
