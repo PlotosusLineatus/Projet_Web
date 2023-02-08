@@ -35,7 +35,7 @@ def user_login(request):
 
         if user is not None:
             login(request, user)
-            #Profile.objects.filter(name=username).last_connexion = Now()
+            Profile.objects.filter(name=username).update(last_connexion = Now())
             Connexion.objects.create(user = user, date=Now())
             return redirect('home')
         else :
@@ -43,7 +43,7 @@ def user_login(request):
                 username = User.objects.get(email=username)
                 user = authenticate(request, username= username.username, password= password )
                 login(request, user)
-                #Profile.objects.filter(email=username).last_connexion = Now()
+                Profile.objects.filter(email=username).update(last_connexion = Now())
                 Connexion.objects.create(user = user, date=Now())
                 return redirect('home')           
             except User.DoesNotExist:
@@ -65,7 +65,7 @@ def register(request):
             user.groups.add(group)
             username = form.cleaned_data.get('username')
             
-            Profile.objects.create(user = user, name=user.username, group = group_name)
+            Profile.objects.create(user = user, name=user.username, group = group_name, last_connexion = Now())
 
             messages.success(request, 'Account was created for ' + username)
             
