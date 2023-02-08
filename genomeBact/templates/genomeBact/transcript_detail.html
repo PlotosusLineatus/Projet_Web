@@ -116,11 +116,22 @@
                                                     <td class="figure-caption">Gene : </td>
                                                     <td class="text-end"> {{ transcript.gene }} </td>
                                                   </tr>
-                                                <li>Gene : {{ transcript.gene }}</li>
-                                                <li>Gene biotype : {{ transcript.gene_biotype }}</li>
-                                                <li>Transcript biotype : {{ transcript.transcript_biotype }}</li>
-                                                <li>Gene symbol : {{ transcript.gene_symbol }}</li>
-                                                <li>Description :  {{ transcript.description }}</li>
+                                                  <tr> 
+                                                    <td class="figure-caption">Gene biotytpe: </td>
+                                                    <td class="text-end"> {{ transcript.gene_biotype }} </td>
+                                                  </tr>
+                                                  <tr> 
+                                                    <td class="figure-caption">Transcript biotype : </td>
+                                                    <td class="text-end"> {{ transcript.transcript_biotype }} </td>
+                                                  </tr>
+                                                  <tr> 
+                                                    <td class="figure-caption">Gene symbol : </td>
+                                                    <td class="text-end"> {{ transcript.gene_symbol }} </td>
+                                                  </tr>
+                                                  <tr> 
+                                                    <td class="figure-caption"> Description : </td>
+                                                    <td class="text-end"> {{ transcript.description }} </td>
+                                                  </tr>
                                                 </table>
                                                 </div>
                                             </div>

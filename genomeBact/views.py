@@ -204,7 +204,7 @@ def download_csv(request, transcripts = None, genomes = None):
 
 @login_required(login_url='login')
 def results(request):
-'''
+    '''
     # If user don't search anything from home page, return full list of genomes
     if 'user_input' in request.session:
         user_input = request.session['user_input'] 
@@ -212,7 +212,7 @@ def results(request):
         # Sinon, on utilise l'input de l'user pour filtrer les génomes sur leur num d'accession
         genome = Genome.objects.filter(chromosome__contains = user_input)
         return render(request, 'genomeBact/results.html',{'genome': genome}) 
-'''
+    '''
 
     
     # Delete session without deleting user current logs
