@@ -378,8 +378,14 @@ def workspace(request):
     transcripts_to_annotate = request.user.profile.to_annotate.all()
     #transcripts_to_annotate = request.user.profile.transcript_set.all()
     transcripts_to_assign = Transcript.objects.filter(status = 'empty')
-    transcripts_to_validate = Transcript.objects.filter(status = 'annotated')
+    transcripts_to_validate = Transcript.objects.filter(status = 'annotated', validator = request.user.profile)
     annotators = User.objects.filter(groups__name='Annotateur')
+
+    nb_to_assign = Transcript.objects.filter(status = 'empty').count()
+    nb_to_val =  Transcript.objects.filter(status = 'annotated', validator = request.user.profile).count()
+    nb_to_annot = request.user.profile.to_annotate.count()
+    nb_send = '?'
+    #nb_send = Transcript.objects.filter(status = 'empty').count()
 
     if request.method == 'POST':
         annotator_chosen = request.POST.get('annotator')
@@ -401,7 +407,8 @@ def workspace(request):
                 messages.info(request, " Please select an Annotator AND a Transcript" )
 
 
-    context = {'transcripts_to_annotate':transcripts_to_annotate, 'transcripts_to_assign':transcripts_to_assign, 'annotators':annotators,'transcripts_to_validate':transcripts_to_validate}
+    context = {'transcripts_to_annotate':transcripts_to_annotate, 'transcripts_to_assign':transcripts_to_assign, 'annotators':annotators,
+               'transcripts_to_validate':transcripts_to_validate, "nb_to_assign":nb_to_assign, "nb_to_val":nb_to_val, "nb_to_annot":nb_to_annot, "nb_send":nb_send}
     return render(request,'genomeBact/workspace.html', context)
 
 @login_required(login_url='login')
