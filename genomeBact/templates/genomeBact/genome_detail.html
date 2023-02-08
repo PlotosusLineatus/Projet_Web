@@ -1,6 +1,8 @@
 {% extends 'genomeBact/base.html' %}
 
 {% block content %}
+<script src = "https://d3js.org/d3.v4.min.js"></script>
+
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
             <div class="container px-4 px-lg-5">
@@ -12,8 +14,13 @@
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ms-auto py-4 py-lg-0">
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/home">Home</a></li>
+                        {% if request.user.groups.all.0.name == None %}
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/admin">Admin</a></li>
+                        {% endif %}
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/settings">Parameters</a></li>
+                        {% if request.user.groups.all.0.name != 'Lecteur' %}
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/workspace">Work space</a></li>
+                        {% endif %}
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/results">Collection</a></li>
                     </ul>
                 </div>
@@ -33,14 +40,55 @@
         </header>
         <!-- Page content-->
         <div class="container mt-5">
-            <a href="{% url 'results' %}"> < Résultats précédents</a>
+
+            <a href="{% url 'results' %}">Résultats précédents</a>
+            <h2 class="fw-bolder mb-4 mt-5">Visualisation</h2>
+
+        </div>
+
+        <!-- Visualisation SVG -->
+        <script>
+            let list_cds = {};
+            let length = "{{ genome.length }}";
+            let genome_name = "{{ genome.specie }}";
+        </script>
+        {% for transcript in transcripts %}
+            <script>
+                list_cds["{{ transcript.transcript }}"] = {"id" : "{{ transcript.transcript }}" ,
+                 "start" : "{{ transcript.start }}", "stop":"{{ transcript.stop }}"};
+            </script>
+        {% endfor %}
+        <div class="card" style="margin-left: 5%; margin-right: 5%;">
+            <div class="card-body">
+                <div align="center">
+                  <img id="big_left" src="/static/genomeBact/img/big_straf_left_seb.png" width="26px"/>
+                  <img id="small_left" src="/static/genomeBact/img/small_straf_left_seb.png" width="26px"/>
+                  <img id="small_right" src="/static/genomeBact/img/small_straf_right_seb.png" width="26px"/>
+                  <img id="big_right" src="/static/genomeBact/img/big_straf_right_seb.png" width="26px"/>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <img id="zoom_in" src="/static/genomeBact/img/zoom_in_seb.png" width="26px"/>
+                  <img id="zoom_small_in" src="/static/genomeBact/img/zoom_small_in_seb.png" width="26px"/>
+                  <img id="zoom_neutral" src="/static/genomeBact/img/zoom_default_seb.png" width="26px"/>
+                  <img id="zoom_small_out" src="/static/genomeBact/img/zoom_small_out_seb.png" width="26px"/>
+                  <img id="zoom_out" src="/static/genomeBact/img/zoom_out_seb.png" width="26px"/>
+                </div>
+          
+                <!-- Genomic View -->
+                <div id = "svg_genomic_view" align="center"></div>
+            </div>
+        </div>
+        <script type="text/javascript" src="/static/genomeBact/transcript.js"></script> 
+
+
+        <div class="container mt-5">
+
             <div class="row">
                 <div class="col-lg-8">
                     <!-- Post content-->
                     <article>
                         <!-- Séquence-->
                         <section class="mb-5">
-                            <h2 class="fw-bolder mb-4 mt-5">Visualisation</h2>
                             <!-- <p class="fs-5 mb-4"><span style = "word-break : break-all;">{{ genome.sequence }}</span></p> -->
                         </section>
                     </article>
@@ -49,6 +97,7 @@
                         <div class="card bg-light">
                             
                             <div class="card-body">
+
                                 <h2 class="fw-bolder mb-4 mt-2">Liste des annotations </h2>
                                 <!-- Single comment-->
                                 <div class="d-flex navbar-nav-scroll">
@@ -56,6 +105,7 @@
                                         <div class="fw-bold">{% for transcript in transcript %}
                                             <p>    <a href="{% url 'transcript-detail' specie=genome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a>
                                             </p>			
+
                                           {% endfor %}</div>
                                     </div>
                                 </div>
@@ -109,4 +159,6 @@
                 </div>
             </div>
         </div>
+
+
 {% endblock %}

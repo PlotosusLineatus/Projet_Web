@@ -2,6 +2,11 @@ from django.db import models
 from django.urls import reverse
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.contrib.auth.models import User
+
+User._meta.get_field('email')._unique = True
+User._meta.get_field('email')._required = True
+
+
 '''
    _____ ______ _   _  ____  __  __ ______ 
   / ____|  ____| \ | |/ __ \|  \/  |  ____|
@@ -27,6 +32,22 @@ class Genome(models.Model):
 class Profile(models.Model):
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=30 , unique=True)
+
+
+    STATUS = ( ('Admin','Admin'), ('Annotateur','Annotateur'), ('Validateur','Validateur'))
+    group = models.CharField(max_length=40, choices=STATUS, default='Lecteur')
+    first_name = models.CharField(max_length=30, blank=True)
+    last_name = models.CharField(max_length=150, blank=True)
+    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
+    phone_number = models.CharField(validators=[phone_regex], max_length=17, blank=True) 
+    #last_connexion = models.DateTimeField();
+
+    def __str__(self):
+        return self.name
+
+class Connexion(models.Model):
+    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+    date = models.DateTimeField()
 
     def __str__(self):
         return self.name
@@ -68,7 +89,12 @@ class Transcript(models.Model):
     status_date = models.DateTimeField(null = True)
     annotator = models.ForeignKey(Profile, null=True, on_delete=models.SET_NULL, related_name="to_annotate")
     validator = models.ForeignKey(Profile, null=True, on_delete=models.SET_NULL)
+    
     FilterFields = ["length"]
+
+    @property
+    def length(self):
+        return (self.stop - self.start)+1
 
 
 

@@ -20,6 +20,10 @@
   
                 {% csrf_token %}
 
+                {% for message in messages %}
+                  <p id="messages"> {{ message }}</p>
+                {% endfor %}
+
                 <div class="form-outline mb-4">
                   <label class="form-label" for="form3Example1q"> {{ form.username.label }} </label>
                   <input type="text" class="form-control" required="" id="form3Example1q" name="username" placeholder=" Username...">
@@ -27,23 +31,20 @@
   
                 <div class="form-outline mb-4">
                     <label class="form-label" for="form3Example1q"> {{ form.email.label}} </label>
-                    <input type="email" id="form3Example1q" class="form-control" name="email" placeholder="..." />
+                    <input type="email" id="form3Example1q" class="form-control" required="" name="email" placeholder="..." />
                   </div>
   
                 <div class="mb-4">
-  
                   <select class="select" name="group">
                     <option value="1" disabled>Role</option>
                     <option value="Lecteur">Lecteur</option>
                     <option value="Annotateur">Annotateur</option>
                     <option value="Validateur">Validateur</option>
                   </select>
-  
                 </div>
   
                 <div class="row mb-4 pb-2 pb-md-0 mb-md-5">
                   <div class="col-md-6">
-  
                     <div class="form-outline">
                       <label class="form-label" for="form3Example1w"> {{ form.password1.label}} </label>
                       <input type="password" class="form-control" required="" id="form3Example1q" name="password1" placeholder=" Password...">
@@ -55,7 +56,23 @@
                     </div>
                   </div>
                 </div>
-  
+
+                <!--
+                <div class="form-outline mb-4">
+                  <label class="form-label" for="form3Example1q"> Phone number </label>
+                  <input type="text" class="form-control" required="" id="form3Example1q" name="phone_number" placeholder=" ...">
+                </div>
+
+                <div class="form-outline mb-4">
+                  <label class="form-label" for="form3Example1q"> First Name </label>
+                  <input type="text" class="form-control" required="" id="form3Example1q" name="first_name" placeholder=" ...">
+                </div>
+
+                <div class="form-outline mb-4">
+                  <label class="form-label" for="form3Example1q"> Last Name </label>
+                  <input type="text" class="form-control" required="" id="form3Example1q" name="last_name" placeholder=" ...">
+                </div>
+              -->
                 <button type="submit" class="btn btn-success btn-lg mb-1" name="Create User">Submit</button>
   
               </form>

@@ -33,7 +33,6 @@ def admin_only( view_func):
         if group != None :
             return redirect('home')
         else:
-            print('--------------------------------OUIIIIIIIIIIIIIIII----------------------')
             return view_func(request, *args, **kwargs)
     return wrapper_func
   

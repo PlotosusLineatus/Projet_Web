@@ -32,68 +32,36 @@
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ms-auto py-4 py-lg-0">
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/home">Home</a></li>
+                        {% if request.user.groups.all.0.name == None %}
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/admin">Admin</a></li>
-                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/user_settings">Parameters</a></li>
+                        {% endif %}
+                        {% if request.user.groups.all.0.name != 'Lecteur' %}
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/workspace">Work space</a></li>
+                        {% endif %}
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/results">Collection</a></li>
                     </ul>
                 </div>
             </div>
         </nav>
 
-
         </html>     
         <header class="masthead" style="background-color: #45425A">
             <div class="container position-relative px-4 px-lg-5">
                 <div class="post-heading">
                     <h1>Profil : </h1>
-                    <h2 class="subheading"> Gestion des projets et paramètres du profil </h2>
+                    <h2 class="subheading"> Paramètres utilisateurs</h2>
                 </div>
             </div>
         </header>
-    
+
         <div class="container px-4 px-lg-5">
-            <div class="tab">
-                <button class="tablinks" onclick="openTab(event, 'toannot')">Liste des CDS</button>
-                <button class="tablinks" onclick="openTab(event, 'assign')">Assigner des CDS</button>
-                <button class="tablinks" onclick="openTab(event, 'validate')">Valider des CDS</button>
-            </div>
-            
-            <!-- Tab content -->
-            <div id="toannot" class="tabcontent">
-                <h3>A Annoter</h3>
-                <p>woof</p>
-            </div>
-            
-            <div id="assign" class="tabcontent">
-                <h3>A assigner</h3>
-                <p>ouaf</p>
-            </div>
-            
-            <div id="validate" class="tabcontent">
-                <h3>A valider</h3>
-                <p>grouf</p>
-            </div>
+            {% for message in messages %}
+                <p id="messages"> {{ message }}</p>
+            {% endfor %}
         </div>
-    
-
-
-        <footer class="border-top">
-            <div class="container px-4 px-lg-5">
-                <div class="row gx-4 gx-lg-5 justify-content-center">
-                    <div class="col-md-10 col-lg-8 col-xl-7">
-                        <ul class="list-inline text-center">
-                            <li class="list-inline-item">
-                                <a href="https://github.com/PlotosusLineatus/Projet_Web">
-                                    <span class="fa-stack fa-lg">
-                                        <i class="fas fa-circle fa-stack-2x"></i>
-                                        <i class="fab fa-github fa-stack-1x fa-inverse"></i>
-                                    </span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </footer>
+        {% for con in connexions %}
+            <li>{{ con.date}}</li>
+        {% endfor %}
+                    
     </body>
 </html>

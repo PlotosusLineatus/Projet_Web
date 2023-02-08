@@ -1,5 +1,5 @@
 import os
-from genomeBact.models import Genome
+
 
 def handle_uploaded_file(f):
     with open((os.getcwd() + "/temp_dir"), 'wb+') as destination:
@@ -125,13 +125,3 @@ def get_data(absolute_path = "/home/sherman/Documents/M2/WEB/data"):
     full_dict["transcripts"] = seq_dict
 
     return full_dict
-
-def get_max_length(): 
-
-    _list = []
-    g = Genome.objects.all()
-
-    for item in g:
-        _list.append(item.length)
-
-    return max(_list)

@@ -2,20 +2,19 @@ from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
+from django.db.models.functions import Now
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.urls import reverse
 from django.db.models import Q
 import csv
 
 
-from genomeBact.models import Genome,Transcript
-from genomeBact.forms import GenomeForm, TranscriptForm, UploadFileForm, CreateUserForm
 from Bio import SeqIO
 from io import StringIO
 
-from .models import Genome,Transcript
-from .forms import GenomeForm, TranscriptForm, CreateUserForm
+from .models import Genome,Transcript,Profile, Connexion
+from .forms import GenomeForm, TranscriptForm, UploadFileForm, CreateUserForm, AnnotForm, ProfileForm
 from .decorators import unauthenticated_user, allowed_users, admin_only
 
 from scripts.utils import get_max_length
@@ -36,9 +35,20 @@ def user_login(request):
 
         if user is not None:
             login(request, user)
+            #Profile.objects.filter(name=username).last_connexion = Now()
+            Connexion.objects.create(user = user, date=Now())
             return redirect('home')
-        else:   
-            messages.info(request, "Username or password is incorrect" )
+        else :
+            try:
+                username = User.objects.get(email=username)
+                user = authenticate(request, username= username.username, password= password )
+                login(request, user)
+                #Profile.objects.filter(email=username).last_connexion = Now()
+                Connexion.objects.create(user = user, date=Now())
+                return redirect('home')           
+            except User.DoesNotExist:
+                messages.info(request, "Username or password is incorrect" )
+            
 
     context = {}
     return render(request, 'genomeBact/login.html', context)
@@ -50,14 +60,18 @@ def register(request):
         if form.is_valid():
             user = form.save()
 
-            group = request.POST.get('group')
-            group = Group.objects.get(name = group)
+            group_name = request.POST.get('group')
+            group = Group.objects.get(name = group_name)
             user.groups.add(group)
-
             username = form.cleaned_data.get('username')
+            
+            Profile.objects.create(user = user, name=user.username, group = group_name)
+
             messages.success(request, 'Account was created for ' + username)
             
             return redirect('login')
+        else:
+            messages.error(request, form.errors)
     else:
         form = CreateUserForm()
 
@@ -66,8 +80,6 @@ def register(request):
 
 @login_required(login_url='login')
 def home(request):
-
-    
 
     # Does user submit anything ?
     if request.method == "POST":    
@@ -191,9 +203,16 @@ def download_csv(request, transcripts = None, genomes = None):
 
 
 @login_required(login_url='login')
-@allowed_users(allowed_roles=['Lecteur'])
-# If user don't search anything from home page, return full list of genomes
 def results(request):
+'''
+    # If user don't search anything from home page, return full list of genomes
+    if 'user_input' in request.session:
+        user_input = request.session['user_input'] 
+        del request.session['user_input'] 
+        # Sinon, on utilise l'input de l'user pour filtrer les génomes sur leur num d'accession
+        genome = Genome.objects.filter(chromosome__contains = user_input)
+        return render(request, 'genomeBact/results.html',{'genome': genome}) 
+'''
 
     
     # Delete session without deleting user current logs
@@ -251,40 +270,28 @@ def results(request):
 
 
        
-
-
 @login_required(login_url='login')
 def genome_detail(request, specie):
     genome = Genome.objects.get(specie=specie)
-    transcript = Transcript.objects.filter(chromosome = genome.chromosome)
+    transcripts = Transcript.objects.filter(chromosome = genome.chromosome)
 
     sequence = genome.sequence
 
-
-
-    return render(request,'genomeBact/genome_detail.html',{'genome': genome, 'transcript': transcript})
-
+    return render(request,'genomeBact/genome_detail.html',{'genome': genome, 'transcripts' : transcripts})
+    
 @login_required(login_url='login')
 def transcript_list(request, specie):
 
 
     
     genome = Genome.objects.get(specie=specie)
-    transcript = Transcript.objects.filter(chromosome = genome.chromosome)
+    transcripts = Transcript.objects.filter(chromosome = genome.chromosome)
 
-    return render(request, 'genomeBact/transcript_list.html',{'genome': genome, 'transcript': transcript})
-
-
-
-
-
-
-
-
-
+    return render(request, 'genomeBact/transcript_list.html',{'genome': genome, 'transcripts': transcripts})
 
 
 @login_required(login_url='login')
+@allowed_users(allowed_roles=['Admin','Validateur'])
 def transcript_create(request, specie):
     genome = Genome.objects.get(specie=specie)
 
@@ -304,10 +311,42 @@ def transcript_create(request, specie):
 def transcript_detail(request, specie, transcript):
 
     genome = Genome.objects.get(specie=specie)
-    transcript = Transcript.objects.get(transcript=transcript)
-    
-    return render(request,'genomeBact/transcript_detail.html',{'genome':genome,'transcript': transcript})
+    cds = Transcript.objects.get(transcript=transcript)
 
+    if request.method == 'POST':
+        form = AnnotForm(request.POST)  
+
+        if 'Validate' in request.POST:
+            Transcript.objects.filter(transcript=transcript).update(status = 'validated', status_date = Now(), annotator=None)
+            messages.success(request, 'Annotations were validated.')
+            return HttpResponseRedirect(request.path_info)
+        elif 'to_validate' in request.POST:
+            Transcript.objects.filter(transcript=transcript).update(status = 'annotated', status_date = Now())
+            messages.success(request, 'Annotations were send for validation.')
+            return HttpResponseRedirect(request.path_info)
+        elif 'reject_validation' in request.POST:
+            Transcript.objects.filter(transcript=transcript).update(status = 'assigned', status_date = Now())
+            messages.success(request, 'Annotations were send back to '+ cds.annotator.name )
+            return HttpResponseRedirect(request.path_info)
+        elif form.is_valid():
+            annotations = form.save(commit=False)
+            gene = annotations.gene
+            gene_biotype = annotations.gene_biotype
+            transcript_biotype = annotations.transcript_biotype
+            gene_symbol = annotations.gene_symbol
+            description = annotations.description
+
+            Transcript.objects.filter(transcript=transcript).update(gene = gene, gene_biotype=gene_biotype, transcript_biotype=transcript_biotype, gene_symbol=gene_symbol, description=description, status_date = Now())
+            
+            messages.success(request, 'Annotations were saved.')
+            
+            return HttpResponseRedirect(request.path_info)
+    else:
+        form = AnnotForm()
+
+    context = {'genome':genome,'transcript': cds, 'form':form}
+    return render(request, 'genomeBact/transcript_detail.html', context)
+    
 @login_required(login_url='login')
 def transcript_annot(request, transcript):
     transcript = Transcript.objects.get(transcript=transcript)
@@ -317,13 +356,62 @@ def transcript_annot(request, transcript):
 @login_required(login_url='login')
 @admin_only
 def admin(request):
+    nb_val = User.objects.filter(groups__name = "Validateur").count()
+    nb_annot  = User.objects.filter(groups__name = "Annotateur").count()
+    nb_read = User.objects.filter(groups__name = "Lecteur").count()
 
-    return render(request,'genomeBact/admin.html')
+    all_val = Profile.objects.filter(group = "Validateur")
+    all_annot = Profile.objects.filter(group = "Annotateur")
+    all_read = Profile.objects.filter(group = "Lecteur")
+
+    nb_to_assign = Transcript.objects.filter(status = 'empty').count()
+    nb_to_val = Transcript.objects.filter(status = 'annotated').count()
+    nb_to_annot = Transcript.objects.filter(status = 'assigned').count()
+
+    context = {"nb_val":nb_val, "nb_annot":nb_annot, "nb_read":nb_read, "all_val":all_val, "all_annot":all_annot, "all_read":all_read,
+               "nb_to_assign":nb_to_assign, "nb_to_val":nb_to_val, "nb_to_annot":nb_to_annot }
+    return render(request,'genomeBact/admin.html', context)
+
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['Admin', 'Validateur','Annotateur'])
+def workspace(request):
+    transcripts_to_annotate = request.user.profile.to_annotate.all()
+    #transcripts_to_annotate = request.user.profile.transcript_set.all()
+    transcripts_to_assign = Transcript.objects.filter(status = 'empty')
+    transcripts_to_validate = Transcript.objects.filter(status = 'annotated')
+    annotators = User.objects.filter(groups__name='Annotateur')
+
+    if request.method == 'POST':
+        annotator_chosen = request.POST.get('annotator')
+        transcript_chosen = request.POST.get('transcript_annot')
+        
+        if( request.user.groups.all()[0].name == 'Validateur'):
+            ### ASSIGNING A TRANSCRIPT
+            if annotator_chosen != None and transcript_chosen!= None:
+                    
+                #transcript_chosen = Transcript.objects.get(transcript=transcript_chosen)
+                
+                Transcript.objects.filter(transcript=transcript_chosen).update(annotator = Profile.objects.get(name=annotator_chosen))
+                Transcript.objects.filter(transcript=transcript_chosen).update(validator = Profile.objects.get(name=request.user.username))
+                Transcript.objects.filter(transcript=transcript_chosen).update(status = 'assigned')
+                
+                messages.success(request, transcript_chosen +' was assigned for ' + annotator_chosen + ".")
+
+            else:
+                messages.info(request, " Please select an Annotator AND a Transcript" )
+
+
+    context = {'transcripts_to_annotate':transcripts_to_annotate, 'transcripts_to_assign':transcripts_to_assign, 'annotators':annotators,'transcripts_to_validate':transcripts_to_validate}
+    return render(request,'genomeBact/workspace.html', context)
 
 @login_required(login_url='login')
 def settings(request):
-    
-    return render(request,'genomeBact/user_settings.html')
+    all_con = request.user.connexion_set.all()
+
+    context = {'connexions': all_con}
+    return render(request, 'genomeBact/user_settings.html', context)
+
+
 
 @login_required(login_url='login')
 def validator(request):
@@ -357,6 +445,8 @@ def transcript_to_annot(request):
 
 
 ### NOT CURRENTLY WORKING NEED TO ADD GENOME FOR WHICH TRANSCRIPTS ARE UPLOADED ###
+@login_required(login_url='login')
+@admin_only
 def transcript_upload(request):
 
     if request.method == 'POST':
