@@ -101,15 +101,16 @@
                                 </form>  
                                 {% endif %}
                                                  
-                                <!-- Single comment-->
+                                <!-- Partie Annotation-->
                                 <div class="d-flex">
 
-                                    <div class="d-flex flex-row user-info" >
+                                    <div class="d-flex flex-row" >
                                         <div class="d-flex flex-column justify-content-start ml-2" >
                                             <div id="display-annot">
-                                                <span class="fw-bold">Pseudo Annot : {{ transcript.annotator }}</span>
-                                                <span class="text-secondary mb-3"> Date : {{ transcript.status_date }} </span>
-                                                
+                                                <div class="d-flex flex-column justify-content-start ml-2">
+                                                    <span class="fw-bold">{{ transcript.annotator }}</span>
+                                                    <span class="text-secondary mb-3">{{ transcript.status_date }} </span>
+                                                </div>
                                                 <div class="d-flex">
                                                 <table class="table-light row">
                                                   <tr> 
@@ -216,8 +217,7 @@
                     <div class="card mb-4">
                         <div class="card-header fw-bolder">Infos</div>
                         <div class="card-body">
-
-                                    <table class="d-flex table-light">
+                                    <table class="table-light">
                                         <tr> 
                                             <td class="fw-bold figure-caption">Accession : </td>
                                             <td class="text-end"> {{ transcript.transcript }} </td>
@@ -240,16 +240,11 @@
                     </div>
                     <!-- Side widget-->
                     <div class="card mb-4">
-
-                        <div class="card-header fw-bolder">Statut</div>
-                        <div class="card-body">{{ transcript.status }}</div>
-
                         <div class="card-header fw-bolder">Statut</div>
                         <div class="card-body"> {{ transcript.status }}</div>
                         {% if transcript.status == 'validated' %}
                             <span class="text-secondary"> validated by : {{ transcript.validator }}</span>
                         {% endif %}
-
                     </div>
                 </div>
             </div>
