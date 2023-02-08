@@ -102,7 +102,7 @@
                             {% csrf_token %}
                             <h2>Let's find your dream transcript! </h2>
                             
-                            <div class="form-label tooltip">
+                            <div class="form-label">
                                 <input type="text" class="form-control" placeholder="Accession number"  name="accession" />
                                 <span class="tooltiptext">tu le connais par coeur evidemment</span>
                             </div>
@@ -116,6 +116,14 @@
 
                             <div class="form-label list-inline-item">
                                 <input type="text" class="form-control" placeholder="Specie"  name="specie"/>
+                            </div>
+                            
+                            <div class="form-label list-inline-item">
+                                <input type="number" class="form-control" placeholder="Start"  name="start"/>
+                            </div>
+
+                            <div class="form-label list-inline-item">
+                                <input type="number" class="form-control" placeholder="Stop"  name="stop"/>
                             </div>
 
                              <!--                 

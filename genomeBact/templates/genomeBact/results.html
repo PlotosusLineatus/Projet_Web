@@ -24,10 +24,9 @@
 <!-- Liste des transcripts -->
 <div class="container px-4 px-lg-5">
     <div class="post-preview">
-        {% for transcript in trasncripts %}
-            <h2><a href="{% url 'genome-detail' genome.specie %}">{{ genome.specie }}</a></h5>
-            <p class=" "post-meta>0% completed</p>
-            <hr class="my-4" />
+        {% for transcript in transcripts %}
+              <li>    <a href="{% url 'transcript-detail' specie=genome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a>
+                </li>			
         {% endfor %}
     </div>
 </div>
