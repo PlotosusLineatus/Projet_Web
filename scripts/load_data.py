@@ -1,47 +1,12 @@
 from django.core import management
 from genomeBact.models import Transcript, Genome
 from django.db import transaction
+from scripts.utils import *
 
 
-# Penser à regarder la disposition management/commands comme alternative à runscript
-
-def get_start_stop(description):
-    
-    import re
-    
-    # Est attendu un pattern comme *Chromosome:1:5528445:1* dans tous les headers des FASTAs
-    match = re.search(r':(\d+:\d+)', description)
-    temp =  match.group(1).split(":")
-    temp = list(map(int, temp))
-
-    try: 
-        len(temp) == 2
-        return temp
-
-    except AssertionError:
-        
-        print("Oopsie : %s" % description)
-        return None
-
-def get_chromosome(description):
-
-    import re
-
-    match = re.search(r"chromosome:(\w+)", description)
-    temp = match.group(1)
-
-    try: 
-        len(temp) == 1
-        return temp
-
-    except AssertionError:
-        
-        print("Mauvais parsing du header du génome de  : %s" % description)
-        return None
-
-#def get_data(absolute_path = "/Users/Soeur/Documents/ECOLE/ORSAY/M2/9.web/PROJET/data_less"):
+def get_data(absolute_path = "/Users/Soeur/Documents/ECOLE/ORSAY/M2/9.web/PROJET/data_less"):
 #def get_data(absolute_path = "/home/noemie/Documents/data"):
-def get_data(absolute_path = "/home/sherman/Documents/M2/WEB/data"):
+#def get_data(absolute_path = "/home/sherman/Documents/M2/WEB/data"):
 
 
     import os
@@ -151,6 +116,7 @@ def run():
 
         genomes_data.append(Genome(sequence = genome_dict[strain]["sequence"],
                                 chromosome = genome_dict[strain]["chromosome"],
+                                length = len(genome_dict[strain]["sequence"]),
                                 specie = strain))
 
     Genome.objects.bulk_create(genomes_data)
@@ -174,6 +140,8 @@ def run():
                                                                 seq_cds = transcripts_dict[tsc_name]["AA"],
                                                                 seq_nt = transcripts_dict[tsc_name]["NT"],
                                                                 start = transcripts_dict[tsc_name]["start"],
-                                                                stop = transcripts_dict[tsc_name]["stop"]))
+                                                                stop = transcripts_dict[tsc_name]["stop"],
+                                                                length_nt = int(len(transcripts_dict[tsc_name]["NT"])),
+                                                                length_pep = int(len(transcripts_dict[tsc_name]["AA"]))))
 
         Transcript.objects.bulk_create(transcripts_of_current_genome)

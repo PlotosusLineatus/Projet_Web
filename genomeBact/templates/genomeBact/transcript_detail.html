@@ -2,8 +2,10 @@
 
 {% block content %}
 
+<!--
     <a id="myLink" href = test.html></a>
 
+-->
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
             <div class="container px-4 px-lg-5">
@@ -41,7 +43,7 @@
         </header>
         <!-- Page content-->
         <div class="container mt-5">
-            <a href="{% url 'transcript-list' genome.specie %}">Résultats précédents</a>
+            <a href="{% url 'transcript-list' genome.specie %}">< Résultats précédents</a>
             <div class="row">
                 <div class="col-lg-8">
                     <!-- Post content-->
@@ -49,11 +51,16 @@
                         <!-- Séquence-->
                         <section class="mb-5">
                             <h2 class="fw-bolder mb-4 mt-5">Séquences</h2>
-                            <h5>Séquence nucléotidique</h5>
-                            <p> WOW</p>
-                            <h5>Séquence peptidique</h5>
-                            <p>WOW2</p>
-                            <!-- <p class="fs-5 mb-4"><span style = "word-break : break-all;">{{ genome.sequence }}</span></p> -->
+                            <div class="input-group-sm">
+                                <h5>Séquence nucléotidique</h5>
+                                <button class="btn-secondary btn" name="button-FASTA_nt" type="button">FASTA</button>
+                            </div>
+                            <p class = "d-flex flex-row small" style=" word-break:break-all;"> {{ transcript.seq_nt }} </p>
+                            <div class="'input-group-sm">
+                                <h5>Séquence peptidique</h5>
+                                <button class="btn-secondary btn" name="button-FASTA_cds" type="button">FASTA</button>
+                            </div>    
+                            <p class = "d-flex flex-row small" style=" word-break:break-all;"> {{ transcript.seq_cds }} </p>
                         </section>
                     </article>
                     <!--Liste des tCDS-->
@@ -96,16 +103,37 @@
                                                  
                                 <!-- Single comment-->
                                 <div class="d-flex">
+
                                     <div class="d-flex flex-row user-info" >
                                         <div class="d-flex flex-column justify-content-start ml-2" >
                                             <div id="display-annot">
                                                 <span class="fw-bold">Pseudo Annot : {{ transcript.annotator }}</span>
-                                                <span class="text-secondary"> Date : {{ transcript.status_date }} </span>
-                                                <li>Gene : {{ transcript.gene }}</li>
-                                                <li>Gene biotype : {{ transcript.gene_biotype }}</li>
-                                                <li>Transcript biotype : {{ transcript.transcript_biotype }}</li>
-                                                <li>Gene symbol : {{ transcript.gene_symbol }}</li>
-                                                <li>Description :  {{ transcript.description }}</li>
+                                                <span class="text-secondary mb-3"> Date : {{ transcript.status_date }} </span>
+                                                
+                                                <div class="d-flex">
+                                                <table class="table-light row">
+                                                  <tr> 
+                                                    <td class="figure-caption">Gene : </td>
+                                                    <td class="text-end"> {{ transcript.gene }} </td>
+                                                  </tr>
+                                                  <tr> 
+                                                    <td class="figure-caption">Gene biotytpe: </td>
+                                                    <td class="text-end"> {{ transcript.gene_biotype }} </td>
+                                                  </tr>
+                                                  <tr> 
+                                                    <td class="figure-caption">Transcript biotype : </td>
+                                                    <td class="text-end"> {{ transcript.transcript_biotype }} </td>
+                                                  </tr>
+                                                  <tr> 
+                                                    <td class="figure-caption">Gene symbol : </td>
+                                                    <td class="text-end"> {{ transcript.gene_symbol }} </td>
+                                                  </tr>
+                                                  <tr> 
+                                                    <td class="figure-caption"> Description : </td>
+                                                    <td class="text-end"> {{ transcript.description }} </td>
+                                                  </tr>
+                                                </table>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -151,46 +179,77 @@
                                 </form>
                                 {% endif %}
                                 <button id="modify_cancel" style="float: right; display: none;" onclick="hideDiv()">Cancel</button>  
+
                             </div>
 
                     </section>
                 </div>
+                
                 <!-- Side widgets-->
                 <div class="col-lg-4">
                     <!-- Widget BLAST-->
                     <div class="card mb-4">
-                        <div class="card-header">Autres ressources :</div>
-                        <div class="card-body">
-                            <div class="input-group">
-                                <button class="btn btn-danger" id="button-blatp" type="button">BLASTp</button>
-                                <button class="btn btn-danger" id="button-blastn" type="button">BLASTn</button>
-                                <button class="btn btn-danger" id="button-uniprot" type="button">Uniprot</button>
+                        <form action="" method="POST" name="ressources">
+                            {% csrf_token %}
+                            <div class="card-header">Autres ressources :</div>
+                                <div class="card-body">
+                                    <div class="input-group">
+                                        <a type="button" class="btn btn-danger" id = "a1"
+                                            href="https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastn&PAGE_TYPE=BlastSearch&LINK_LOC=blasthome&QUERY={{transcript.seq_nt}}&JOB_TITLE={{transcript.transcript}}"
+                                            value="button" target="_blank" class="button">BLASTn
+                                        </a>
+                                        <a type="button" class="btn btn-danger" id = "a2"
+                                            href="https://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastp&PAGE_TYPE=BlastSearch&LINK_LOC=blasthome&QUERY={{transcript.seq_cds}}&JOB_TITLE={{transcript.transcript}}"
+                                            value="facebook" target="_blank" class="button">BLASTp
+                                        </a>
+                                        <a type="button" class="btn btn-danger" id = "a3"
+                                            href="https://www.uniprot.org/uniprotkb?query={{transcript.transcript}}"
+                                            value="facebook" target="_blank" class="button">Uniprot
+                                        </a>
+                                    </div
+                                </div>
                             </div>
-                        </div>
+                        </form>
+
                     </div>
                     <!-- Categories widget-->
                     <div class="card mb-4">
-                        <div class="card-header">Infos</div>
+                        <div class="card-header fw-bolder">Infos</div>
                         <div class="card-body">
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <ul class="list-unstyled mb-0">
-                                        <li> transcript : {{ transcript.transcript }}</li>
-                                        <li> Specie : {{ transcript.chromosome.chromosome }}</li>
-                                        <li> start : {{ transcript.start }}</li>
-                                        <li> stop : {{ transcript.stop }}</li>
-                                    </ul>
-                                </div>
-                            </div>
+
+                                    <table class="d-flex table-light">
+                                        <tr> 
+                                            <td class="fw-bold figure-caption">Accession : </td>
+                                            <td class="text-end"> {{ transcript.transcript }} </td>
+                                        </tr>
+                                        <tr> 
+                                            <td class="fw-bold figure-caption">Specie </td>
+                                            <td class="text-end"> {{ transcript.chromosome.chromosome }} </td>
+                                        </tr>
+                                        <tr> 
+                                            <td class="fw-bold figure-caption">Start </td>
+                                            <td class="text-end"> {{ transcript.start }} </td>
+                                        </tr>
+                                        <tr> 
+                                            <td class="fw-bold figure-caption">Stop </td>
+                                            <td class="text-end"> {{ transcript.stop }} </td>
+                                        </tr>
+                                    </table>
+
                         </div>
                     </div>
                     <!-- Side widget-->
                     <div class="card mb-4">
-                        <div class="card-header">Statut</div>
+
+                        <div class="card-header fw-bolder">Statut</div>
+                        <div class="card-body">{{ transcript.status }}</div>
+
+                        <div class="card-header fw-bolder">Statut</div>
                         <div class="card-body"> {{ transcript.status }}</div>
                         {% if transcript.status == 'validated' %}
                             <span class="text-secondary"> validated by : {{ transcript.validator }}</span>
                         {% endif %}
+
                     </div>
                 </div>
             </div>
