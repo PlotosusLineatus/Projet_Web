@@ -4,8 +4,7 @@
 <header class="masthead" style="background-color: #8DAA9D">
     <div class="container position-relative px-4 px-lg-5">
         <div class="post-heading">
-            <h1>Collection : </h1>
-            <h2 class="subheading"> Ensemble des génomes</h2>
+            <h1>Results : </h1>
         </div>
     </div>
 </header>
@@ -25,8 +24,8 @@
 
 {% if transcripts %}
 <!-- Liste des transcripts -->
-<div class="d-flex navbar-nav-scroll">
-    <div class="ms-3 ">
+<div class="container px-4 px-lg-5">
+    <div class="post-preview navbar-nav-scroll">
         <div class="fw-bold">
             {% for transcript in transcripts %}
             <p> <a href="{% url 'transcript-detail' specie=transcript.chromosome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a> </p>
