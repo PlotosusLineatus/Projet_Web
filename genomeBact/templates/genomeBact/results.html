@@ -17,7 +17,6 @@
     <div class="post-preview">
         {% for genome in genomes %}
             <h2><a href="{% url 'genome-detail' genome.specie %}">{{ genome.specie }}</a></h5>
-            <p class=" "post-meta>0% completed</p>
             <hr class="my-4" />
         {% endfor %}
     </div>
@@ -37,5 +36,9 @@
 {% endif %}
 <!-- Télécharger Fasta -->
 
+<form action="" method="POST">
+    {% csrf_token %}
+    <input type="submit" value="Download the database" name="download">
+</form>
 
 {% endblock %}

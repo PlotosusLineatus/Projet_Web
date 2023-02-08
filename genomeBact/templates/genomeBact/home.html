@@ -18,36 +18,6 @@
         <link href="{% static 'genomeBact/styleshome.css' %}" rel="stylesheet" />
     </head>
 
-    <style>
-
-    .tooltip {
-         text-align: center;
-         background-color: transparent;
-         border: 0px !important;
-         width: 280px;
-         color: #666666;
-         font-size: 14px;
-    }
-    
-    button .why {
-          text-decoration: underline;
-         font-style: Italic;
-    }
-    
-    button .tip { 
-         display: none; 
-    }
-    
-    button:hover .why {
-          display: none;
-     }
-    
-    button:hover .tip { 
-         display: inline;
-         color: #222525;
-     }
-    
-    </style>
     <body>
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
@@ -107,10 +77,10 @@
                                 <span class="tooltiptext">tu le connais par coeur evidemment</span>
                             </div>
 
-                            <div class="form-outline">
+                            <div class="form-label list-inline-item">
                                 <input type="number" class="form-control" placeholder="Minimum length"  name="min_length" />
                             </div>
-                            <div class="form-outline">
+                            <div class="form-label list-inline-item">
                                 <input type="number" class="form-control" placeholder="Maximum length"  name="max_length" />
                             </div>
 
@@ -126,16 +96,17 @@
                                 <input type="number" class="form-control" placeholder="Stop"  name="stop"/>
                             </div>
 
-                            <div class="form-outline">
+                            <div class="form-label tooltip">
+
                                 <input type="text" class="form-control" placeholder="Nucleotidic substring : ATGCN only" name="sub_nt" pattern="[ATGCN]+" />
                             </div>
-                            <div class="form-outline">
+                            <div class="form-label">
                                 <input type="text" class="form-control" placeholder="Peptidic substring : 1 letter AA only" name="sub_pep" pattern="[ARNDCQEGHILKMFPSTWYV]+"/>
 
                             </div>
                             
-                            <div class="form-select">
-                                <select class="form-control" name="query_type" required>
+                            <div class="form-label">
+                                <select class="form-control form-select" name="query_type" required>
                                     <option>Genome</option>
                                     <option>Transcript</option>
                                 </select>
