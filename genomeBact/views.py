@@ -134,9 +134,20 @@ def home(request):
 
             return redirect("results")
 
+        else:
+
+            # Return empty research fields to results/ if user don't submit button
+            request.session["accession"] = ""
+            request.session["specie"] = ""
+            request.session["max"] = ""
+            request.session["min"] = ""
+            request.session["sub_nt"] = ""
+            request.session["sub_pep"] = ""
+            request.session["query_type"] = ""
+            request.session["start"] = ""
+            request.session["stop"] = ""
 
     else:
-
         # Return empty research fields to results/ if user don't submit button
         request.session["accession"] = ""
         request.session["specie"] = ""
@@ -145,6 +156,8 @@ def home(request):
         request.session["sub_nt"] = ""
         request.session["sub_pep"] = ""
         request.session["query_type"] = ""
+        request.session["start"] = ""
+        request.session["stop"] = ""
 
     return render(request,'genomeBact/home.html')
 

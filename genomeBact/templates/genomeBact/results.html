@@ -29,7 +29,7 @@
     <div class="ms-3 ">
         <div class="fw-bold">
             {% for transcript in transcripts %}
-            <p> <a href="{% url 'transcript-detail' specie=trancript.chromosome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a> </p>
+            <p> <a href="{% url 'transcript-detail' specie=transcript.chromosome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a> </p>
             {% endfor %}
         </div>
     </div>

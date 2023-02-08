@@ -74,7 +74,6 @@
                             
                             <div class="form-label">
                                 <input type="text" class="form-control" placeholder="Accession number"  name="accession" />
-                                <span class="tooltiptext">tu le connais par coeur evidemment</span>
                             </div>
 
                             <div class="form-label list-inline-item">
@@ -87,6 +86,8 @@
                             <div class="form-label list-inline-item">
                                 <input type="text" class="form-control" placeholder="Specie"  name="specie"/>
                             </div>
+
+                           <div></div>
                             
                             <div class="form-label list-inline-item">
                                 <input type="number" class="form-control" placeholder="Start"  name="start"/>
@@ -97,11 +98,12 @@
                             </div>
 
                             <div class="form-label tooltip">
-
-                                <input type="text" class="form-control" placeholder="Nucleotidic substring : ATGCN only" name="sub_nt" pattern="[ATGCN]+" />
+                                <input type="text" class="form-control" placeholder="Nucleotidic substring" name="sub_nt" pattern="[ATGCN]+" />
+                                <span class="tooltiptext"> /!\ ATGCN only</span>
                             </div>
-                            <div class="form-label">
-                                <input type="text" class="form-control" placeholder="Peptidic substring : 1 letter AA only" name="sub_pep" pattern="[ARNDCQEGHILKMFPSTWYV]+"/>
+                            <div class="form-label tooltip">
+                                <input type="text" class="form-control" placeholder="Peptidic substring" name="sub_pep" pattern="[ARNDCQEGHILKMFPSTWYV]+"/>
+                                <span class="tooltiptext"> /!\ Use the 1 letter Amino-Acid code. Not needed for genome search</span>
 
                             </div>
                             
