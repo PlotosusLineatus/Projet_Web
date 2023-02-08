@@ -10,16 +10,32 @@
     </div>
 </header>
 
-<!-- Liste des génomes-->
-    <div class="container px-4 px-lg-5">
-        <div class="post-preview">
-            {% for genome in genome %}
-                <h2><a href="{% url 'genome-detail' genome.specie %}">{{ genome.specie }}</a></h5>
-                <p class=" "post-meta>0% completed</p>
-                <hr class="my-4" />
-            {% endfor %}
-        </div>
+<!-- Liste des génomes -->
+<div class="container px-4 px-lg-5">
+    <div class="post-preview">
+        {% for genome in genomes %}
+            <h2><a href="{% url 'genome-detail' genome.specie %}">{{ genome.specie }}</a></h5>
+            <p class=" "post-meta>0% completed</p>
+            <hr class="my-4" />
+        {% endfor %}
     </div>
+</div>
 
+<!-- Liste des transcripts -->
+<div class="container px-4 px-lg-5">
+    <div class="post-preview">
+        {% for transcript in trasncripts %}
+            <h2><a href="{% url 'genome-detail' genome.specie %}">{{ genome.specie }}</a></h5>
+            <p class=" "post-meta>0% completed</p>
+            <hr class="my-4" />
+        {% endfor %}
+    </div>
+</div>
+<!-- Télécharger Fasta -->
+<form action="" method="POST">
+    {% csrf_token %}
+    <input type="submit" value="Submit" name="download">
+</form>
+    
 
 {% endblock %}

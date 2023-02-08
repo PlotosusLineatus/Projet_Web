@@ -17,6 +17,37 @@
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="{% static 'genomeBact/styleshome.css' %}" rel="stylesheet" />
     </head>
+
+    <style>
+
+    .tooltip {
+         text-align: center;
+         background-color: transparent;
+         border: 0px !important;
+         width: 280px;
+         color: #666666;
+         font-size: 14px;
+    }
+    
+    button .why {
+          text-decoration: underline;
+         font-style: Italic;
+    }
+    
+    button .tip { 
+         display: none; 
+    }
+    
+    button:hover .why {
+          display: none;
+     }
+    
+    button:hover .tip { 
+         display: inline;
+         color: #222525;
+     }
+    
+    </style>
     <body>
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
@@ -79,10 +110,10 @@
                                 <input type="text" class="form-control" placeholder="Accession number"  name="accession" />
                             </div>
                             <div class="form-outline">
-                                <input type="number" class="form-control" placeholder="Minimum length"  name="max_length" />
+                                <input type="number" class="form-control" placeholder="Minimum length"  name="min_length" />
                             </div>
                             <div class="form-outline">
-                                <input type="number" class="form-control" placeholder="Maximum length"  name="min_length" />
+                                <input type="number" class="form-control" placeholder="Maximum length"  name="max_length" />
                             </div>
 
                             <div class="form-outline">
@@ -90,7 +121,10 @@
                             </div>
 
                             <div class="form-outline">
-                                <input type="text" class="form-control" placeholder="Substring" name="substring"/>
+                                <input type="text" class="form-control" placeholder="Nucleotidic substring : ATGCN only" name="sub_nt" pattern="[ATGCN]+" />
+                            </div>
+                            <div class="form-outline">
+                                <input type="text" class="form-control" placeholder="Peptidic substring : 1 letter AA only" name="sub_pep" pattern="[ARNDCQEGHILKMFPSTWYV]+"/>
                             </div>
                             
                             <div class="col-lg-12 col-md-3 col-sm-12 p-0">

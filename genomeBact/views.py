@@ -26,6 +26,8 @@ def user_logout(request):
 
 @unauthenticated_user
 def user_login(request):
+
+    request.session.clear()
     if request.method == 'POST':
         username = request.POST.get('username') 
         password = request.POST.get('password') 
@@ -65,58 +67,127 @@ def register(request):
 @login_required(login_url='login')
 def home(request):
 
+    
+
+    # Does user submit anything ?
     if request.method == "POST":    
       
-    
-        # On regarde si le code d'accession contient quelque chose
+        # User submits but don't fill any research field
         if request.POST.keys() is not None:
 
+            # Genome or transcript ?
             query_type = request.POST.get("query_type")
+            request.session["query_type"] = query_type
 
-            # Si l'utilisateur a sélectionné " Genome " ( au lieu de " Transcript ")
             if query_type == "Genome":
 
                 request.session["accession"] = request.POST.get("accession", "")
                 request.session["specie"] = request.POST.get("specie", "")
+                request.session["max"] = request.POST.get("max_length")
+                request.session["min"] = request.POST.get("min_length")
 
-                if request.POST.get("substring") is not None:
-                    if len(request.POST.get("substring")) < 3:
-                        request.session["substring"] = ""
+                if request.POST.get("sub_nt"):
+
+                    # Minimum substring length to search
+                    if len(request.POST.get("sub_nt")) < 3:
+
+                        request.session["sub_nt"] = ""
                     
                     else:
-                        request.session["substring"] = request.POST.get("substring")
+
+                        request.session["sub_nt"] = request.POST.get("sub_nt")
                 else:
-                    request.session["substring"] = request.POST.get("substring")
 
-                max_length = request.POST.get("max_length")
-                request.session["max_length"] = int(max_length) if max_length.strip() else 0
-                min_length = request.POST.get("min_length")
-                request.session["min_length"] = int(min_length) if min_length.strip() else 0
-
-
+                    request.session["sub_nt"] = ""
 
                 return redirect("results")
 
             if query_type == "Transcript":
 
-                request.sesion["accession"] = request.POST.get("accession", "")
+                accession= request.POST.get("accession", "")
+                specie = request.POST.get("specie", "")
 
-                return redirect("transcript_detail")
+                default_max = get_max_length()
+                max_ = request.POST.get("max_length", default_max)
+                min_ = request.POST.get("min_length", 0)
+
+                if request.POST.get("sub_nt"):
+
+                    # Minimum substring length to search
+                    if len(request.POST.get("sub_nt")) < 3:
+
+                        sub_nt = ""
+                    
+                    else:
+
+                        sub_nt = request.POST.get("sub_nt")
+                else:
+
+                    sub_nt = ""
+
+
+                if request.POST.get("sub_pep"):
+
+                    # Minimum substring length to search
+                    if len(request.POST.get("sub_pep")) < 3:
+
+                        sub_pep = ""
+                    
+                    else:
+
+                        sub_pep = request.POST.get("sub_pep")
+                else:
+
+                    sub_pep = ""
+
+                if ( not request.POST.get("specie") ) or request.POST.get("specie") == "":
+
+                    query_max = Q(length__gte = min_)
+                    query_min = Q(length__lte = max_)
+                    query_access = Q(chromosome__contains = accession)
+                    query_sub_nt = Q(seq_nt__contains = sub_nt)
+                    query_sub_pep = Q(seq_cds__contains = sub_pep)
+                    query_specie = Q(specie__contains = specie)
+
+                    Transcripts = Transcript.objects.filter(query_max & query_min & query_access & query_sub_nt & query_sub_pep)
+
+                    # Pour plus tard : transcripts = Transcript.objects.filter(chromosome__in = genomes)
+                    # retourne les trancripts des ( )
+
+
+                return render(request, "genomeBact/transcript_list.html",{'genome': genome, 'transcript': transcript})
+
+    # Return empty research fields to results/ if user don't submit button
+    request.session["accession"] = ""
+    request.session["specie"] = ""
+    request.session["max"] = ""
+    request.session["min"] = ""
+    request.session["substring"] = ""
+    request.session["query_type"] = ""
 
     return render(request,'genomeBact/home.html')
 
-def download_transcripts(request):
+def download_csv(request, transcripts = None, genomes = None):
+
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="transcripts.csv"'
 
     writer = csv.writer(response)
     writer.writerow(['Accession', 'Sequence'])
 
-    transcripts = Transcript.objects.all()
-    for transcript in transcripts:
-        writer.writerow([transcript.transcript, transcript.seq_cds])
+    if transcripts:
 
-    return response
+        for transcript in transcripts:
+            writer.writerow([transcript.transcript, transcript.seq_cds])
+
+        return response
+
+    elif genomes:
+
+        for genome in genomes:
+
+            writer.writerow([genome.chromosome, genome.sequence])
+        return response
 
 
 @login_required(login_url='login')
@@ -124,27 +195,60 @@ def download_transcripts(request):
 # If user don't search anything from home page, return full list of genomes
 def results(request):
 
-    keys = ["accession","specie","substring"]
+    
+    # Delete session without deleting user current logs
+    keys = ["accession","specie","sub_nt","sub_pep", "max","min", "query_type"]
+    keys = [key for key in keys if key in request.session.keys() ]
 
-    if ("accession" or "specie" or "substring") in request.session.keys():
+    
+    accession = request.session["accession"] 
+    specie = request.session["specie"]
+    substring = request.session["substring"]
+    substring = substring.upper() # Just in case
 
-        accession = request.session["accession"] ## je récupère la variable dans les cookies
-        specie = request.session["specie"]
-        substring = request.session["substring"]
-        substring = substring.upper()
+    # For some reason request.session doesn't store request.POST.get(name, default_integer) default output as integer but rather as ''
+    max_ = request.session["max"]
+    if max_ == '':
+        max_ = get_max_length()
+    min_ = request.session["min"]
+    if min_ == '':
+        min_ = 0
 
-        genome = Genome.objects.filter(Q(specie__contains = specie) & Q(sequence__contains = substring) & Q(chromosome__contains = accession))
+    query_max = Q(length__gte = min_)
+    query_min = Q(length__lte = max_)
+    query_access = Q(chromosome__contains = accession)
+    query_sub = Q(sequence__contains = substring)
+    query_specie = Q(specie__contains = specie)
+
+    genomes = Genome.objects.filter(query_max & query_min & query_access & query_sub & query_specie)
+
+    #for key in keys:
+    #    del request.session[key]
+
+        
+    if request.method == 'POST':
 
 
-        for key in keys:
-            del request.session[key] ## Je supprime les cookies car on en a plus besoin
+        if not genomes:
 
-        return render(request, 'genomeBact/results.html',{'genome': genome}) 
+            return render(request, '404.html', status=404)
 
-    else:
-        # On accède à la page normalement si l'input de l'user est inexistant  
-        genome = Genome.objects.all()
-        return render(request, 'genomeBact/results.html',{'genome': genome}) 
+        else:
+
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="models.csv"'
+
+            writer = csv.writer(response)
+            writer.writerow(['Number', 'Text'])
+
+        
+            for genome in genomes:
+                writer.writerow([genome.chromosome, genome.specie])
+
+            return response
+        
+    return render(request,'genomeBact/results.html', {'genomes': genomes}) 
+
 
        
 
@@ -162,10 +266,23 @@ def genome_detail(request, specie):
 
 @login_required(login_url='login')
 def transcript_list(request, specie):
+
+
+    
     genome = Genome.objects.get(specie=specie)
     transcript = Transcript.objects.filter(chromosome = genome.chromosome)
 
     return render(request, 'genomeBact/transcript_list.html',{'genome': genome, 'transcript': transcript})
+
+
+
+
+
+
+
+
+
+
 
 @login_required(login_url='login')
 def transcript_create(request, specie):

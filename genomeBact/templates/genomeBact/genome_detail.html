@@ -33,7 +33,7 @@
         </header>
         <!-- Page content-->
         <div class="container mt-5">
-            <a href="{% url 'results' %}">Résultats précédents</a>
+            <a href="{% url 'results' %}"> < Résultats précédents</a>
             <div class="row">
                 <div class="col-lg-8">
                     <!-- Post content-->
@@ -71,9 +71,10 @@
                         <div class="card-header">Autres ressources :</div>
                         <div class="card-body">
                             <div class="input-group">
-                                <button class="btn btn-danger" id="button-blatp" type="button">BLASTp</button>
-                                <button class="btn btn-danger" id="button-blastn" type="button">BLASTn</button>
-                                <button class="btn btn-danger" id="button-uniprot" type="button">Uniprot</button>
+                                <a type="button" class="btn btn-danger" id = "a3"
+                                        href="https://www.uniprot.org/uniprotkb?query={{genome.specie}}"
+                                        value="facebook" target="_blank" class="button">Uniprot
+                                </a>
                             </div>
                         </div>
                     </div>

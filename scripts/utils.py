@@ -132,6 +132,6 @@ def get_max_length():
     g = Genome.objects.all()
 
     for item in g:
-        _list.append(g.length)
+        _list.append(item.length)
 
     return max(_list)
