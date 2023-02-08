@@ -6,6 +6,8 @@ from django.contrib.auth.models import Group, User
 from django.db.models.functions import Now
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.urls import reverse
+from django.db.models import Q
+import csv
 
 
 from Bio import SeqIO
@@ -15,12 +17,16 @@ from .models import Genome,Transcript,Profile, Connexion
 from .forms import GenomeForm, TranscriptForm, UploadFileForm, CreateUserForm, AnnotForm, ProfileForm
 from .decorators import unauthenticated_user, allowed_users, admin_only
 
+from scripts.utils import get_max_length
+
 def user_logout(request):
     logout(request)
     return redirect('login')
 
 @unauthenticated_user
 def user_login(request):
+
+    request.session.clear()
     if request.method == 'POST':
         username = request.POST.get('username') 
         password = request.POST.get('password') 
@@ -74,38 +80,194 @@ def register(request):
 
 @login_required(login_url='login')
 def home(request):
-   
+
+    # Does user submit anything ?
     if request.method == "POST":    
+      
+        # User submits but don't fill any research field
+        if request.POST.keys() is not None:
 
-        user_input = request.POST.get('accession', None)
-
-        # On regarde si le code d'accession contient quelque chose
-        if user_input is not None:
-            query_type = request.POST.get("query_type", None)
+            # Genome or transcript ?
+            query_type = request.POST.get("query_type")
+            request.session["query_type"] = query_type
 
             if query_type == "Genome":
-                request.session['user_input'] = user_input ## j'enregistre dans les cookies {'user_input' = user_input}
-                # Je veux retourner sur la page results en renvoyant ce que l'utilisateur a entré pour sa recherche
-                return redirect( 'results')
+
+                request.session["accession"] = request.POST.get("accession", "")
+                request.session["specie"] = request.POST.get("specie", "")
+                request.session["max"] = request.POST.get("max_length")
+                request.session["min"] = request.POST.get("min_length")
+
+                if request.POST.get("sub_nt"):
+
+                    # Minimum substring length to search
+                    if len(request.POST.get("sub_nt")) < 3:
+
+                        request.session["sub_nt"] = ""
+                    
+                    else:
+
+                        request.session["sub_nt"] = request.POST.get("sub_nt")
+                else:
+
+                    request.session["sub_nt"] = ""
+
+                return redirect("results")
+
+            if query_type == "Transcript":
+
+                accession= request.POST.get("accession", "")
+                specie = request.POST.get("specie", "")
+
+                default_max = get_max_length()
+                max_ = request.POST.get("max_length", default_max)
+                min_ = request.POST.get("min_length", 0)
+
+                if request.POST.get("sub_nt"):
+
+                    # Minimum substring length to search
+                    if len(request.POST.get("sub_nt")) < 3:
+
+                        sub_nt = ""
+                    
+                    else:
+
+                        sub_nt = request.POST.get("sub_nt")
+                else:
+
+                    sub_nt = ""
+
+
+                if request.POST.get("sub_pep"):
+
+                    # Minimum substring length to search
+                    if len(request.POST.get("sub_pep")) < 3:
+
+                        sub_pep = ""
+                    
+                    else:
+
+                        sub_pep = request.POST.get("sub_pep")
+                else:
+
+                    sub_pep = ""
+
+                if ( not request.POST.get("specie") ) or request.POST.get("specie") == "":
+
+                    query_max = Q(length__gte = min_)
+                    query_min = Q(length__lte = max_)
+                    query_access = Q(chromosome__contains = accession)
+                    query_sub_nt = Q(seq_nt__contains = sub_nt)
+                    query_sub_pep = Q(seq_cds__contains = sub_pep)
+                    query_specie = Q(specie__contains = specie)
+
+                    Transcripts = Transcript.objects.filter(query_max & query_min & query_access & query_sub_nt & query_sub_pep)
+
+                    # Pour plus tard : transcripts = Transcript.objects.filter(chromosome__in = genomes)
+                    # retourne les trancripts des ( )
+
+
+                return render(request, "genomeBact/transcript_list.html",{'genome': genome, 'transcript': transcript})
+
+    # Return empty research fields to results/ if user don't submit button
+    request.session["accession"] = ""
+    request.session["specie"] = ""
+    request.session["max"] = ""
+    request.session["min"] = ""
+    request.session["substring"] = ""
+    request.session["query_type"] = ""
 
     return render(request,'genomeBact/home.html')
 
+def download_csv(request, transcripts = None, genomes = None):
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="transcripts.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Accession', 'Sequence'])
+
+    if transcripts:
+
+        for transcript in transcripts:
+            writer.writerow([transcript.transcript, transcript.seq_cds])
+
+        return response
+
+    elif genomes:
+
+        for genome in genomes:
+
+            writer.writerow([genome.chromosome, genome.sequence])
+        return response
 
 
 @login_required(login_url='login')
 def results(request):
+'''
     # If user don't search anything from home page, return full list of genomes
     if 'user_input' in request.session:
-        user_input = request.session['user_input'] ## je récupère la variable dans les cookies
-        del request.session['user_input'] ## Je supprime les cookies car on en a plus besoin
+        user_input = request.session['user_input'] 
+        del request.session['user_input'] 
         # Sinon, on utilise l'input de l'user pour filtrer les génomes sur leur num d'accession
         genome = Genome.objects.filter(chromosome__contains = user_input)
         return render(request, 'genomeBact/results.html',{'genome': genome}) 
+'''
 
-    else:
-        # On accède à la page normalement si l'input de l'user est inexistant  
-        genome = Genome.objects.all()
-        return render(request, 'genomeBact/results.html',{'genome': genome}) 
+    
+    # Delete session without deleting user current logs
+    keys = ["accession","specie","sub_nt","sub_pep", "max","min", "query_type"]
+    keys = [key for key in keys if key in request.session.keys() ]
+
+    
+    accession = request.session["accession"] 
+    specie = request.session["specie"]
+    substring = request.session["substring"]
+    substring = substring.upper() # Just in case
+
+    # For some reason request.session doesn't store request.POST.get(name, default_integer) default output as integer but rather as ''
+    max_ = request.session["max"]
+    if max_ == '':
+        max_ = get_max_length()
+    min_ = request.session["min"]
+    if min_ == '':
+        min_ = 0
+
+    query_max = Q(length__gte = min_)
+    query_min = Q(length__lte = max_)
+    query_access = Q(chromosome__contains = accession)
+    query_sub = Q(sequence__contains = substring)
+    query_specie = Q(specie__contains = specie)
+
+    genomes = Genome.objects.filter(query_max & query_min & query_access & query_sub & query_specie)
+
+    #for key in keys:
+    #    del request.session[key]
+
+        
+    if request.method == 'POST':
+
+
+        if not genomes:
+
+            return render(request, '404.html', status=404)
+
+        else:
+
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="models.csv"'
+
+            writer = csv.writer(response)
+            writer.writerow(['Number', 'Text'])
+
+        
+            for genome in genomes:
+                writer.writerow([genome.chromosome, genome.specie])
+
+            return response
+        
+    return render(request,'genomeBact/results.html', {'genomes': genomes}) 
+
 
        
 @login_required(login_url='login')
@@ -119,10 +281,14 @@ def genome_detail(request, specie):
     
 @login_required(login_url='login')
 def transcript_list(request, specie):
+
+
+    
     genome = Genome.objects.get(specie=specie)
     transcripts = Transcript.objects.filter(chromosome = genome.chromosome)
 
     return render(request, 'genomeBact/transcript_list.html',{'genome': genome, 'transcripts': transcripts})
+
 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['Admin','Validateur'])
@@ -143,6 +309,7 @@ def transcript_create(request, specie):
 
 @login_required(login_url='login')
 def transcript_detail(request, specie, transcript):
+
     genome = Genome.objects.get(specie=specie)
     cds = Transcript.objects.get(transcript=transcript)
 

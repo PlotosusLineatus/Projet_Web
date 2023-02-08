@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 User._meta.get_field('email')._unique = True
 User._meta.get_field('email')._required = True
 
+
 '''
    _____ ______ _   _  ____  __  __ ______ 
   / ____|  ____| \ | |/ __ \|  \/  |  ____|
@@ -25,14 +26,13 @@ class Genome(models.Model):
                                 validators=[RegexValidator(regex='^[ATCGN]+$', message = "Sequence must be ATGCN")])
 
 
-    @property
-    def length(self):
-        return len(self.sequence)
+    length = models.IntegerField(null = True)
 
 
 class Profile(models.Model):
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=30 , unique=True)
+
 
     STATUS = ( ('Admin','Admin'), ('Annotateur','Annotateur'), ('Validateur','Validateur'))
     group = models.CharField(max_length=40, choices=STATUS, default='Lecteur')
@@ -49,6 +49,8 @@ class Connexion(models.Model):
     user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     date = models.DateTimeField()
 
+    def __str__(self):
+        return self.name
 
 ''' _____ 
            _   _  _____  _____ _____  _____ _____ _______ 
@@ -70,6 +72,9 @@ class Transcript(models.Model):
 
     seq_nt = models.TextField(default = "",
                                 validators=[RegexValidator(regex='^[ATCGN]+$', message = "Sequence must be ATGCN")])
+
+    length_nt = models.IntegerField(null = True)
+    length_pep = models.IntegerField(null = True)
     start = models.IntegerField(null = True)
     stop = models.IntegerField(null = True)
 
@@ -84,10 +89,13 @@ class Transcript(models.Model):
     status_date = models.DateTimeField(null = True)
     annotator = models.ForeignKey(Profile, null=True, on_delete=models.SET_NULL, related_name="to_annotate")
     validator = models.ForeignKey(Profile, null=True, on_delete=models.SET_NULL)
+    
+    FilterFields = ["length"]
 
     @property
     def length(self):
         return (self.stop - self.start)+1
+
 
 
 
