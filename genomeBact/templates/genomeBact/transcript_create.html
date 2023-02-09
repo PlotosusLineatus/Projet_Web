@@ -4,13 +4,20 @@
 
     <p>Add a transcript for {{ genome.chromosome }} ({{ genome.specie }}).</p>
 
-    <form action="" method="post" novalidate>
+    <form action="" method="post">
 
-    {% csrf_token %}    
+    {% csrf_token %}   
+    <div class="form-select">
+        <select class="form-control" name="genome" required>
+            <option value="" disabled selected hidden> Select genome</option>                          
+            {% for genome in genomes %}
+            <option value="{{ genome.specie }}">{{ genome.specie }}</option>
+            {% endfor %}
+        </select>
+    </div> 
     {{  form.as_p }} 
 
     <input type="submit" value="Envoyer">
     </form>
 
-    <a href="{% url 'transcript-list' genome.specie %}">Cancel</a>
 {% endblock %}

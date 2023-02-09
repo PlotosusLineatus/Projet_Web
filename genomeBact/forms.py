@@ -12,8 +12,7 @@ class GenomeForm(forms.ModelForm):
 class TranscriptForm(forms.ModelForm):
     class Meta:
         model = Transcript
-        #fields = '__all__'
-        exclude = ('chromosome',)
+        fields = ['seq_cds']
 
 class AnnotForm(forms.ModelForm):
 

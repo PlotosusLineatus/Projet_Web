@@ -412,21 +412,25 @@ def transcript_list(request, specie):
 
 
 @login_required(login_url='login')
-@allowed_users(allowed_roles=['Admin','Validateur'])
-def transcript_create(request, specie):
-    genome = Genome.objects.get(specie=specie)
+#@admin_only
+def transcript_create(request):
+    genomes = Genome.objects.all
 
     if request.method == 'POST':
         form = TranscriptForm(request.POST)  
         if form.is_valid():
+            specie = request.POST.get("genome")
+            genome = Genome.objects.get(specie=specie)
             form.instance.chromosome = genome
-            form.save()
-            #return redirect('transcript-list', genome.specie)
-            return redirect('genome-detail', genome.specie)
+            transcript = form.save(commit=False)
+
+            messages.success(request, "The transcript "+ transcript.transcript + " wad added to "+specie)
+            return redirect('admin')
     else:
         form = TranscriptForm()
 
-    return render(request,'genomeBact/transcript_create.html',{'form': form, 'genome' : genome}) 
+    context = {'form': form, "genomes" : genomes}
+    return render(request,'genomeBact/transcript_create.html', context) 
 
 @login_required(login_url='login')
 def transcript_detail(request, specie, transcript):
@@ -449,6 +453,10 @@ def transcript_detail(request, specie, transcript):
             Transcript.objects.filter(transcript=transcript).update(status = 'assigned', status_date = Now())
             messages.success(request, 'Annotations were send back to '+ cds.annotator.name )
             return HttpResponseRedirect(request.path_info)
+        elif 'Delete' in request.POST:
+            cds.delete()
+            messages.success(request, "The transcript "+ cds.transcript + " from "+ specie +" was deleted.")
+            return redirect('results')
         elif form.is_valid():
             annotations = form.save(commit=False)
             gene = annotations.gene
@@ -477,8 +485,14 @@ def transcript_annot(request, transcript):
 @login_required(login_url='login')
 @admin_only
 def admin(request):
+
     if request.method == 'POST':
-        return redirect('register')
+        if "add_genome" in request.POST:
+            return redirect('genome-create')
+        elif "add_transcript" in request.POST:
+            return redirect('transcript-create')
+        elif "add_user" in request.POST:
+            return redirect('register')
 
     nb_val = User.objects.filter(groups__name = "Validateur").count()
     nb_annot  = User.objects.filter(groups__name = "Annotateur").count()

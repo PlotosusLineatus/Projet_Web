@@ -63,10 +63,10 @@ class Connexion(models.Model):
 '''                                                                  
 class Transcript(models.Model):
     STATUS = ( ('assigned','assigned'), ('annotated','annotated'), ('validated','validated'), ('empty','empty'))    
-
+    chromosome = models.ForeignKey(Genome, related_name = "transcript", on_delete = models.CASCADE)
+    
     # One unique ID per CDS / Protein 
     transcript = models.CharField(max_length=50, unique = True, help_text='Chromosome version name')
-    chromosome = models.ForeignKey(Genome, related_name = "transcript", on_delete = models.CASCADE)
     seq_cds = models.TextField(default = "",
                                 validators=[RegexValidator(regex='^[ARNDCQEGHILKMFPSTWYV]+$')])
 

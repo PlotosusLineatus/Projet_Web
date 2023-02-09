@@ -229,7 +229,7 @@
                                     <form method="POST" action="">
                                         {% csrf_token %}
                                         <div class="input-group">
-                                            <button class="btn btn-danger" id="button-blatp" type="submit">add User</button>
+                                            <button class="btn btn-danger" name="add_user" type="submit">add User</button>
                                         </div>
                                     </form>
                                 </div>
@@ -389,11 +389,17 @@
                         <div class="col-lg-4">
                             <!-- Widget BLAST-->
                             <div class="card mb-4">
-                                <div class="card-header"> Genome </div>
-                                <div class="card-body">
-                                    <div class="input-group">
-                                        <button class="btn btn-danger" id="button-blatp" type="button" onclick="window.location.href='{% url 'genome-create' %}'">add Genome</button>
-                                    </div>
+                                <div class="card-header"> Database </div>
+                                <div class="card-body text-center">
+                                    <form method="POST" action="">
+                                        {% csrf_token %}
+                                        <div class="input-group">
+                                            <button class="btn btn-danger" name="add_genome" type="submit">add Genome</button>
+                                        </div>
+                                        <div class="input-group">
+                                            <button class="btn btn-danger" name="add_transcript" type="submit">add Transcript</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                             <!-- Categories widget-->

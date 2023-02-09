@@ -251,6 +251,16 @@ w
                         {% endif %}
 
                     </div>
+
+                    {% if request.user.groups.all.0.name == None %}
+                    <form method="post" action="">
+                        {% csrf_token %}
+                        <div class="text-right" style="float: right; margin-top: 200px;">
+                            <button class="btn btn-danger" name="Delete" id="Delete" type="submit">Delete Transcript</button>
+                        </div>
+                    </form>
+                    {% endif %}
+
                 </div>
             </div>
         </div>
