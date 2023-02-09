@@ -84,7 +84,7 @@ def home(request):
     # Does user submit anything ?
     if request.method == "POST":    
       
-        # User submits but don't fill any research field
+        # User submits and fill any research field
         if request.POST.keys() is not None:
 
             # Genome or transcript ?
@@ -134,9 +134,9 @@ def home(request):
 
             return redirect("results")
 
+        # User submits button but does not enter query specification
         else:
 
-            # Return empty research fields to results/ if user don't submit button
             request.session["accession"] = ""
             request.session["specie"] = ""
             request.session["max"] = ""
@@ -146,8 +146,8 @@ def home(request):
             request.session["query_type"] = ""
             request.session["start"] = ""
             request.session["stop"] = ""
-
     else:
+
         # Return empty research fields to results/ if user don't submit button
         request.session["accession"] = ""
         request.session["specie"] = ""
@@ -158,6 +158,7 @@ def home(request):
         request.session["query_type"] = ""
         request.session["start"] = ""
         request.session["stop"] = ""
+
 
     return render(request,'genomeBact/home.html')
 
@@ -258,9 +259,7 @@ def results(request):
         
         transcripts = Transcript.objects.filter(query_max & query_min & query_access & query_sub_nt & query_sub_pep & query_sub_species)
 
-
-        print("\n" + str(len(transcripts)) + "\n")
-
+    # If both empty
     if genomes == transcripts:
 
         genomes = Genome.objects.all()
