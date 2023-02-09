@@ -38,17 +38,18 @@ class CreateUserForm(UserCreationForm):
 
 class ModifyUserForm(UserCreationForm):
     email = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'Enter email'}), required=False)
-    password1 = forms.CharField(required = False)
-    password2 = forms.CharField(required = False)
+    password1 = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Enter password'}), required=False)
+    password2 = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Enter same password'}), required=False)
+
     class Meta:
         model = User
-        fields = ['email']
+        fields = ['email', 'password1', "password2"]
 
 class ProfileForm(forms.Form):
-    first_name = forms.CharField(max_length=30, required=False)
-    last_name = forms.CharField(max_length=150, required=False)
+    first_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Enter first name'}), max_length=30, required=False)
+    last_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Enter last name'}), max_length=150, required=False)
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
-    phone_number = forms.CharField(validators=[phone_regex], max_length=17, required=False) 
+    phone_number = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Enter phone number'}), validators=[phone_regex], max_length=17, required=False) 
     group = forms.CharField(required=False)
     
     class Meta:

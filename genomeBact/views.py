@@ -21,6 +21,7 @@ from scripts.utils import get_max_length
 
 def user_logout(request):
     logout(request)
+    print("logouuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuut")
     return redirect('login')
 
 @unauthenticated_user
@@ -82,40 +83,85 @@ def register(request):
     return render(request, 'genomeBact/register.html', context)
 
 @login_required(login_url='login')
-def user_detail(request):
+def user_detail(request, user_id):
 
+    user = User.objects.filter(id=user_id).get()
+    profile = Profile.objects.filter(user = user).get()
     '''
     if( request.user.groups.all()[0].name == 'Admin'):
     '''
-    username = request.user.username
+    username = user.username
     #user = User.objects.get(username = 'r')
     if request.method == 'POST':
         form_profile = ProfileForm(request.POST)  
         form_user = ModifyUserForm(request.POST)
-        if form_profile.is_valid() and form_user.is_valid() :
-                print("ouiiiiiiiiiiiiiiiiiiiiiinnnnnnnnnnnnnnnnnnnnnnnn")
-            #if 'Update' in request.POST:
-                #user = form_user.cleaned_data
-                #last_name = user["last_name"]
-                #first_name = user["first_name"]
-                #phone = user["phone_number"]
 
-                a = form_profile.cleaned_data
-                a = form_user.cleaned_data
-                print("ouiiiiiiiiiiiiiiiiiiiiiinnnnnnnnnnnnnnnnnnnnnnnn")
-                print(a)
-                # User.objects.filter(username=username).get().email
-                #Profile.objects.filter(name=username).update(last_name = last_name, first_name=first_name, phone_number=phone)
-                messages.success(request, 'The profile was updated')
-            
-                return HttpResponseRedirect(request.path_info)
-                return redirect('admin')
+        if form_profile.is_valid() and form_user.is_valid() :
+            if 'Update' in request.POST:
+                user = form_user.cleaned_data
+                profile2 = form_profile.cleaned_data
+                
+                if profile2["group"] == profile.group :
+                    profile2["group"] = ""
+
+                ## test if there's some changes or none
+                x = list(user.values())
+                y = list(profile2.values())
+                if ( [x[0]]*len(x) != x and [y[0]]*len(y) != y):
+                    email = user["email"]
+                    if(email != ""):
+                        User.objects.filter(username=username).update(email=email)
+
+                    phone = profile2["phone_number"]
+                    if(phone != ""):
+                        Profile.objects.filter(name=username).update(phone_number = phone)
+                        
+                    last_name = profile2["last_name"]
+                    if(last_name != ""):
+                        Profile.objects.filter(name=username).update(last_name = last_name)
+                    first_name = profile2["first_name"]
+                    if(first_name != ""):
+                        Profile.objects.filter(name=username).update(first_name = first_name)
+
+                    group_name = profile2["group"]
+                    if(group_name != "" and group_name != "Admin"):
+                        group = Group.objects.get(name = group_name)
+                        group.user_set.add(User.objects.filter(username=username).get())
+                        Profile.objects.filter(name=username).update(group = group_name)
+
+                    messages.success(request, 'The profile was updated')
+                
+                    return HttpResponseRedirect(request.path_info)
+                
+            elif 'Update_password' in request.POST:
+
+                user = form_user.cleaned_data
+                password1 = user["password1"]
+                password2 = user["password2"]
+
+                if( password1 == password2 and password1!=""):
+                    User.objects.get(username=username).set_password(password1)
+                
+                    messages.success(request, 'The password was updated')
+                
+                    return HttpResponseRedirect(request.path_info)
+                    return redirect('admin')
+            elif 'Delete' in request.POST:
+                user = User.objects.filter(username = username).get()
+                user.delete()
+
+                #if(request.user.profile == "Admin" and request.user.id != user.id)
+                if(request.user.id != user.id) :
+                    messages.success(request, "The user " + username +" was deleted.")
+                    return redirect('admin')
+                else:
+                    user_logout(request)
+                    return redirect('login')
     else:
         form_profile = ProfileForm()
         form_user = ModifyUserForm()
 
-    user1 = Profile.objects.filter(name = request.user.username).get()
-    context = {'user' : user1, "form_profile":form_profile, "form_user":form_user}
+    context = {'profile' : profile, "form_profile":form_profile, "form_user":form_user}
     return render(request, 'genomeBact/user_detail.html', context)
 
 @login_required(login_url='login')

@@ -29,7 +29,7 @@ urlpatterns = [
     path('admin_django/', admin.site.urls),
     path('admin/', views.admin, name = 'admin'),
     path('settings/', views.settings, name = 'user_settings'),
-    path('user/', views.user_detail, name = 'user_detail'),
+    path('user/<int:user_id>/', views.user_detail, name = 'user-detail'),
     path('workspace/', views.workspace, name = 'workspace'),
     path('validator/', views.validator, name='validator'),
     path('validator/assign/', views.assign_transcript, name='assign-transcript'),

@@ -147,7 +147,7 @@
                                                     <tbody>
                                                         {% for user in all_val %}
                                                         <tr>
-                                                        <td>{{ user.name}}</td>
+                                                        <td> <a href="{% url 'user-detail' user.id %}">{{ user.name}}</a></td>
                                                         <td>{{ user.first_name }}</td>
                                                         <td>{{ user.last_name }}</td>
                                                         <td> {{ user.last_connexion }} </td>
@@ -171,7 +171,7 @@
                                                     <tbody>
                                                     {% for user in all_annot %}
                                                     <tr>
-                                                        <td>{{ user.name}}</td>
+                                                        <td> <a href="{% url 'user-detail' user.id %}">{{ user.name}}</a> </td>
                                                         <td>{{ user.first_name }}</td>
                                                         <td>{{ user.last_name }}</td>
                                                         <td> {{user.last_connexion }} </td>
@@ -194,7 +194,7 @@
                                                     <tbody>
                                                         {% for user in all_read %}
                                                         <tr>
-                                                        <td>{{ user.name}}</td>
+                                                        <td> <a href="{% url 'user-detail' user.id %}">{{ user.name}}</a> </td>
                                                         <td>{{ user.first_name }}</td>
                                                         <td>{{ user.last_name }}</td>
                                                         <td> {{ user.last_connexion }} </td>
@@ -321,7 +321,7 @@
                                                     <tbody>
                                                         {% for user in all_val %}
                                                         <tr>
-                                                        <td>{{ user.name}}</td>
+                                                        <td> <a href="{% url 'user-detail' user.id %}">{{ user.name}}</a> </td>
                                                         <td>{{ user.first_name }}</td>
                                                         <td>{{ user.last_name }}</td>
                                                         <td> {{ user.last_connexion }}</td>
@@ -345,7 +345,7 @@
                                                     <tbody>
                                                     {% for user in all_annot %}
                                                     <tr>
-                                                        <td>{{ user.name}}</td>
+                                                        <td> <a href="{% url 'user-detail' user.id %}">{{ user.name}}</a> </td>
                                                         <td>{{ user.first_name }}</td>
                                                         <td>{{ user.last_name }}</td>
                                                         <td> {{ user.last_connexion }} </td>
@@ -368,7 +368,7 @@
                                                     <tbody>
                                                         {% for user in all_read %}
                                                         <tr>
-                                                        <td>{{ user.name}}</td>
+                                                        <td> <a href="{% url 'user-detail' user.id %}">{{ user.name}}</a> </td>
                                                         <td>{{ user.first_name }}</td>
                                                         <td>{{ user.last_name }}</td>
                                                         <td> {{ user.last_connexion }} </td>
