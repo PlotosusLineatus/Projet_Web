@@ -501,15 +501,6 @@ def workspace(request):
     return render(request,'genomeBact/workspace.html', context)
 
 @login_required(login_url='login')
-def settings(request):
-    all_con = request.user.connexion_set.all()
-
-    context = {'connexions': all_con}
-    return render(request, 'genomeBact/user_settings.html', context)
-
-
-
-@login_required(login_url='login')
 def validator(request):
     
     return render(request,'genomeBact/validator.html')
