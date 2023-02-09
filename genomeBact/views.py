@@ -393,8 +393,11 @@ def genome_detail(request, specie):
     genome = Genome.objects.get(specie=specie)
     transcripts = Transcript.objects.filter(chromosome = genome.chromosome)
 
-    sequence = genome.sequence
-
+    if request.method == 'POST' and 'Delete' in request.POST:
+        genome.delete()
+        messages.success(request, "The genome "+ genome.specie + " was deleted.")
+        return redirect('results')
+    
     return render(request,'genomeBact/genome_detail.html',{'genome': genome, 'transcripts' : transcripts})
     
 @login_required(login_url='login')

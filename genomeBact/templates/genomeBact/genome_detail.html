@@ -75,7 +75,12 @@
                 </div>
           
                 <!-- Genomic View -->
-                <div id = "svg_genomic_view" align="center"></div>
+                <div id = "svg_genomic_view" style="text-align:center"></div>
+            </div>
+            <div class="text-right" style="float: right; text-align: right; margin-right: 10px;">
+               <i> code adapted from 
+                <a href="https://genoscapist.migale.inrae.fr/" target="_blank">Genoscapist</a>
+               </i>
             </div>
         </div>
         <script type="text/javascript" src="/static/genomeBact/transcript.js"></script> 
@@ -152,10 +157,19 @@
                         </div>
                     </div>
                     <!-- Side widget-->
-                    <div class="card mb-4">
+                    <div class="card">
                         <div class="card-header">Commentaire de l'admin</div>
                         <div class="card-body">wow</div>
                     </div>
+                    
+                    {% if request.user.groups.all.0.name == None %}
+                    <form method="post" action="">
+                        {% csrf_token %}
+                        <div class="text-right" style="float: right; margin-top: 200px;">
+                            <button class="btn btn-danger" name="Delete" id="Delete" type="submit">Delete Genome</button>
+                        </div>
+                    </form>
+                    {% endif %}
                 </div>
             </div>
         </div>

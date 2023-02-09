@@ -13,6 +13,10 @@
 <!-- Liste des génomes -->
 <div class="container px-4 px-lg-5">
     <div class="post-preview">
+        {% for message in messages %}
+                <p id="messages"> {{ message }}</p>
+        {% endfor %}
+
         {% for genome in genomes %}
             <h2><a href="{% url 'genome-detail' genome.specie %}">{{ genome.specie }}</a></h5>
             <p class=" "post-meta>0% completed</p>
