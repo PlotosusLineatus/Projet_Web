@@ -40,10 +40,10 @@ def user_login(request):
             return redirect('home')
         else :
             try:
-                username = User.objects.get(email=username)
-                user = authenticate(request, username= username.username, password= password )
+                user = User.objects.get(email=username)
+                user = authenticate(request, username= user.username, password= password )
                 login(request, user)
-                Profile.objects.filter(email=username).update(last_connexion = Now())
+                Profile.objects.filter(user=user).update(last_connexion = Now())
                 Connexion.objects.create(user = user, date=Now())
                 return redirect('home')           
             except User.DoesNotExist:
@@ -371,7 +371,23 @@ def results(request):
     return render(request,'genomeBact/results.html', {'genomes': genomes}) 
 
 
-       
+
+@login_required(login_url='login')
+@admin_only
+def genome_create(request):
+
+    if request.method == 'POST':
+        form = GenomeForm(request.POST)  
+        if form.is_valid():
+            genome = form.save()
+            #return redirect('transcript-list', genome.specie)
+            return redirect('genome-detail', genome.specie)
+    else:
+        form = GenomeForm()
+
+    return render(request,'genomeBact/genome_create.html',{'form': form}) 
+
+
 @login_required(login_url='login')
 def genome_detail(request, specie):
     genome = Genome.objects.get(specie=specie)

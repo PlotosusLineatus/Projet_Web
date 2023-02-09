@@ -39,6 +39,7 @@ urlpatterns = [
     path('annotator/transcripts/', views.transcript_to_annot, name='annot-list'),
 
     # BD #
+    path('sp/add/', views.genome_create, name='genome-create'),
     path('sp/<str:specie>/', views.genome_detail, name='genome-detail'),
     path('sp/<str:specie>/transcripts/', views.transcript_list, name='transcript-list'),
     path('sp/<str:specie>/transcripts/add/', views.transcript_create, name='transcript-create'),
