@@ -32,9 +32,25 @@ class UploadFileForm(forms.Form):
     file = forms.FileField()
 
 class CreateUserForm(UserCreationForm):
+    username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Enter username'}))
+    email = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'Enter email'}))
+    password1 = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Enter password'}))
+    password2 = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Enter same password'}))
+
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2']
+
+class CreateProfileForm(forms.Form):
+    first_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Enter first name'}), max_length=30)
+    last_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Enter last name'}), max_length=150)
+    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
+    phone_number = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Enter phone number'}), validators=[phone_regex], max_length=17) 
+    group = forms.ChoiceField(widget = forms.Select(), 
+                 choices = ([('Lecteur','Lecteur'), ('Annotateur','Annotateur'), ('Validateur','Validateur'), ]), initial='Lecteur')
+    class Meta:
+        model = Profile
+        fields = ['first_name', 'last_name', 'phone_number', 'group']
 
 class ModifyUserForm(UserCreationForm):
     email = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'Enter email'}), required=False)
@@ -50,8 +66,9 @@ class ProfileForm(forms.Form):
     last_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Enter last name'}), max_length=150, required=False)
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
     phone_number = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Enter phone number'}), validators=[phone_regex], max_length=17, required=False) 
-    group = forms.CharField(required=False)
+    group = forms.ChoiceField(widget = forms.Select(), 
+                 choices = ([('Lecteur','Lecteur'), ('Annotateur','Annotateur'), ('Validateur','Validateur'), ]), initial='Lecteur')
     
     class Meta:
         model = Profile
-        fields = ['first_name', 'last_name', 'phone_number']
+        fields = ['first_name', 'last_name', 'phone_number','group']

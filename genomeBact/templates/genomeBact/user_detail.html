@@ -151,17 +151,12 @@
                         
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                             <div class="form-group">
-                                <label for="group">{{ profile.group }}</label>
-                                <select class="select" name="group">
-                                    <option value="1" disabled>Role</option>
-                                    <option value="{{ profile.group }}"> {{ profile.group }}</option>
-                                    <option value="Lecteur">Lecteur</option>
-                                    <option value="Annotateur">Annotateur</option>
-                                    <option value="Validateur">Validateur</option>
-                                </select>
-            
+                                <label for="group">Role : {{ profile.group }}</label>
+                                {{ form_profile.group.errors }}
+                                {{ form_profile.group }}
                             </div>
                         </div>
+                        
                     </div>
                     <div class="row gutters">
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">

@@ -14,14 +14,13 @@ from Bio import SeqIO
 from io import StringIO
 
 from .models import Genome,Transcript,Profile, Connexion
-from .forms import GenomeForm, TranscriptForm, UploadFileForm, CreateUserForm, AnnotForm, ProfileForm, ModifyUserForm
+from .forms import GenomeForm, TranscriptForm, UploadFileForm, CreateUserForm, CreateProfileForm, AnnotForm, ProfileForm, ModifyUserForm
 from .decorators import unauthenticated_user, allowed_users, admin_only
 
 from scripts.utils import get_max_length
 
 def user_logout(request):
     logout(request)
-    print("logouuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuut")
     return redirect('login')
 
 @unauthenticated_user
@@ -57,16 +56,34 @@ def user_login(request):
 #@unauthenticated_user
 def register(request):
     if request.method == 'POST':
-        form = CreateUserForm(request.POST)  
-        if form.is_valid():
-            user = form.save()
+        form_user = CreateUserForm(request.POST)  
+        form_profile = CreateProfileForm(request.POST)  
 
-            group_name = request.POST.get('group')
-            group = Group.objects.get(name = group_name)
-            user.groups.add(group)
-            username = form.cleaned_data.get('username')
+        if form_user.is_valid() and form_profile.is_valid():
+            user = form_user.cleaned_data
+            profile = form_profile.cleaned_data
             
-            Profile.objects.create(user = user, name=user.username, group = group_name, last_connexion = Now())
+            username = user['username']
+            email = user['email']
+            
+            if(user["password1"] != user["password2"]):
+                print("OUUUUUUUUUUUULAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+            
+            password = user['password1']
+
+            User.objects.create_user(username=username, email=email, password=password )
+
+            group_name = profile['group']
+            group = Group.objects.get(name = group_name)
+            user = User.objects.get(username=username)
+            user.groups.add(group)
+            
+            first_name = profile['first_name']
+            last_name = profile['last_name']
+            phone_number = profile['phone_number']
+
+            Profile.objects.create(user = user, name=username, first_name = first_name, last_name=last_name, phone_number=phone_number,
+                                    group = group_name, last_connexion = Now())
 
             messages.success(request, 'Account was created for ' + username)
             
@@ -74,12 +91,11 @@ def register(request):
             return redirect('admin')
             #else :
             return redirect('login')
-        else:
-            messages.error(request, form.errors)
     else:
-        form = CreateUserForm()
+        form_user = CreateUserForm()
+        form_profile = CreateProfileForm()
 
-    context = {'form':form}
+    context = {'form_user':form_user, 'form_profile':form_profile}
     return render(request, 'genomeBact/register.html', context)
 
 @login_required(login_url='login')

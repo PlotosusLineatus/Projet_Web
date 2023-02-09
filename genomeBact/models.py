@@ -34,7 +34,7 @@ class Profile(models.Model):
     name = models.CharField(max_length=30 , unique=True) ## A SUPP
 
 
-    STATUS = ( ('Admin','Admin'), ('Annotateur','Annotateur'), ('Validateur','Validateur'))
+    STATUS = ( ('Admin','Admin'), ('Annotateur','Annotateur'), ('Validateur','Validateur'), ('Lecteur','Lecteur'))
     group = models.CharField(max_length=40, choices=STATUS, default='Lecteur')
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=150, blank=True)
