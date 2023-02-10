@@ -145,10 +145,15 @@ L'onglet `PARAMETERS` vous permet d'acceder aux paramètres de votre compte, et 
 Si vous êtes connectés en tant qu'annotateur ou validateur, vous pouvez avoir accès l'onglet `WORKSPACE` qui vous relie aux travaux concernant les annotations.
 
 # Détails du génome
-![image](https://user-images.githubusercontent.com/75751225/218156782-ae7ff0b7-cd0f-430d-bd3e-05f8aeb355fa.png)
+En cliquant sur `COLLECTION` ou en faisant une recherche par génome, vous vous trouverez sur une page de résultat. De cette page vous avez l'option de télécharger les annotation compressées en zip ou d'en savoir plus sur un génome particulier. Dans ce cas, vous arriverez à la page suivante :
+
+![image](https://user-images.githubusercontent.com/75751225/218156782-ae7ff0b7-cd0f-430d-bd3e-05f8aeb355fa.png)Cette page permets la visualisation du génome et des différents gènes présents dans la base de données. Pour naviguer, il suffit de cliquer sur les flèches directionnelles. Passer au dessus des gènes vous fera apparaitre l'identitifiant de celui-ci, et cliquer dessus vous amenera à sa page détaillée (*voir section suivante*). 
+Cette liste de gène est également accessible sans visualisation, en scrollant jusqu'à l'identifiant désiré. Enfin, le bouton `UNIPROT` vous permettra d'acceder aux résultats de recherche de la banque de données Uniprot.
 
 # Détails d'un gène
-![image](https://user-images.githubusercontent.com/75751225/218156946-1105dc67-1286-4452-a181-06c0e75cad6e.png)
+![image](https://user-images.githubusercontent.com/75751225/218156946-1105dc67-1286-4452-a181-06c0e75cad6e.png)La page détaillée de chaque gène comprend : les séquence nucléotidique (et le bouton `BLASTn` associé), la séquence peptidique (et le bouton `BLASTp`associé). Le bouton `Uniprot` redirige vers le site éponyme, avec une recherche par numéro d'accession, essayez! Les différentes annotations si elles existent, sont visibles dans le cadre dédié. S'il ne s'agit pas d'annotations qui vous ont été confiées, il est impossible de les modifier. 
 
 # Espace de travail
 ![image](https://user-images.githubusercontent.com/75751225/218157189-7caa244d-b4b1-4e45-9fb2-0e20e30251ba.png)
+En tant qu'annotateur, l'espace `WORKSPACE` vous permets de connaitre les différents gènes qui vous ont été confiés, ainsi que les annotations en attente de validation.
+En tant que validateur, c'est ici que vous pourrez assigner des séquences à des annotateurs et valider, ou non, leurs annotations
