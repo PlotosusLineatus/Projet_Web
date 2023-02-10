@@ -199,7 +199,7 @@ def admin_(request):
     return render(request,'genomeBact/admin.html', context)
 
 @login_required(login_url='login')
-@allowed_users(allowed_roles=['Validator','Annotator'])
+@allowed_users(allowed_roles=['Validator','Annotator','Admin'])
 def workspace(request):
     transcripts_to_annotate = request.user.profile.to_annotate.all()
     transcripts_to_assign = Transcript.objects.filter(status = 'empty')
@@ -228,7 +228,7 @@ def workspace(request):
             annotator_chosen = request.POST.get('annotator')
             transcript_chosen = request.POST.get('transcript_annot')
             
-            if( request.user.groups.all()[0].name == 'Validator'):
+            if( request.user.groups.all()[0].name == 'Validator' or request.user.groups.all()[0].name == 'Admin'):
                 
                 if annotator_chosen != None and transcript_chosen!= None:
                         
