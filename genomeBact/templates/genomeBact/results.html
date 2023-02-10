@@ -4,13 +4,14 @@
 <header class="masthead" style="background-color: #8DAA9D">
     <div class="container position-relative px-4 px-lg-5">
         <div class="post-heading">
-            <h1>Collection : </h1>
-            <h2 class="subheading"> Ensemble des génomes</h2>
+            <h1>Results : </h1>
         </div>
     </div>
 </header>
 
 <!-- Liste des génomes -->
+
+{% if genomes %}
 <div class="container px-4 px-lg-5">
     <div class="post-preview">
         {% for message in messages %}
@@ -19,27 +20,31 @@
 
         {% for genome in genomes %}
             <h2><a href="{% url 'genome-detail' genome.specie %}">{{ genome.specie }}</a></h5>
-            <p class=" "post-meta>0% completed</p>
             <hr class="my-4" />
         {% endfor %}
     </div>
 </div>
+{% endif %}
 
+{% if transcripts %}
 <!-- Liste des transcripts -->
 <div class="container px-4 px-lg-5">
-    <div class="post-preview">
-        {% for transcript in trasncripts %}
-            <h2><a href="{% url 'genome-detail' genome.specie %}">{{ genome.specie }}</a></h5>
-            <p class=" "post-meta>0% completed</p>
-            <hr class="my-4" />
-        {% endfor %}
+    <div class="post-preview navbar-nav-scroll">
+        <div class="fw-bold">
+            {% for transcript in transcripts %}
+            <p> <a href="{% url 'transcript-detail' specie=transcript.chromosome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a> </p>
+            {% endfor %}
+        </div>
     </div>
 </div>
+{% endif %}
+
+
 <!-- Télécharger Fasta -->
+
 <form action="" method="POST">
     {% csrf_token %}
-    <input type="submit" value="Submit" name="download">
+    <input type="submit" value="Download the database" name="download">
 </form>
-    
 
 {% endblock %}

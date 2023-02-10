@@ -5512,11 +5512,12 @@ textarea.form-control-lg {
   padding: 10px 10;
   border-radius: 6px;
   position: absolute;
-  z-index: 1;
+  top: -20px
 }
 
 .tooltip:hover .tooltiptext {
   visibility: visible;
+  z-index: 1;
 }
 
 .tooltip.show {
