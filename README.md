@@ -51,4 +51,7 @@ Cette liste de gène est également accessible sans visualisation, en scrollant 
 # Espace de travail
 ![image](https://user-images.githubusercontent.com/75751225/218157189-7caa244d-b4b1-4e45-9fb2-0e20e30251ba.png)
 En tant qu'annotateur, l'espace `WORKSPACE` vous permets de connaitre les différents gènes qui vous ont été confiés, ainsi que les annotations en attente de validation.
-En tant que validateur, c'est ici que vous pourrez assigner des séquences à des annotateurs et valider, ou non, leurs annotations
+En tant que validateur, c'est ici que vous pourrez assigner des séquences à des annotateurs et valider, ou non, leurs annotations.
+
+
+Enfin, la barre de navigation vous permet de retourner sur la page principale à tout moment, tout comme d'accéder à vos parametres utilisateur et modifier vos informations personneles et mot de passe.
