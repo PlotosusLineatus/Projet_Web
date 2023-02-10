@@ -95,11 +95,20 @@ def transcript_detail(request, specie, transcript):
     except Transcript.DoesNotExist:
         return redirect('home')
 
-
+    list = []
+    list.append(cds)
     if request.method == 'POST':
-        form = AnnotForm(request.POST)  
+        form = AnnotForm(request.POST)
 
-        if 'Validate' in request.POST:
+        if "Download" in request.POST:
+            if not list:
+                pass
+            else:
+                # Return zip file with current genes selected
+                zip_genes = get_genes(list)
+                return zip_genes
+                
+        elif 'Validate' in request.POST:
             Transcript.objects.filter(transcript=transcript).update(status = 'validated', status_date = Now(), annotator=None)
             messages.success(request, 'Annotations were validated.')
             return HttpResponseRedirect(request.path_info)

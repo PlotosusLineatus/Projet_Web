@@ -24,15 +24,20 @@
                     <article>
                         <!-- Séquence-->
                         <section class="mb-5">
-                            <h2 class="fw-bolder mb-4 mt-5">Séquences</h2>
+                            <h2 class="fw-bolder mb-4 mt-5">Séquences
+                                <!-- Download fasta -->
+                                <form method="POST" action="">
+                                    {% csrf_token %}
+                                    <button class="btn-secondary btn" name="Download" type="submit" style="padding: 1%; float: right; margin-right: 50px;"> ⇩ FASTA</button>
+                                </form>
+                            </h2>
+                            
                             <div class="input-group-sm">
                                 <h5>Séquence nucléotidique</h5>
-                                <button class="btn-secondary btn" name="button-FASTA_nt" type="button" style="padding: 1%;">FASTA</button>
                             </div>
                             <p class = "d-flex flex-row small" style=" word-break:break-all;"> {{ transcript.seq_nt }} </p>
                             <div class="'input-group-sm">
                                 <h5>Séquence peptidique</h5>
-                                <button class="btn-secondary btn" name="button-FASTA_cds" type="button" style="padding: 1%;">FASTA</button>
                             </div>    
                             <p class = "d-flex flex-row small" style=" word-break:break-all;"> {{ transcript.seq_cds }} </p>
                         </section>
@@ -217,7 +222,7 @@
                     </div>
                     <!-- Side widget-->
                     {% if request.user.groups.all.0.name != 'Reader' %}
-                    <div class="card mb-4" style="margin-top: 360px;">
+                    <div class="card mb-4">
                         <div class="card-header fw-bolder">Status</div>
                             <div class="card-body">{{ transcript.status }}</div>
                             {% if transcript.status == 'validated' %}

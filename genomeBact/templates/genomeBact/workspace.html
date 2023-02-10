@@ -107,6 +107,12 @@
                                                 
                                                 </tbody>
                                             </table>
+                                            <!-- Download fasta -->
+                                            <form method="POST" action="">
+                                                {% csrf_token %}
+                                                <button class="btn-secondary btn" name="Download" type="submit" style="padding: 1%; float: right;"> ⇩ FASTA</button>
+                                            </form>
+
                                         </div>
                                         <div class="tab-pane fade" id="valid">
                                             <table class="table table-sm">

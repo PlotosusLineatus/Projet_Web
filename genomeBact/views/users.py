@@ -9,7 +9,7 @@ from django.http import HttpResponseRedirect
 from genomeBact.models import Transcript,Profile, Connexion
 from genomeBact.forms import  CreateUserForm, CreateProfileForm, ProfileForm, ModifyUserForm
 from genomeBact.decorators import unauthenticated_user, allowed_users, admin_only, unauth_admin
-
+from scripts.utils import  get_genes
 
 def user_logout(request):
     logout(request)
@@ -202,7 +202,6 @@ def admin_(request):
 @allowed_users(allowed_roles=['Validator','Annotator'])
 def workspace(request):
     transcripts_to_annotate = request.user.profile.to_annotate.all()
-    #transcripts_to_annotate = request.user.profile.transcript_set.all()
     transcripts_to_assign = Transcript.objects.filter(status = 'empty')
     transcripts_to_validate = Transcript.objects.filter(status = 'annotated', validator = request.user.username)
     annotators = User.objects.filter(groups__name='Annotator')
@@ -212,24 +211,37 @@ def workspace(request):
     nb_to_annot = Transcript.objects.filter(status = 'assigned', annotator = request.user.profile).count()
     nb_send = Transcript.objects.filter(status = 'annotated', annotator =request.user.profile).count()
 
+    transcripts = transcripts_to_annotate
     if request.method == 'POST':
-        annotator_chosen = request.POST.get('annotator')
-        transcript_chosen = request.POST.get('transcript_annot')
         
-        if( request.user.groups.all()[0].name == 'Validator'):
-            ### ASSIGNING A TRANSCRIPT
-            if annotator_chosen != None and transcript_chosen!= None:
-                    
-                #transcript_chosen = Transcript.objects.get(transcript=transcript_chosen)
-                
-                Transcript.objects.filter(transcript=transcript_chosen).update(annotator = Profile.objects.get(name=annotator_chosen))
-                Transcript.objects.filter(transcript=transcript_chosen).update(validator = request.user.username)
-                Transcript.objects.filter(transcript=transcript_chosen).update(status = 'assigned')
-                
-                messages.success(request, transcript_chosen +' was assigned for ' + annotator_chosen + ".")
-
+         # Download transcripts of genome 
+        if "Download" in request.POST:
+            if not transcripts:
+                pass
             else:
-                messages.info(request, " Please select an Annotator AND a Transcript" )
+
+                # Return zip file with current genes selected
+                zip_genes = get_genes(transcripts)
+                return zip_genes
+            
+        else: ### ASSIGNING A TRANSCRIPT
+            annotator_chosen = request.POST.get('annotator')
+            transcript_chosen = request.POST.get('transcript_annot')
+            
+            if( request.user.groups.all()[0].name == 'Validator'):
+                
+                if annotator_chosen != None and transcript_chosen!= None:
+                        
+                    #transcript_chosen = Transcript.objects.get(transcript=transcript_chosen)
+                    
+                    Transcript.objects.filter(transcript=transcript_chosen).update(annotator = Profile.objects.get(name=annotator_chosen))
+                    Transcript.objects.filter(transcript=transcript_chosen).update(validator = request.user.username)
+                    Transcript.objects.filter(transcript=transcript_chosen).update(status = 'assigned')
+                    
+                    messages.success(request, transcript_chosen +' was assigned for ' + annotator_chosen + ".")
+
+                else:
+                    messages.info(request, " Please select an Annotator AND a Transcript" )
 
 
     context = {'transcripts_to_annotate':transcripts_to_annotate, 'transcripts_to_assign':transcripts_to_assign, 'annotators':annotators,

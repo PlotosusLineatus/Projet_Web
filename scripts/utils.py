@@ -96,7 +96,6 @@ def generate_header(instance, type_ = ""):
         header = ("Chromosome dna:chromosome chromosome:" + instance.chromosome + ":Chromosome:1:" + str(instance.length) + ":1 REF")
     return header
 
-
 def get_annotation(description):
 
     import re
