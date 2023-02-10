@@ -4,11 +4,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group, User
 from django.db.models.functions import Now
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
+from django.http import HttpResponse, FileResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.db.models import Q
-import csv
-
+import io
+import zipfile
 
 from Bio import SeqIO
 from io import StringIO
@@ -17,7 +17,7 @@ from .models import Genome,Transcript,Profile, Connexion
 from .forms import GenomeForm, TranscriptForm, UploadFileForm, CreateUserForm, AnnotForm, ProfileForm
 from .decorators import unauthenticated_user, allowed_users, admin_only
 
-from scripts.utils import get_max_length
+from scripts.utils import get_max_length, get_genomes, get_genes
 
 def user_logout(request):
     logout(request)
@@ -162,27 +162,21 @@ def home(request):
 
     return render(request,'genomeBact/home.html')
 
-def download_csv(request, transcripts = None, genomes = None):
+def download_multifasta(request, instances):
 
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="transcripts.csv"'
+    response = HttpResponse(content_type='text/fasta')
+    response['Content-Disposition'] = 'attachment; filename="transcripts.fasta"'
+    
+    if (instances[0], Genome):
+        for instance in instances:
 
-    writer = csv.writer(response)
-    writer.writerow(['Accession', 'Sequence'])
-
-    if transcripts:
-
-        for transcript in transcripts:
-            writer.writerow([transcript.transcript, transcript.seq_cds])
-
-        return response
-
-    elif genomes:
-
-        for genome in genomes:
-
-            writer.writerow([genome.chromosome, genome.sequence])
-        return response
+            response.write(f">{instance.chromosome}\n")
+            sequence = instance.sequence
+            while len(sequence) > 0:
+                response.write(sequence[:80] + "\n")
+                sequence = sequence[80:]
+        
+    return response
 
 
 @login_required(login_url='login')
@@ -210,12 +204,13 @@ def results(request):
     accession = request.session["accession"]
     specie = request.session["specie"]
     sub_nt = request.session["sub_nt"]
-    sub_nt = sub_nt.upper() # Just in case
+    sub_nt = sub_nt.upper()
     sub_pep = request.session["sub_pep"]
     sub_pep = sub_pep.upper()
 
 
-    # For some reason request.session doesn't store request.POST.get(name, default_integer) default output as integer but rather as ''
+    # For some reason request.session doesn't store 
+    # request.POST.get(name, default_integer) default_integer as integer but rather as ''
 
     start = request.session["start"]
     if start == '':
@@ -232,7 +227,11 @@ def results(request):
         min_ = 0
 
     
+    ##########
 
+    # REQUESTS
+
+    ##########
 
     if request.session["query_type"] == "Genome":
 
@@ -259,32 +258,44 @@ def results(request):
         
         transcripts = Transcript.objects.filter(query_max & query_min & query_access & query_sub_nt & query_sub_pep & query_sub_species)
 
-    # If both empty
+    # If no query by user, render all genomes 
     if genomes == transcripts:
 
         genomes = Genome.objects.all()
         
-    if request.method == 'POST':
 
+
+
+    ########
+
+    # DOWNLOADS 
+
+    ########
+
+    if (request.method == 'POST' and genomes):
 
         if not genomes:
 
-            return render(request, '404.html', status=404)
+            pass
+
+        else:
+            
+            # Return zip file with current genomes selected
+            zip_genomes = get_genomes(genomes)
+            return zip_genomes
+
+    elif (request.method == "POST" and transcripts):
+
+        if not transcripts:
+
+            pass
 
         else:
 
-            response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="models.csv"'
+            # Return zip file with current genes selected
+            zip_genes = get_genes(transcripts)
+            return zip_genes
 
-            writer = csv.writer(response)
-            writer.writerow(['Number', 'Text'])
-
-        
-            for genome in genomes:
-                writer.writerow([genome.chromosome, genome.specie])
-
-            return response
-        
     return render(request,'genomeBact/results.html', {'genomes': genomes, "transcripts" : transcripts}) 
 
 
@@ -294,7 +305,18 @@ def genome_detail(request, specie):
     genome = Genome.objects.get(specie=specie)
     transcripts = Transcript.objects.filter(chromosome = genome.chromosome)
 
-    sequence = genome.sequence
+    # Download transcripts of genome 
+    if request.method == "POST":
+
+        if not transcripts:
+
+            pass
+
+        else:
+
+            # Return zip file with current genes selected
+            zip_genes = get_genes(transcripts)
+            return zip_genes
 
     return render(request,'genomeBact/genome_detail.html',{'genome': genome, 'transcripts' : transcripts})
     
@@ -322,6 +344,7 @@ def transcript_create(request, specie):
             #return redirect('transcript-list', genome.specie)
             return redirect('genome-detail', genome.specie)
     else:
+        
         form = TranscriptForm()
 
     return render(request,'genomeBact/transcript_create.html',{'form': form, 'genome' : genome}) 

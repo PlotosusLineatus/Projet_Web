@@ -44,5 +44,5 @@ urlpatterns = [
     path('sp/<str:specie>/transcripts/add/', views.transcript_create, name='transcript-create'),
     path('sp/<str:specie>/<str:transcript>/', views.transcript_detail, name='transcript-detail'),
     path('sp/<str:specie>/<str:transcript>/annotations/', views.transcript_annot, name='transcript-annot'),
-    path('download/', views.download_csv, name='download_csv'),
+    path('download_multifasta/', views.download_multifasta, name='download_multifasta'),
 ]

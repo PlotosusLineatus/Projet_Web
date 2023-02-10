@@ -131,6 +131,13 @@
                         <div class="card-header">Commentaire de l'admin</div>
                         <div class="card-body">wow</div>
                     </div>
+                    <div class="card mb-4">
+                        <div class="card-header">Download genes and cds </div>
+                        <form method = "POST">
+                            {% csrf_token %}
+                            <input type="submit" value="Download annotated multifasta">
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

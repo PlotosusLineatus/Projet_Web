@@ -13,6 +13,10 @@
 
 {% if genomes %}
 <div class="container px-4 px-lg-5">
+    <form method = "POST">
+        {% csrf_token %}
+        <input type="submit" value="Download annotated multifasta">
+    </form>
     <div class="post-preview">
         {% for genome in genomes %}
             <h2><a href="{% url 'genome-detail' genome.specie %}">{{ genome.specie }}</a></h5>
@@ -25,22 +29,17 @@
 {% if transcripts %}
 <!-- Liste des transcripts -->
 <div class="container px-4 px-lg-5">
+    <form method = "POST">
+        {% csrf_token %}
+        <input type="submit" value="Download annotated multifasta">
+    </form>
     <div class="post-preview navbar-nav-scroll">
         <div class="fw-bold">
             {% for transcript in transcripts %}
             <p> <a href="{% url 'transcript-detail' specie=transcript.chromosome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a> </p>
             {% endfor %}
         </div>
-    </div>
+    </div>      
 </div>
 {% endif %}
-
-
-<!-- Télécharger Fasta -->
-
-<form action="" method="POST">
-    {% csrf_token %}
-    <input type="submit" value="Download the database" name="download">
-</form>
-
 {% endblock %}
