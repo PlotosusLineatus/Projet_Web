@@ -35,5 +35,4 @@ urlpatterns = [
     path('sp/<str:specie>/', views.genome_detail, name='genome-detail'),
     path('transcripts/add/', views.transcript_create, name='transcript-create'),
     path('sp/<str:specie>/<str:transcript>/', views.transcript_detail, name='transcript-detail'),
-    path('download/', views.download_csv, name='download_csv'),
 ]
