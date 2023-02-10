@@ -67,12 +67,21 @@ class ModifyUserForm(UserCreationForm):
         fields = ['email', 'password1', "password2"]
 
 class ProfileForm(forms.Form):
+
+    
+    def __init__(self,user_group,*args,**kwargs):
+          super().__init__(*args,**kwargs)
+          #extend __init__
+          self.fields['group'] =    forms.ChoiceField(widget = forms.Select(), 
+                 choices = ([('Reader','Reader'), ('Annotator','Annotator'), ('Validator','Validator'), ]), initial= user_group, required=False )
+    
+
     first_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Enter first name'}), max_length=30, required=False)
     last_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Enter last name'}), max_length=150, required=False)
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
     phone_number = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Enter phone number'}), validators=[phone_regex], max_length=17, required=False) 
     group = forms.ChoiceField(widget = forms.Select(), 
-                 choices = ([('Reader','Reader'), ('Annotator','Annotator'), ('Validator','Validator'), ]), initial='Reader')
+                 choices = ([('Reader','Reader'), ('Annotator','Annotator'), ('Validator','Validator'), ]) )
     
     class Meta:
         model = Profile

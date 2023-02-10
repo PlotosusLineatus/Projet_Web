@@ -14,8 +14,8 @@
 <div class="pt-5">
   <h1 class="text-center">Projet OUAF</h1>
   
-<div class="container">
-                <div class="row">
+    <div class="container">
+                <div class="column ">
                     <div class="col-md-5 mx-auto">
                         <div class="card card-body">
                                                     
@@ -36,7 +36,7 @@
                             </form>
 
                             {% for message in messages %}
-                                <p id="messages"> {{ message }}</p>
+                                <p id="messages" style="background-color: grey; color: #fff; padding: 10px; margin-top: 10px;"> {{ message }}</p>
                             {% endfor %}
 
                             <p class="small-xl pt-3 text-center">
@@ -45,8 +45,39 @@
                             </p>
                         </div>
                     </div>
+
+                    <div class="card mx-auto " style="margin-top: 50px; width: 420px;">
+                        <div class="card-header text-center">
+                            <span class="fw-bold"> HELP</span>
+                            <span class="figure-caption"> You can login with one of those accounts :</span>
+                            <div class="text-secondary">(password: AZERTY3456 )</div>
+                        </div>
+                            
+                            <table class="table-light" style="margin-left: 10px;">
+                                <tr> 
+                                    <td class="fw-bold figure-caption">admin / admin@mail.fr  </td>
+                                    <td class="text-end"> Admin </td>
+                                </tr>
+                                <tr> 
+                                    <td class="fw-bold figure-caption">El_Teckel / teckel@mail.fr   </td>
+                                    <td class="text-end"> Validator </td>
+                                </tr>
+                                <tr> 
+                                    <td class="fw-bold figure-caption">Chiwowwow / Chihuahua_doux@mail.fr   </td>
+                                    <td class="text-end"> Annotator </td>
+                                </tr>
+                                <tr> 
+                                    <td class="fw-bold figure-caption">Long_Snoot / groofgroof@mail.fr   </td>
+                                    <td class="text-end"> Annotator </td>
+                                </tr>
+                                <tr> 
+                                    <td class="fw-bold figure-caption">Dawg / ouafouaf@mail.fr   </td>
+                                    <td class="text-end"> Reader </td>
+                                </tr>
+                            </table>
+                    </div>
                 </div>
-            </div>
+    </div>
 </div>
 <!-- partial -->
   

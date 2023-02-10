@@ -1,3 +1,4 @@
+from django import forms
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -84,7 +85,9 @@ def register(request):
 
             messages.success(request, 'Account was created for ' + username)
             
-            if( request.user.groups.all()[0].name == 'Admin' ):
+            if( request.user.is_anonymous ):
+                return redirect('login')
+            elif(request.user.profile.name == 'Admin' ):
                 return redirect('admin')
             else :
                 return redirect('login')
@@ -101,13 +104,11 @@ def user_detail(request, user_id):
 
         user = User.objects.filter(id=user_id).get()
         profile = Profile.objects.filter(user = user).get()
-        '''
-        if( request.user.groups.all()[0].name == 'Admin'):
-        '''
+        user_group = user.profile.group
         username = user.username
-        #user = User.objects.get(username = 'r')
+
         if request.method == 'POST':
-            form_profile = ProfileForm(request.POST)  
+            form_profile = ProfileForm(user_group, request.POST) 
             form_user = ModifyUserForm(request.POST)
 
             if form_profile.is_valid() and form_user.is_valid() :
@@ -118,37 +119,37 @@ def user_detail(request, user_id):
                     if profile2["group"] == profile.group :
                         profile2["group"] = ""
 
-                    ## test if there's some changes or none
-                    x = list(user.values())
-                    y = list(profile2.values())
-                    if ( [x[0]]*len(x) != x and [y[0]]*len(y) != y):
-                        email = user["email"]
-                        if(email != ""):
-                            User.objects.filter(username=username).update(email=email)
+                    email = user["email"]
+                    if(email != ""):
+                        User.objects.filter(username=username).update(email=email)
 
-                        phone = profile2["phone_number"]
-                        if(phone != ""):
-                            Profile.objects.filter(name=username).update(phone_number = phone)
+                    phone = profile2["phone_number"]
+                    if(phone != ""):
+                        Profile.objects.filter(name=username).update(phone_number = phone)
                             
-                        last_name = profile2["last_name"]
-                        if(last_name != ""):
-                            Profile.objects.filter(name=username).update(last_name = last_name)
-                        first_name = profile2["first_name"]
-                        if(first_name != ""):
-                            Profile.objects.filter(name=username).update(first_name = first_name)
+                    last_name = profile2["last_name"]
+                    if(last_name != ""):
+                        Profile.objects.filter(name=username).update(last_name = last_name)
+                    
+                    first_name = profile2["first_name"]
+                    if(first_name != ""):
+                        Profile.objects.filter(name=username).update(first_name = first_name)
 
+
+                    # changing user role (admin only)
+                    if(request.user.groups.all()[0].name == 'Admin'):
                         group_name = profile2["group"]
                         if(group_name != "" and group_name != "Admin"):
+                            User.objects.filter(username=username).get().groups.clear()
                             group = Group.objects.get(name = group_name)
                             group.user_set.add(User.objects.filter(username=username).get())
                             Profile.objects.filter(name=username).update(group = group_name)
 
-                        messages.success(request, 'The profile was updated')
-                    
-                        return HttpResponseRedirect(request.path_info)
+                    messages.success(request, 'The profile was updated')
+                    return HttpResponseRedirect(request.path_info)
                     
                 elif 'Update_password' in request.POST:
-
+                    print("èèèèèèè----------------------------------")
                     user = form_user.cleaned_data
                     password1 = user["password1"]
                     password2 = user["password2"]
@@ -170,7 +171,7 @@ def user_detail(request, user_id):
                         user_logout(request)
                         return redirect('login')
         else:
-            form_profile = ProfileForm()
+            form_profile = ProfileForm(user_group = user_group)
             form_user = ModifyUserForm()
 
         context = {'profile' : profile, "form_profile":form_profile, "form_user":form_user}
@@ -260,6 +261,8 @@ def home(request):
 
 
     return render(request,'genomeBact/home.html')
+
+
 
 @login_required(login_url='login')
 def results(request):
@@ -529,9 +532,8 @@ def workspace(request):
 
     nb_to_assign = Transcript.objects.filter(status = 'empty').count()
     nb_to_val =  Transcript.objects.filter(status = 'annotated', validator = request.user.profile).count()
-    nb_to_annot = request.user.profile.to_annotate.count()
-    nb_send = '?'
-    #nb_send = Transcript.objects.filter(status = 'empty').count()
+    nb_to_annot = Transcript.objects.filter(status = 'assigned', annotator = request.user.profile).count()
+    nb_send = Transcript.objects.filter(status = 'annotated', annotator =request.user.profile).count()
 
     if request.method == 'POST':
         annotator_chosen = request.POST.get('annotator')

@@ -50,7 +50,7 @@
             <div class="container position-relative px-4 px-lg-5">
                 <div class="post-heading">
                     <h1>Profil : </h1>
-                    <h2 class="subheading"> Paramètres utilisateurs</h2>
+                    <h2 class="subheading"> User parameters </h2>
                 </div>
             </div>
         </header>
@@ -58,8 +58,39 @@
         <div class="container px-4 px-lg-5">
         </div>
 
-        <form action="" method="POST">
-            {% csrf_token %}
+        <script type="text/javascript">
+            function showDiv(){
+                let elements = document.querySelectorAll('[id^="modify_"]');
+                elements.forEach(element => {
+                    element.style.display = 'block';
+                });
+                document.getElementById('Modify').style.display = 'none';
+                document.getElementById('Update').style.display = 'block';
+                document.getElementById('Cancel').style.display = 'block';
+            }
+            function hideDiv(){
+                let elements = document.querySelectorAll('[id^="modify_"]');
+                elements.forEach(element => {
+                    element.style.display = 'none';
+                });
+                document.getElementById('Modify').style.display = 'block';
+                document.getElementById('Update').style.display = 'none';
+                document.getElementById('Cancel').style.display = 'none';
+            }
+            function showPas(){
+                document.getElementById('pass_change').style.display = 'none';
+                document.getElementById('pass_update').style.display = 'block';
+                document.getElementById('pass_cancel').style.display = 'block';
+                document.getElementById('pass_modify').style.display = 'block';
+            }
+            function hidePas(){
+                document.getElementById('pass_change').style.display = 'block';
+                document.getElementById('pass_update').style.display = 'none';
+                document.getElementById('pass_cancel').style.display = 'none';
+                document.getElementById('pass_modify').style.display = 'none';
+            }
+        </script>
+
         <div class="container">
             <div class="row gutters">
             <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
@@ -73,25 +104,38 @@
                             <h5 class="user-name">{{ profile.user.username }}</h5>
                             <h6 class="user-email"> {{ profile.user.email }} </h6>
                         </div>
+                        <div class="text-center">
+                            <h6>Role</h6>
+                            <p style="margin-top: 0%;font-size: 1.2rem;">{{ profile.group }}</p>
+                        </div>
+                       
                        
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 button-wrapper">
-                                <div class="form-group">
-                                    <label for="password1">Password</label>
-                                    {{ form_user.password1.errors }}
-                                    {{ form_user.password1 }}
+                            <form method="post" action="">
+                                {% csrf_token %}
+                                <div id="pass_modify" style="display: none;">
+                                    <div class="form-group">
+                                        <label for="password1">Password</label>
+                                        {{ form_user.password1.errors }}
+                                        {{ form_user.password1 }}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="password2">Password 2</label>
+                                        {{ form_user.password2.errors }}
+                                        {{ form_user.password2 }}
+                                    </div>
+                                    <div style="float: right;">
+                                    <button type="submit" id="pass_update" name="Update_password" class="btn btn-primary" onclick="hidePas()" >Update</button>
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="password2">Password 2</label>
-                                    {{ form_user.password2.errors }}
-                                    {{ form_user.password2 }}
-                                </div>
+                            </form>
                             <div class="text-center ">
-                                <button type="button" id="submit" name="Change_password" class="btn btn-secondary">Change password</button>
-                                <button type="submit" id="submit" name="Update_password" class="btn btn-secondary">Update</button>
-                                <button type="button" id="submit" name="Cancel" class="btn btn-secondary">Cancel</button>
+                                <button type="button" id="pass_change" name="Change_password" class="btn btn-primary" onclick="showPas()" style=" margin-bottom:10px;">Change password</button>
+                                <button type="button" id="pass_cancel" name="Cancel" class="btn btn-secondary" onclick="hidePas()" style="display: none;">Cancel</button>
+
                             </div>
                             <div class="text-center ">
-                                <button type="submit" id="submit" name="Delete" class="btn btn-danger"> Delete Account</button>
+                                <button type="submit" id="submit" name="Delete" class="btn btn-danger" style="margin-top: 150px;"> Delete Account</button>
                             </div>
                         </div>
                     </div>
@@ -100,67 +144,93 @@
             </div>
             <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
             <div class="card h-100">
-                {% for message in messages %}
-                <p id="messages"> {{ message }}</p>
-                {% endfor %}
                 <div class="card-body">
+                    {% for message in messages %}
+                    <p id="messages" style="background-color: grey; color: #fff; padding: 10px; margin-top: 10px;" > {{ message }}</p>
+                    {% endfor %}
+                </div>
+                {{ form_user.errors }}
+                {{ form_profile.errors }}
+                <div class="card-body">
+                    <form method="post" action="">
+                        {% csrf_token %}
                     <div class="row gutters">
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                            <h6 class="mb-2 text-primary">Personal Details</h6>
+                            <h6 class="mb-2 " style="color: #45425A; --bs-text-opacity: 1;">Personal Details</h6>
                         </div>
+
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                             <div class="form-group">
-                                <label for="first_name">First Name</label>
+                                <h5 style="margin-top: 10px;">First Name</h5>
+                                <div id="modify_1" style="display:none;">
                                 {{ form_profile.first_name.errors }}
                                 {{form_profile.first_name}}
+                                </div>
                                 <p class=" text-center"> {{ profile.first_name }} </p>
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                             <div class="form-group">
-                                <label for="last_name">Last Name</label>
+                                <h5 style="margin-top: 10px;"">Last Name</h5>
+                                <div id="modify_2" style="display:none;">
                                 {{form_profile.last_name.errors}}
                                 {{form_profile.last_name}}
+                                </div>
                                 <p class=" text-center"> {{ profile.last_name }} </p>
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                             <div class="form-group">
-                                <label for="email">Email</label>
+                                <h5 style="margin-top: 10px;">Email</h5>
+                                <div id="modify_3" style="display:none;">
                                 {{form_user.email.errors}}
                                 {{form_user.email}}
+                                </div>
                                 <p class=" text-center"> {{ profile.user.email }} </p>
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                             <div class="form-group">
-                                <label for="phone_number">Phone</label>
+                                <h5 style="margin-top: 10px;">Phone</h5>
+                                <div id="modify_4" style="display:none;">
                                 {{form_profile.phone_number.errors}}
                                 {{form_profile.phone_number}}
+                                </div>
                                 <p class=" text-center"> {{ profile.phone_number }} </p>
                             </div>
                         </div>
                     </div>
-                    <div class="row gutters">
+                    {% if request.user.groups.all.0.name == 'Admin' %}
+                    <div class="row gutters" id="modify_6" style="display: none;">
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                            <h6 class="mt-3 mb-2 text-primary">Work</h6>
+                            <h6 class="mt-3 mb-2 " style="color: #45425A; --bs-text-opacity: 1;">Work</h6>
                         </div>
+
                         
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                             <div class="form-group">
-                                <label for="group">Role : {{ profile.group }}</label>
+                                <h5 style="margin-top: 10px;">Role : {{ profile.group }}</h5>
+                                <div id="modify_5" >
                                 {{ form_profile.group.errors }}
                                 {{ form_profile.group }}
+                                </div>
                             </div>
                         </div>
                         
+                        
                     </div>
+                    {% endif %}
+                    <div style="float: right;">
+                        <button type="submit" id="Update" name="Update" class="btn btn-primary" style="display: none;">Update</button>
+                    </div>
+                    </form>
+
                     <div class="row gutters">
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                             <div class="text-right" style="float: right;">
-                                <button id="Cancel" name="Cancel" class="btn btn-secondary">Cancel</button>
-                                <button type="submit" id="Update" name="Update" class="btn btn-primary">Update</button>
-                                <button id="Modify" name="Modify" class="btn btn-primary">Modify</button>
+                                <button id="Cancel" name="Cancel" class="btn btn-secondary" onclick="hideDiv()" style="display: none;">Cancel</button>
+                                
+                                <button id="Modify" name="Modify" class="btn btn-primary" onclick="showDiv()">Modify</button>
                             </div>
                         </div>
                     </div>
@@ -169,7 +239,6 @@
             </div>
             </div>
         </div>  
-        </form>
             
     <!-- Footer-->
     <footer class="border-top">

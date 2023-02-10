@@ -21,10 +21,6 @@
   
                 {% csrf_token %}
 
-                {% for message in messages %}
-                  <p id="messages"> {{ message }}</p>
-                {% endfor %}
-
                 <div class="form-outline mb-4">
                   <label class="form-label" for="username"> Username </label>
                   {{ form_user.username.errors }}
@@ -81,6 +77,10 @@
                 <button type="submit" class="btn btn-success btn-lg mb-1" name="Create User">Submit</button>
   
               </form>
+              <p class="small-xl pt-3 text-center">
+                <span class="text-muted">Already have an account?</span>
+                <a href="/">Login</a>
+              </p>
   
             </div>
           </div>

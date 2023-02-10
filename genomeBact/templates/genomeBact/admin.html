@@ -60,7 +60,7 @@
         <!-- Page content-->        
         <div class="container px-4 px-lg-5">
             {% for message in messages %}
-                <p id="messages"> {{ message }}</p>
+                <p id="messages" style="background-color: grey; color: #fff; padding: 10px; margin-top: 10px;"> {{ message }}</p>
             {% endfor %}
 
             <div class="tab">
@@ -73,8 +73,7 @@
                 <div class="container mt-5">
                     <div class="row">
                         <div class="col-lg-8">
-                            <div class="card-body">
-                                                        
+                            <div class="card-body">                       
                                 <!-- Numbers -->
                                 <div class="d-flex">
                                     <div class="d-flex flex-row user-info" >
@@ -113,6 +112,7 @@
                                     </div>
                                 </div>     
                             </div>
+
                             <!-- Table Navigation-->
                             <div class="m-4">
                                 <div class="card text-center">
@@ -204,6 +204,7 @@
                                             </div>
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
 

@@ -17,8 +17,9 @@
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="{% static 'genomeBact/styleshome.css' %}" rel="stylesheet" />
         <link href="{% static 'genomeBact/stylestab.css' %}" rel="stylesheet" />
+        <link href="{% static 'genomeBact/admin.css' %}" rel="stylesheet" />
         <script src="{% static 'genomeBact/tab.js' %}"></script>
-
+        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css'>
     </head>
     <body>
         <!-- Navigation-->
@@ -55,38 +56,92 @@
         <!-- Page content-->   
         <div class="container px-4 px-lg-5">
             {% for message in messages %}
-                <p id="messages"> {{ message }}</p>
+                <p id="messages" style="background-color: grey; color: #fff; padding: 10px; margin-top: 10px;"> {{ message }}</p>
             {% endfor %}
 
             <div class="tab">
-                {% if request.user.groups.all.0.name == 'Annotator' %}
-                <button class="tablinks" onclick="openTab(event, 'toannot')">Liste des CDS</button>
-                {% endif %}
                 {% if request.user.groups.all.0.name == 'Validator' %}
-                <button class="tablinks" onclick="openTab(event, 'validate')">Valider des CDS</button>
-                <button class="tablinks" onclick="openTab(event, 'assign')">Assigner des CDS</button>
+                <button class="tablinks" onclick="openTab(event, 'validate')">Validate transcripts</button>
+                <button class="tablinks" onclick="openTab(event, 'assign')">Assign transcripts</button>
                 {% endif %}
             </div>
             
             <div class="container mt-5">
                 <div class="row">
                     <div class="col-lg-8">
-                        <!-- Tab content -->
-                        <div id="toannot" class="tabcontent">
-                            <h3>A Annoter</h3>
-                            <p>woof</p>
-                            {% for transcript in transcripts_to_annotate %}
-                                {% if transcript.status == "assigned" %}
-                                <a href="{% url 'transcript-detail' specie=transcript.chromosome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a>
-                                {% else %}
-                                <h3>En attente de validation</h3>
-                                <a href="{% url 'transcript-detail' specie=transcript.chromosome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a>
-                                {% endif %}
-                            {% endfor %}
+                        {% if request.user.groups.all.0.name == 'Annotator' %}
+                        <!-- Table Navigation-->
+                        <div class="m-4">
+                            <div class="card text-center">
+                                <div class="card-header">
+                                    <ul class="nav nav-tabs card-header-tabs" id="myTab">
+                                        <li class="nav-item">
+                                            <a href="#to_annot" class="nav-link active" data-bs-toggle="tab">To annotate</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="#valid" class="nav-link" data-bs-toggle="tab"> Send for validation</a>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <!-- Tables -->
+                                <div class="card-body">
+                                    <div class="tab-content">
+                                        <div class="tab-pane fade show active" id="to_annot">
+                                            <table class="table table-sm">
+                                                <thead>
+                                                <tr>
+                                                    <th scope="col">Transcript</th>
+                                                    <th scope="col">Validator</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for transcript in transcripts_to_annotate %}
+                                                    {% if transcript.status == "assigned" %}
+                                                    <tr>
+                                                    <td> <a href="{% url 'transcript-detail' specie=transcript.chromosome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a></td>
+                                                    <td>{{ transcript.validator }}</td>
+                                                    </tr>
+                                                    {% endif %}
+                                                    {% endfor %}
+                                                
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="tab-pane fade" id="valid">
+                                            <table class="table table-sm">
+                                                <thead>
+                                                <tr>
+                                                    <th scope="col">Transcript</th>
+                                                    <th scope="col">Validator</th>
+                                                    <th scope="col"> Since </th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for transcript in transcripts_to_annotate %}
+                                                    {% if transcript.status != "assigned" %}
+                                                    <tr>
+                                                    <td> <a href="{% url 'transcript-detail' specie=transcript.chromosome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a></td>
+                                                    <td>{{ transcript.validator }}</td>
+                                                    <td>{{ transcript.status_date }}</td>
+                                                    </tr>
+                                                    {% endif %}
+                                                    {% endfor %}
+                                                
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
                         </div>
-                        
+                        {% endif %}
+
+                        <!-- Tab content -->
                         <div id="assign" class="tabcontent">
-                            <h3>A assigner</h3>
+                    
+                            <h3>To assign</h3>
                             <div class="col-lg-12 col-md-3 col-sm-12 p-0">
                                 <form action="" method="POST" name="form_content">
                                     {% csrf_token %}
@@ -112,12 +167,54 @@
                             </div>
                         </div>
                         
+                        {% if request.user.groups.all.0.name == 'Validator' %}
+                        <div id="validate" class="tabcontent" style="display: block;">
+                        {% else %}
                         <div id="validate" class="tabcontent">
-                            <h3>A valider</h3>
-                            {% for transcript in transcripts_to_validate %}
-                            <a href="{% url 'transcript-detail' specie=transcript.chromosome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a>                    
-                            {{ transcript.status_date }}
-                            {% endfor %}
+                        {% endif %}
+                            <h3>To validate</h3>
+
+                            <!-- Table Navigation-->
+                            <div class="m-4">
+                                <div class="card text-center">
+                                    <div class="card-header">
+                                        <ul class="nav nav-tabs card-header-tabs" id="myTab">
+                                            <li class="nav-item">
+                                                <a href="#to_valid" class="nav-link" data-bs-toggle="tab">To validate</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <!-- Tables -->
+                                    <div class="card-body">
+                                        <div class="tab-content">
+                                            <div class="tab-pane fade show active" id="to_valid">
+                                                <table class="table table-sm">
+                                                    <thead>
+                                                    <tr>
+                                                        <th scope="col">Transcript</th>
+                                                        <th scope="col">Annotator</th>
+                                                        <th scope="col">Since</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for transcript in transcripts_to_validate %}
+                                                        <tr>
+                                                        <td> <a href="{% url 'transcript-detail' specie=transcript.chromosome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a></td>
+                                                        <td>{{ transcript.annotator }}</td>
+                                                        <td>{{ transcript.status_date }}</td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                    
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 
@@ -148,29 +245,24 @@
                                 {% if request.user.groups.all.0.name == 'Annotator' %}
                                 <div class="card d-flex mx-auto mb-3" style="width: 220px; height: 180px;">
                                     <div class="card-header text-white" style="background-color: #45425A;">
-                                                Send for validation
-                                    </div>
-                                    <div class="card-body align-items-center d-flex justify-content-center" style="font-size: 50px; ">
-                                            <p class="card-text" style="color:#45425A;"> {{ nb_send }} </p>
-                                    </div>                                          
-                                </div>
-                                <div class="card d-flex mx-auto mb-3" style="width: 220px; height: 180px;">
-                                    <div class="card-header text-white" style="background-color: #45425A;">
                                                 To Annotate
                                     </div>
                                     <div class="card-body align-items-center d-flex justify-content-center" style="font-size: 50px; ">
                                             <p class="card-text" style="color:#45425A;"> {{ nb_to_annot }} </p>
                                     </div>                                          
                                 </div>
+                                <div class="card d-flex mx-auto mb-3" style="width: 220px; height: 180px;">
+                                    <div class="card-header text-white" style="background-color: #45425A;">
+                                                Send for validation
+                                    </div>
+                                    <div class="card-body align-items-center d-flex justify-content-center" style="font-size: 50px; ">
+                                            <p class="card-text" style="color:#45425A;"> {{ nb_send }} </p>
+                                    </div>                                          
+                                </div>
                                 {% endif %}
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-                    </div>
-
                 </div>
             </div>
         </div>
@@ -184,7 +276,7 @@
                             <li class="list-inline-item">
                                 <a href="https://github.com/PlotosusLineatus/Projet_Web">
                                     <span class="fa-stack fa-lg">
-                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fas fa-circle fa-stack-2x" ></i>
                                         <i class="fab fa-github fa-stack-1x fa-inverse"></i>
                                     </span>
                                 </a>
@@ -194,5 +286,7 @@
                 </div>
             </div>
         </footer>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>  
     </body>
 </html>

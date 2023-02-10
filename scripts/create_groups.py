@@ -87,7 +87,6 @@ def create_users():
                                     group = group_name, last_connexion = Now())
 
 
-
 def run():
     create_groups()
     create_admin()
