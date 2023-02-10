@@ -208,7 +208,7 @@
                         </div>
                     </div>
                     <!-- Side widget-->
-                    {% if request.user.groups.all.0.name != 'Lecteur' %}
+                    {% if request.user.groups.all.0.name != 'Reader' %}
                     <div class="card mb-4">
                         <div class="card-header fw-bolder">Status</div>
                             <div class="card-body">{{ transcript.status }}</div>
@@ -240,7 +240,7 @@
                     </div>
                     {% endif %}
 
-                    {% if request.user.groups.all.0.name == None %}
+                    {% if request.user.groups.all.0.name == 'Admin' %}
                     <form method="post" action="">
                         {% csrf_token %}
                         <div class="text-right" style="float: right; margin-top: 200px;">

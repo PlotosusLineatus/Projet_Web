@@ -33,10 +33,10 @@
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ms-auto py-4 py-lg-0">
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/home">Home</a></li>
-                        {% if request.user.groups.all.0.name == None %}
+                        {% if request.user.groups.all.0.name == 'Admin' %}
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/admin">Admin</a></li>
                         {% endif %}
-                        {% if request.user.groups.all.0.name != 'Lecteur' %}
+                        {% if request.user.groups.all.0.name != 'Reader' and  request.user.groups.all.0.name != 'Admin'%}
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/workspace">Work space</a></li>
                         {% endif %}
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/results">Collection</a></li>
@@ -73,10 +73,7 @@
                             <h5 class="user-name">{{ profile.user.username }}</h5>
                             <h6 class="user-email"> {{ profile.user.email }} </h6>
                         </div>
-                        <div class="about">
-                            <h5>About</h5>
-                            <p>I'm Yuki. Full Stack Designer I enjoy creating user-centric, delightful and human experiences.</p>
-                        </div>
+                       
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 button-wrapper">
                                 <div class="form-group">
                                     <label for="password1">Password</label>

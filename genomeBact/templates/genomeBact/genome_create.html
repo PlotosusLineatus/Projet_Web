@@ -1,15 +1,65 @@
 {% extends 'genomeBact/base.html' %}
 
 {% block content %}
+<header class="masthead" style="background-color: #8DAA9D">
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="post-heading">
+            <h1>Database : </h1>
+            <h2 class="subheading">Add a genome.</h2>
+        </div>
+    </div>
+</header>
 
-    <p>Add a Genome </p>
 
-    <form action="" method="post" novalidate>
+    <section class="h-100 h-custom" >
+        <div class="container py-5 h-100">
+          <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-lg-8 col-xl-6">
+              <div class="card rounded-3">
+                <div class="card-body p-4 p-md-5">
+      
+                  <form class="px-md-2" method="post">
+      
+                    {% csrf_token %}
+    
+                    {% for message in messages %}
+                      <p id="messages"> {{ message }}</p>
+                    {% endfor %}
+    
+                    <div class="form-outline mb-4">
+                      <label class="form-label"> Specie name </label>
+                      {{ form.specie.errors }}
+                      {{ form.specie }}
+                    </div>
+      
+                    <div class="form-outline mb-4">
+                        <label class="form-label"> Chromosome </label>
+                        {{ form.chromosome.errors }}
+                        {{ form.chromosome }}                  
+                      </div>
+      
+                    <div class="form-outline mb-4">
+                        <label class="form-label" > Sequence : </label>
+                        {{ form.sequence.errors }}
+                        {{ form.sequence }}
+                    </div>
 
-    {% csrf_token %}    
-    {{  form.as_p }} 
+                    <div class="form-outline mb-4">
+                        <label class="form-label" > Length of sequence </label>
+                        {{ form.length.errors }}
+                        {{ form.length }}
+                    </div>
+                  
+                    <button type="submit" class="btn btn-success btn-lg mb-1" name="Create User">Submit</button>
+      
+                  </form>
+      
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <input type="submit" value="Envoyer">
-    </form>
 
 {% endblock %}

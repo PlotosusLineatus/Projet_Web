@@ -52,7 +52,7 @@ class CreateProfileForm(forms.Form):
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
     phone_number = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Enter phone number'}), validators=[phone_regex], max_length=17) 
     group = forms.ChoiceField(widget = forms.Select(), 
-                 choices = ([('Lecteur','Lecteur'), ('Annotateur','Annotateur'), ('Validateur','Validateur'), ]), initial='Lecteur')
+                 choices = ([('Reader','Reader'), ('Annotator','Annotator'), ('Validator','Validator'), ]), initial='Reader')
     class Meta:
         model = Profile
         fields = ['first_name', 'last_name', 'phone_number', 'group']
@@ -72,7 +72,7 @@ class ProfileForm(forms.Form):
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
     phone_number = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Enter phone number'}), validators=[phone_regex], max_length=17, required=False) 
     group = forms.ChoiceField(widget = forms.Select(), 
-                 choices = ([('Lecteur','Lecteur'), ('Annotateur','Annotateur'), ('Validateur','Validateur'), ]), initial='Lecteur')
+                 choices = ([('Reader','Reader'), ('Annotator','Annotator'), ('Validator','Validator'), ]), initial='Reader')
     
     class Meta:
         model = Profile
