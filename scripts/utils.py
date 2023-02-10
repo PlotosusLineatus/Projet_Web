@@ -172,9 +172,7 @@ def get_chromosome(description):
 
 
 
-def get_data(absolute_path = "./data"):
-#def get_data(absolute_path = "/home/noemie/Documents/data"):
-#def get_data(absolute_path = "/home/sherman/Documents/M2/WEB/data"):
+def get_data(absolute_path = "../data"):
 
     '''
     Use all previous functions to store sequences in the absolute path in dict
