@@ -11,13 +11,7 @@ def results(request):
 
    
     '''
-    # If user don't search anything from home page, return full list of genomes
-    if 'user_input' in request.session:
-        user_input = request.session['user_input'] 
-        del request.session['user_input'] 
-        # Sinon, on utilise l'input de l'user pour filtrer les génomes sur leur num d'accession
-        genome = Genome.objects.filter(chromosome__contains = user_input)
-        return render(request, 'genomeBact/results.html',{'genome': genome}) 
+    Result page from homepage. User are able to download shown results.
     '''
 
     

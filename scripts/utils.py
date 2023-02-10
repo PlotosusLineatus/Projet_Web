@@ -5,12 +5,20 @@ import zipfile
 from django.http import HttpResponse, FileResponse
 
 def handle_uploaded_file(f):
+
+    '''
+    Deprecated function, no time for upload file function
+    '''
     with open((os.getcwd() + "/temp_dir"), 'wb+') as destination:
         for chunk in f.chunks():
             destination.write(chunk)
 
 
 def to_fasta_format(sequence, line_width=60):
+
+    '''
+    Input any string and return to FASTA format with line width specified
+    '''
     fasta_format = ""
     for i in range(0, len(sequence), line_width):
         fasta_format += sequence[i:i+line_width] + "\n"
@@ -18,6 +26,10 @@ def to_fasta_format(sequence, line_width=60):
 
 
 def get_genomes(genomes):
+
+    '''
+    Return FileResponse containing zip file containing each genome as solo FASTA file
+    '''
 
     buffer = io.BytesIO()
     with zipfile.ZipFile(buffer, mode='w') as zip_file:
@@ -39,6 +51,12 @@ def get_genomes(genomes):
     return(response)
 
 def get_genes(genes):
+
+    '''
+    Return FileResponse containing zip file of all transcripts downloaded.
+    Two files : one for peptidic sequence and one for nucleotidic one.
+
+    '''
 
     buffer = io.BytesIO()
     with zipfile.ZipFile(buffer, mode='w') as zip_file:
@@ -67,11 +85,8 @@ def get_genes(genes):
 def generate_header(instance, type_ = ""):
 
     '''
-    gene = models.CharField(max_length= 15, default = "")
-    gene_biotype =  models.CharField(max_length=10, default = "")
-    transcript_biotype = models.CharField(max_length= 15, default = "")
-    gene_symbol = models.CharField(max_length=10, default = "")
-    description = models.CharField(max_length=100, default = "")    
+    Generate FASTA header respecting the regex of the database. 
+    Different header if genome or genes.
     '''
     if ( type_ == "pep" or type_ == "cds"):
 
@@ -98,6 +113,10 @@ def generate_header(instance, type_ = ""):
 
 def get_annotation(description):
 
+    '''
+    Get annotations availables in a given header respecting the format of the database.
+    '''
+
     import re
 
     annot = {}
@@ -111,6 +130,10 @@ def get_annotation(description):
 
 def get_start_stop(description):
     
+
+    '''
+    Get start and stop position of gene on its chromosome
+    '''
     import re
     
     # Est attendu un pattern comme *Chromosome:1:5528445:1* dans tous les headers des FASTAs
@@ -128,6 +151,10 @@ def get_start_stop(description):
         return None
 
 def get_chromosome(description):
+
+    '''
+    Get accession number of chromosome
+    '''
 
     import re
 
@@ -149,6 +176,9 @@ def get_data(absolute_path = "./data"):
 #def get_data(absolute_path = "/home/noemie/Documents/data"):
 #def get_data(absolute_path = "/home/sherman/Documents/M2/WEB/data"):
 
+    '''
+    Use all previous functions to store sequences in the absolute path in dict
+    '''
 
     import os
     from Bio import SeqIO
@@ -239,6 +269,10 @@ def get_data(absolute_path = "./data"):
     return full_dict
 
 def get_max_length() -> int:
+
+    '''
+    Compute max length of all available genomes in database for default query values.
+    '''
 
     _list = []
     g = Genome.objects.all()

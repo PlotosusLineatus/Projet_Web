@@ -6,6 +6,11 @@ from django.contrib.auth.decorators import login_required
 @login_required(login_url='login')
 def home(request):
 
+
+    '''
+    Main page of the website. User can search instances of Genome or Transcript based on queries.
+    
+    '''
     # Does user submit anything ?
     if request.method == "POST":    
       

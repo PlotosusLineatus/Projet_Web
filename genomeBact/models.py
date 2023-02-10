@@ -19,7 +19,7 @@ User._meta.get_field('email')._required = True
 
 class Genome(models.Model):
 
-    specie = models.CharField(max_length = 50, unique = True)
+    specie = models.CharField(max_length = 100, unique = True)
     chromosome = models.CharField(max_length = 30, help_text = "Chromosome version name", primary_key=True)
     sequence = models.TextField(default = "",
                                 help_text = "Copy FASTA sequence here",
