@@ -57,17 +57,16 @@ Si vous êtes l'annotateur associé à ce gène, vous pourrez librement modifier
 Si vous êtes validateur et que vous devez vérifier les annotations, il vous sera possible de les valider définitevement ou bien de les renvoyer pour plus de précisions à l'annotateur associé, en lui laissant un message.
 
 # Espace de travail
-![image](https://user-images.githubusercontent.com/55387021/218196150-6fea6595-68e9-42e2-b57a-ee7c1b26a4c3.png)
+![image](https://user-images.githubusercontent.com/55387021/218198938-32dabc23-d9ff-43c7-9b42-06f6cb10ddb8.png)
 En tant que validateur, c'est ici que vous pourrez assigner des séquences à des annotateurs et valider, ou non, leurs annotations.
-![image](https://user-images.githubusercontent.com/55387021/218195100-4f9ec86a-c9ef-4674-b346-d5840adcaa25.png)
 En tant qu'annotateur, l'espace `WORKSPACE` vous permet de connaitre les différents gènes qui vous ont été confiés, ainsi que les annotations en attente de validation.
 Il est possible de télécharger un fasta avec tous les gènes à annoter.
 
 # Paramètres Utilisateurs
-![image](https://user-images.githubusercontent.com/55387021/218195458-cc2145fd-78f2-4b32-b2e7-4ca5370f131b.png)
 Tout utilisateur peut changer ses informations, son mot de passe et même supprimer son compte. Attention c'est irreversible !
 L'administrateur peut également changer les rôles de tous les utilisateurs.
 
 # Page Admin
+En tant qu'administrateur, vous pouvez assigner des gènes à annoter, les valider, les annoter. Vous pouvez également accéder à la page paramètres de tous utilisateurs ou encore ajouter/supprimer des génomes, des utilisateurs ou des gènes.
 
 Enfin, la barre de navigation vous permet de retourner sur la page principale à tout moment, tout comme d'accéder à vos parametres utilisateur et modifier vos informations personneles et mot de passe.
