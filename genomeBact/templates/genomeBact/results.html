@@ -13,7 +13,7 @@
 
 {% if genomes %}
 <div class="container px-4 px-lg-5">
-    <form method = "POST">
+    <form class="mb-4" method = "POST">
         {% csrf_token %}
         <input type="submit" value="Download annotated multifasta">
     </form>

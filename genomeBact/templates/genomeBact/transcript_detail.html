@@ -27,47 +27,24 @@
                             <h2 class="fw-bolder mb-4 mt-5">Séquences</h2>
                             <div class="input-group-sm">
                                 <h5>Séquence nucléotidique</h5>
-                                <button class="btn-secondary btn" name="button-FASTA_nt" type="button">FASTA</button>
                             </div>
                             <p class = "d-flex flex-row small" style=" word-break:break-all;"> {{ transcript.seq_nt }} </p>
                             <div class="'input-group-sm">
                                 <h5>Séquence peptidique</h5>
-                                <button class="btn-secondary btn" name="button-FASTA_cds" type="button">FASTA</button>
                             </div>    
                             <p class = "d-flex flex-row small" style=" word-break:break-all;"> {{ transcript.seq_cds }} </p>
                         </section>
                     </article>
                     <!--Liste des tCDS-->
                     <section class="mb-5">
-                        <div class="card bg-light">
-                            <script type="text/javascript">
-                                function showDiv(){
-                                    let elements = document.querySelectorAll('[id^="modify_"]');
-                                    elements.forEach(element => {
-                                        element.style.display = 'block';
-                                    });
-                                    document.getElementById('button_modify').style.display = 'none';
-                                    document.getElementById('button_validate').style.display = 'none';
-                                    document.getElementById('display-annot').style.display = 'none';
-                                }
-                                function hideDiv(){
-                                    let elements = document.querySelectorAll('[id^="modify_"]');
-                                    elements.forEach(element => {
-                                        element.style.display = 'none';
-                                    });
-                                    document.getElementById('button_modify').style.display = 'Block';
-                                    document.getElementById('button_validate').style.display = 'Block';
-                                    document.getElementById('display-annot').style.display = 'Block';
-                                }
-                            </script>
-                                
+                        <div class="card bg-light">                                
                             <div class="card-body">
                                 <h2 class="fw-bolder mb-4 mt-2">Annotations</h2>      
                                 {% for message in messages %}
                                     <p id="messages" style="background-color: grey; color: #fff; padding: 10px; margin-top: 10px;"> {{ message }}</p>
                                 {% endfor %}
                                 {% if transcript.status != 'validated' and transcript.status != 'empty' %}
-                                    <b style='color:red;'>Not validated</b>
+                                    <b style='color:#C97064;'>Not validated</b>
                                 {% endif %}
                                                  
                                 <!-- Partie Annotation-->
@@ -112,27 +89,27 @@
                                 <form action="" method="POST" name="form_content"  id='modify_annot' style="display:none;">
                                     {% csrf_token %}
                                     <div>
-                                        <div class="form-outline mb-4">
+                                        <div class="form-label mb-4">
                                             <label class="form-label" for="form3Example1q"> Gene </label>
                                             <input type="text" class="form-control" required="" id="form3Example1q" name="gene" value="{{transcript.gene}}">
                                         </div>
                             
-                                        <div class="form-outline mb-4">
+                                        <div class="form-label mb-4">
                                             <label class="form-label" for="form3Example1q"> Gene biotype </label>
                                             <input type="text" id="form3Example1q" class="form-control" name="gene_biotype" value="{{transcript.gene_biotype}}"/>
                                         </div>
 
-                                        <div class="form-outline mb-4">
+                                        <div class="form-label mb-4">
                                             <label class="form-label" for="form3Example1q"> Transcript biotype </label>
                                             <input type="text" id="form3Example1q" class="form-control" name="transcript_biotype" value="{{transcript.transcript_biotype}}"/>
                                         </div>
 
-                                        <div class="form-outline mb-4">
+                                        <div class="form-label mb-4">
                                             <label class="form-label" for="form3Example1q"> Gene symbol </label>
                                             <input type="text" id="form3Example1q" class="form-control" name="gene_symbol" value="{{transcript.gene_symbol}}"/>
                                         </div>
 
-                                        <div class="form-outline mb-4">
+                                        <div class="form-label mb-4">
                                             <label class="form-label" for="form3Example1q"> Description </label>
                                             <input type="text" id="form3Example1q" class="form-control" name="description" value="{{transcript.description}}"/>
                                         </div>
@@ -215,7 +192,7 @@
                     </div>
                     <!-- Side widget-->
                     {% if request.user.groups.all.0.name != 'Reader' %}
-                    <div class="card mb-4" style="margin-top: 360px;">
+                    <div class="card mb-4">
                         <div class="card-header fw-bolder">Status</div>
                             <div class="card-body">{{ transcript.status }}</div>
                             {% if transcript.status == 'validated' %}
@@ -263,3 +240,24 @@
 
 
 {% endblock %}
+
+<script type="text/javascript">
+    function showDiv(){
+        let elements = document.querySelectorAll('[id^="modify_"]');
+        elements.forEach(element => {
+            element.style.display = 'block';
+        });
+        document.getElementById('button_modify').style.display = 'none';
+        document.getElementById('button_validate').style.display = 'none';
+        document.getElementById('display-annot').style.display = 'none';
+    }
+    function hideDiv(){
+        let elements = document.querySelectorAll('[id^="modify_"]');
+        elements.forEach(element => {
+            element.style.display = 'none';
+        });
+        document.getElementById('button_modify').style.display = 'Block';
+        document.getElementById('button_validate').style.display = 'Block';
+        document.getElementById('display-annot').style.display = 'Block';
+    }
+</script>
