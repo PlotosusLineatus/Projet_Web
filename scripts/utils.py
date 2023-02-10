@@ -1,5 +1,8 @@
 import os
 from genomeBact.models import Genome
+import io
+import zipfile
+from django.http import HttpResponse, FileResponse
 
 def handle_uploaded_file(f):
     with open((os.getcwd() + "/temp_dir"), 'wb+') as destination:
@@ -7,7 +10,105 @@ def handle_uploaded_file(f):
             destination.write(chunk)
 
 
-# Penser à regarder la disposition management/commands comme alternative à runscript
+def to_fasta_format(sequence, line_width=60):
+    fasta_format = ""
+    for i in range(0, len(sequence), line_width):
+        fasta_format += sequence[i:i+line_width] + "\n"
+    return fasta_format
+
+
+def get_genomes(genomes):
+
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, mode='w') as zip_file:
+
+        for genome in genomes:
+
+            fasta_file = io.StringIO()
+            header = generate_header(genome)
+            fasta_file.write(f">{header}\n")
+    
+            formated_seq = to_fasta_format(genome.sequence)
+            fasta_file.write(formated_seq)
+
+            zip_file.writestr(f"{genome.specie}.fasta", fasta_file.getvalue())
+
+    buffer.seek(0)
+    response = FileResponse(buffer, content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename="genomes.zip"'
+    return(response)
+
+def get_genes(genes):
+
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, mode='w') as zip_file:
+        pep_file = io.StringIO()
+        cds_file = io.StringIO()
+        for gene in genes:
+
+            header = generate_header(gene, "pep")
+            pep_file.write(f">{header}\n")
+            formated_seq = to_fasta_format(gene.seq_cds)
+            pep_file.write(formated_seq)
+
+            header = generate_header(gene, "cds")
+            cds_file.write(f">{header}\n")
+            formated_seq = to_fasta_format(gene.seq_nt)
+            cds_file.write(formated_seq)
+
+        zip_file.writestr(f"genes_coding_sequences.fasta", cds_file.getvalue())
+        zip_file.writestr(f"genes_peptide_sequences.fasta", pep_file.getvalue())
+
+    buffer.seek(0)
+    response = FileResponse(buffer, content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename="genes.zip"'
+    return(response)
+
+def generate_header(instance, type_ = ""):
+
+    '''
+    gene = models.CharField(max_length= 15, default = "")
+    gene_biotype =  models.CharField(max_length=10, default = "")
+    transcript_biotype = models.CharField(max_length= 15, default = "")
+    gene_symbol = models.CharField(max_length=10, default = "")
+    description = models.CharField(max_length=100, default = "")    
+    '''
+    if ( type_ == "pep" or type_ == "cds"):
+
+        # >AAN78501 cds chromosome:ASM744v1:Chromosome:190:255:1 
+        header = []
+        header.append(instance.transcript + " " + type_ + " " + "chromosome:" + instance.chromosome.chromosome + ":" + str(instance.start) + ":" + str(instance.stop) + ":1")
+        annotations = ["gene","gene_biotype_","transcript_biotype","gene_symbol","description"]
+
+        # gene:c5491 gene_biotype:protein_coding transcript_biotype:protein_coding gene_symbol:thrL description:Thr operon leader peptide
+        for field_name in instance.__dict__:
+
+            if ( not field_name.startswith('_') and field_name in annotations and instance.__dict__[field_name] != ""):
+
+                header.append(field_name + ":" + instance.__dict__[field_name]) 
+
+
+        header = " ".join(header)
+
+    else:
+
+        # >Chromosome dna:chromosome chromosome:ASM744v1:Chromosome:1:5231428:1 REF
+        header = ("Chromosome dna:chromosome chromosome:" + instance.chromosome + ":Chromosome:1:" + str(instance.length) + ":1 REF")
+    return header
+
+
+def get_annotation(description):
+
+    import re
+
+    annot = {}
+    annot["gene"] = re.search(r"gene:(\w+)", description).group(1) if re.search(r"gene:(\w+)", description) else ""
+    annot["gene_biotype"] = re.search(r"gene_biotype:(\w+)", description).group(1) if re.search(r"gene_biotype:(\w+)", description) else ""
+    annot["transcript_biotype"] = re.search(r"transcript_biotype:(\w+)", description).group(1) if re.search(r"transcript_biotype:(\w+)", description) else ""
+    annot["gene_symbol"] = re.search(r"gene_symbol:(\w+)", description).group(1) if re.search(r"gene_symbol:(\w+)", description) else ""
+    annot["description"] = re.search(r"description:([\w*\s]*)", description).group(1) if re.search(r"description:([\w*\s]*)", description) else ""
+
+    return annot
 
 def get_start_stop(description):
     
@@ -43,7 +144,11 @@ def get_chromosome(description):
         print("Mauvais parsing du header du génome de  : %s" % description)
         return None
 
+
+
 def get_data(absolute_path = "/home/sherman/Documents/M2/WEB/data"):
+#def get_data(absolute_path = "/home/noemie/Documents/data"):
+#def get_data(absolute_path = "/home/sherman/Documents/M2/WEB/data"):
 
 
     import os
@@ -88,11 +193,19 @@ def get_data(absolute_path = "/home/sherman/Documents/M2/WEB/data"):
             seq_dict[seq.name] = {}
         
             terms = get_start_stop(seq.description)
+            annot = get_annotation(seq.description)
+
             
             seq_dict[seq.name]["start"] = terms[0]
             seq_dict[seq.name]["stop"] = terms[1]
             seq_dict[seq.name]["NT"] = str(seq.seq)
             seq_dict[seq.name]["specie"] = strain
+            seq_dict[seq.name]["gene"] = annot["gene"]
+            seq_dict[seq.name]["gene_biotype"] = annot["gene_biotype"]
+            seq_dict[seq.name]["transcript_biotype"] = annot["transcript_biotype"]
+            seq_dict[seq.name]["gene_symbol"] = annot["gene_symbol"]
+            seq_dict[seq.name]["description"] = annot["description"]
+            
             
             
     
