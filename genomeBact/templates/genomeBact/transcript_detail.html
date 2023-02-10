@@ -24,7 +24,14 @@
                     <article>
                         <!-- Séquence-->
                         <section class="mb-5">
-                            <h2 class="fw-bolder mb-4 mt-5">Séquences</h2>
+                            <h2 class="fw-bolder mb-4 mt-5">Séquences
+                                <!-- Download fasta -->
+                                <form method="POST" action="">
+                                    {% csrf_token %}
+                                    <button class="btn-secondary btn" name="Download" type="submit" style="padding: 1%; float: right; margin-right: 50px;"> ⇩ FASTA</button>
+                                </form>
+                            </h2>
+                            
                             <div class="input-group-sm">
                                 <h5>Séquence nucléotidique</h5>
                             </div>
@@ -54,7 +61,9 @@
                                         <div class="d-flex flex-column justify-content-start ml-2" >
                                             <div id="display-annot">
                                                 <div class="d-flex flex-column justify-content-start ml-2">
+                                                    {% if request.user.groups.all.0.name != 'Reader' %}
                                                     <span class="fw-bold">{{ transcript.annotator.user.email }}</span>
+                                                    {% endif %}
                                                     <span class="text-secondary mb-3">{{ transcript.status_date }} </span>
                                                 </div>
                                                 <div class="d-flex">
@@ -127,7 +136,7 @@
                                 <form action="" method="POST" id="button_validate" style="float: right;">
                                     {% csrf_token %}
                                     <div style="float: right;">
-                                        <button type="submit" name="to_validate" class="btn btn-primary" style=" border-color: #8DAA9D; background-color: #8DAA9D; padding: 10px;">To validate</button>
+                                        <button type="submit" name="to_validate" class="btn btn-primary" style=" border-color: #8DAA9D; background-color: #C97064; padding: 10px;">Send for validation</button>
                                     </div>
                                 </form>
                                 {% endif %}
@@ -175,15 +184,15 @@
                                             <td class="text-end"> {{ transcript.transcript }} </td>
                                         </tr>
                                         <tr> 
-                                            <td class="fw-bold figure-caption">Specie </td>
+                                            <td class="fw-bold figure-caption">Chromosome : </td>
                                             <td class="text-end"> {{ transcript.chromosome.chromosome }} </td>
                                         </tr>
                                         <tr> 
-                                            <td class="fw-bold figure-caption">Start </td>
+                                            <td class="fw-bold figure-caption">Start :</td>
                                             <td class="text-end"> {{ transcript.start }} </td>
                                         </tr>
                                         <tr> 
-                                            <td class="fw-bold figure-caption">Stop </td>
+                                            <td class="fw-bold figure-caption">Stop :</td>
                                             <td class="text-end"> {{ transcript.stop }} </td>
                                         </tr>
                                     </table>
@@ -196,7 +205,7 @@
                         <div class="card-header fw-bolder">Status</div>
                             <div class="card-body">{{ transcript.status }}</div>
                             {% if transcript.status == 'validated' %}
-                            <span class="text-secondary"> validated by : {{ transcript.validator }}</span>
+                            <span class="text-secondary" style="margin-left: 20px;"> validated by : {{ transcript.validator }}</span>
                             {% endif %}
                             {% if transcript.status != 'validated' and request.user.username == transcript.annotator.name %}
                             <span class="text-center" style="color: orangered;"> {{ transcript.message }}</span>
@@ -205,7 +214,7 @@
                     {% endif %}
                                 
                     
-                    {% if request.user.username == transcript.validator.name and transcript.status == 'annotated' %}
+                    {% if request.user.username == transcript.validator and transcript.status == 'annotated' %}
                     <div class="card mb-4">
                         <form action="" method="POST" novalidate>
                             {% csrf_token %}

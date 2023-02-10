@@ -25,6 +25,16 @@
                     {% for message in messages %}
                       <p id="messages" style="background-color: grey; color: #fff; padding: 10px; margin-top: 10px;"> {{ message }}</p>
                     {% endfor %}
+
+                    <div class="form-outline mb-4">
+                      <label class="form-label"> Genome specie </label>
+                      <select class="form-control" name="genome" required>
+                          <option value="" disabled selected hidden> Select genome</option>                          
+                          {% for genome in genomes %}
+                          <option value="{{ genome.specie }}">{{ genome.specie }}</option>
+                          {% endfor %}
+                      </select>
+                  </div> 
     
                     <div class="form-outline mb-4">
                       <label class="form-label"> Transcript name </label>
@@ -71,7 +81,7 @@
                       {{ form.stop }}                
                     </div>
                   
-                    <button type="submit" class="btn btn-success btn-lg mb-1" name="Create User">Submit</button>
+                    <button type="submit" class="btn btn-success btn-lg mb-1" name="Create User" style="background-color: #C97064;">Submit</button>
       
                   </form>
       

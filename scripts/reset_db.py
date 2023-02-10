@@ -3,30 +3,20 @@
 def run():
 
 
-    import os
-    import glob
+
     from django.core import management
+    flag = False
 
-    current_dir = os.getcwd()   
-
-
-    db_path = current_dir + "/db.sqlite3"
-
-    if os.path.isfile(db_path):
+    '''
+    if os.path.isfile("./db.sqlite3"):
         print("Removing existing database ... ")
-        os.remove(db_path)
+        os.remove("./db.sqlite3")
 
 
-    migrations_path = current_dir + "genomeBact/migrations/"
+    migrations_path = "./genomeBact/migrations/"
 
     files = glob.glob(migrations_path + "/*")
-
-
-    if files:
-        print("Removing existing migrations ... ")
-        for file in files:
-            os.remove(file)
-
+    '''
 
     print("Creation des tables ...   \n\n\n")
 
@@ -39,6 +29,7 @@ def run():
     except Exception:
 
         print("Echec de création des tables")
+        flag = True
 
 
     print("Chargement des données initiales ")
@@ -50,7 +41,12 @@ def run():
     except Exception:
 
         print("Echec du chargement des données")
+        flag = True
 
+    if flag == False:
 
-
+        return 0
     
+    else:
+
+        return 1

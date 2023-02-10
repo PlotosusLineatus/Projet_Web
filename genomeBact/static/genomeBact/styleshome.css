@@ -343,14 +343,13 @@ button:focus:not(:focus-visible) {
 
 input {
   width: 100%;
-  padding:10px; 
-  border:2px solid #ccc; 
+  padding: 10px;
+  border: 2px solid #ccc;
   -webkit-border-radius: 5px;
   border-radius: 5px;
-  color: #fff;
-  background-color: #C97064;
-  border-color: #C97064;
-  margin : 5px;
+  color: #000000;
+  background-color: #fff;
+  margin: 5px;
 }
 
 button,

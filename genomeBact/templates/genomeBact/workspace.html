@@ -47,8 +47,8 @@
         <header class="masthead" style="background-color: #45425A">
             <div class="container position-relative px-4 px-lg-5">
                 <div class="post-heading">
-                    <h1>Profil : </h1>
-                    <h2 class="subheading"> Gestion des projets</h2>
+                    <h1>Workspace : </h1>
+                    <h2 class="subheading"> Project management</h2>
                 </div>
             </div>
         </header>
@@ -107,6 +107,12 @@
                                                 
                                                 </tbody>
                                             </table>
+                                            <!-- Download fasta -->
+                                            <form method="POST" action="">
+                                                {% csrf_token %}
+                                                <button class="btn-secondary btn" name="Download" type="submit" style="padding: 1%; float: right;"> ⇩ FASTA</button>
+                                            </form>
+
                                         </div>
                                         <div class="tab-pane fade" id="valid">
                                             <table class="table table-sm">
@@ -161,7 +167,7 @@
                                         {% endfor %}
                                     </select>
                                     <div class="col-lg-12 col-md-3 col-sm-12 p-0">
-                                        <input type="submit" value="Assign">
+                                        <input type="submit" value="Assign" style="background-color: #C97064; color: #fff;">
                                     </div>
                                 </form>
                             </div>

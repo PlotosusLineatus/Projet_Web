@@ -19,7 +19,7 @@ User._meta.get_field('email')._required = True
 
 class Genome(models.Model):
 
-    specie = models.CharField(max_length = 50, unique = True)
+    specie = models.CharField(max_length = 100, unique = True)
     chromosome = models.CharField(max_length = 30, help_text = "Chromosome version name", primary_key=True)
     sequence = models.TextField(default = "",
                                 help_text = "Copy FASTA sequence here",
@@ -88,7 +88,7 @@ class Transcript(models.Model):
     status = models.CharField(max_length=200, choices=STATUS, default='empty')
     status_date = models.DateTimeField(null = True)
     annotator = models.ForeignKey(Profile, null=True, on_delete=models.SET_NULL, related_name="to_annotate")
-    validator = models.ForeignKey(Profile, null=True, on_delete=models.SET_NULL, related_name ="to_validate")
+    validator = models.CharField(max_length=100, default="")
     message = models.CharField(max_length=100, default = "")    
     
     FilterFields = ["length"]

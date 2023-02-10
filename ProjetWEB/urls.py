@@ -15,26 +15,29 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from genomeBact import views
+from genomeBact.views.home import *
+from genomeBact.views.users import *
+from genomeBact.views.results import *
+from genomeBact.views.transcripts import *
 
 urlpatterns = [
 
     path('admin_django/', admin.site.urls),
 
-    path('', views.user_login, name = 'login'),
-    path('register/', views.register, name = 'register'),
-    path('logout/', views.user_logout, name = 'logout'),
-    path('home/', views.home, name = 'home'),
-    path('results/', views.results, name='results'),
+    path('', user_login, name = 'login'),
+    path('register/', register, name = 'register'),
+    path('logout/', user_logout, name = 'logout'),
+    path('home/', home, name = 'home'),
+    path('results/', results, name='results'),
 
     # USERS #
-    path('admin/', views.admin, name = 'admin'),
-    path('user/<int:user_id>/', views.user_detail, name = 'user-detail'),
-    path('workspace/', views.workspace, name = 'workspace'),
+    path('admin/', admin_, name = 'admin'),
+    path('user/<int:user_id>/', user_detail, name = 'user-detail'),
+    path('workspace/', workspace, name = 'workspace'),
 
     # BD #
-    path('sp/add/', views.genome_create, name='genome-create'),
-    path('sp/<str:specie>/', views.genome_detail, name='genome-detail'),
-    path('transcripts/add/', views.transcript_create, name='transcript-create'),
-    path('sp/<str:specie>/<str:transcript>/', views.transcript_detail, name='transcript-detail'),
+    path('sp/add/', genome_create, name='genome-create'),
+    path('sp/<str:specie>/', genome_detail, name='genome-detail'),
+    path('transcripts/add/', transcript_create, name='transcript-create'),
+    path('sp/<str:specie>/<str:transcript>/', transcript_detail, name='transcript-detail'),
 ]
