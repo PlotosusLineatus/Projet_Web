@@ -21,10 +21,6 @@
   
                 {% csrf_token %}
 
-                {% for message in messages %}
-                  <p id="messages"> {{ message }}</p>
-                {% endfor %}
-
                 <div class="form-outline mb-4">
                   <label class="form-label" for="username"> Username </label>
                   {{ form_user.username.errors }}

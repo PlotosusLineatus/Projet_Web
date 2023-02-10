@@ -85,7 +85,9 @@ def register(request):
 
             messages.success(request, 'Account was created for ' + username)
             
-            if( request.user.groups.all()[0].name == 'Admin' ):
+            if( request.user.is_anonymous ):
+                return redirect('login')
+            elif(request.user.profile.name == 'Admin' ):
                 return redirect('admin')
             else :
                 return redirect('login')
@@ -110,7 +112,6 @@ def user_detail(request, user_id):
             form_user = ModifyUserForm(request.POST)
 
             if form_profile.is_valid() and form_user.is_valid() :
-                print(request.POST)
                 if 'Update' in request.POST:
                     user = form_user.cleaned_data
                     profile2 = form_profile.cleaned_data
@@ -139,6 +140,7 @@ def user_detail(request, user_id):
                     if(request.user.groups.all()[0].name == 'Admin'):
                         group_name = profile2["group"]
                         if(group_name != "" and group_name != "Admin"):
+                            User.objects.filter(username=username).get().groups.clear()
                             group = Group.objects.get(name = group_name)
                             group.user_set.add(User.objects.filter(username=username).get())
                             Profile.objects.filter(name=username).update(group = group_name)

@@ -64,7 +64,7 @@
                             <div class="card-body">
                                 <h2 class="fw-bolder mb-4 mt-2">Annotations</h2>      
                                 {% for message in messages %}
-                                    <p id="messages"> {{ message }}</p>
+                                    <p id="messages" style="background-color: grey; color: #fff; padding: 10px; margin-top: 10px;"> {{ message }}</p>
                                 {% endfor %}
                                 {% if transcript.status != 'validated' and transcript.status != 'empty' %}
                                     <b style='color:red;'>Not validated</b>
@@ -137,18 +137,24 @@
                                             <input type="text" id="form3Example1q" class="form-control" name="description" value="{{transcript.description}}"/>
                                         </div>
                                     </div>
-                    
-                                    <input type="submit" value="Submit changes" style="float: right;">  
+                                    
+                                    <div style="float: right;">
+                                        <button type="submit" class="btn btn-primary" style=" border-color: #8DAA9D; background-color: #8DAA9D; padding: 10px;">Submit changes</button>
+                                    </div>
                                 </form>   
                                 
                                 {% if request.user.username == transcript.annotator.name and transcript.status != 'annotated' %}
-                                <button id="button_modify" style="float: right;" onclick="showDiv()">Modify</button>
+                                <div style="float: right;">
+                                    <button id="button_modify" class="btn btn-primary" style=" border-color: #8DAA9D; background-color: #8DAA9D; padding: 10px;" onclick="showDiv()">Modify</button>
+                                </div>
                                 <form action="" method="POST" id="button_validate" style="float: right;">
                                     {% csrf_token %}
-                                    <input type="submit" name="to_validate" value="To validate">
+                                    <div style="float: right;">
+                                        <button type="submit" name="to_validate" class="btn btn-primary" style=" border-color: #8DAA9D; background-color: #8DAA9D; padding: 10px;">To validate</button>
+                                    </div>
                                 </form>
                                 {% endif %}
-                                <button id="modify_cancel" style="float: right; display: none;" onclick="hideDiv()">Cancel</button>  
+                                <button id="modify_cancel" class="btn btn-secondary" style="float: right; display: none;padding:10px;" onclick="hideDiv()">Cancel</button>  
 
                             </div>
 
@@ -224,16 +230,18 @@
                     
                     {% if request.user.username == transcript.validator.name and transcript.status == 'annotated' %}
                     <div class="card mb-4">
-                        <form action="" method="POST">
+                        <form action="" method="POST" novalidate>
                             {% csrf_token %}
                             <div class="card-header fw-bolder">Validation process</div>
                             <div class="card-body">
                                 <div class="form-outline mb-4">
                                     <label class="form-label" for="message"> Message </label>
-                                    <input type="text" id="message" required="false" name="message" placeholder="comment if annotations are rejected (put a space if validated)" />
+                                    <input type="text" id="message" name="message" placeholder="comment if annotations are rejected" style="border-color: #C97064; background-color: #fff;"/>
                                 </div>
-                                <input type="submit" name="Validate" value="Validate">
-                                <input type="submit" name="reject_validation" value="Reject">
+                                <div style="float: right;">
+                                    <button type="submit" name="Validate" class="btn btn-primary" style=" border-color: #8DAA9D; background-color: #8DAA9D; padding: 10px;">Validate</button>
+                                    <button type="submit" name="reject_validation" class="btn btn-secondary" style="background-color: #C97064; padding: 10px;">Reject</button>
+                                </div>
                             </div>
                         </form>
 
