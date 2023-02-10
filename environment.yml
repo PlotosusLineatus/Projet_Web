@@ -1,0 +1,9 @@
+name: OUAF
+
+dependencies:
+  - python=3.10.6
+  - pip=22.1.2
+  - pip:
+    - biopython==1.80
+    - django-extensions==3.2.1
+    - django==4.1.6
