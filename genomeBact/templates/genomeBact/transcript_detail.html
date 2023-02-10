@@ -92,13 +92,8 @@
                                 {% for message in messages %}
                                     <p id="messages"> {{ message }}</p>
                                 {% endfor %}
-w
-                                {% if request.user.username == transcript.validator.name and transcript.status == 'annotated' %}
-                                <form action="" method="POST">
-                                    {% csrf_token %}
-                                    <input type="submit" name="Validate" value="Validate" style="float: right;">
-                                    <input type="submit" name="reject_validation" value="Reject" style="float: right;">
-                                </form>  
+                                {% if transcript.status != 'validated' and transcript.status != 'empty' %}
+                                    <b style='color:red;'>Not validated</b>
                                 {% endif %}
                                                  
                                 <!-- Single comment-->
@@ -239,18 +234,36 @@ w
                         </div>
                     </div>
                     <!-- Side widget-->
+                    {% if request.user.groups.all.0.name != 'Lecteur' %}
                     <div class="card mb-4">
-
-                        <div class="card-header fw-bolder">Statut</div>
-                        <div class="card-body">{{ transcript.status }}</div>
-
-                        <div class="card-header fw-bolder">Statut</div>
-                        <div class="card-body"> {{ transcript.status }}</div>
-                        {% if transcript.status == 'validated' %}
+                        <div class="card-header fw-bolder">Status</div>
+                            <div class="card-body">{{ transcript.status }}</div>
+                            {% if transcript.status == 'validated' %}
                             <span class="text-secondary"> validated by : {{ transcript.validator }}</span>
-                        {% endif %}
-
+                            {% endif %}
+                            {% if transcript.status != 'validated' and request.user.username == transcript.annotator.name %}
+                            <span class="text-center"> {{ transcript.message }}</span>
+                            {% endif %}
                     </div>
+                    {% endif %}
+                                
+                    
+                    {% if request.user.username == transcript.validator.name and transcript.status == 'annotated' %}
+                    <div class="card mb-4">
+                        <form action="" method="POST">
+                            {% csrf_token %}
+                            <div class="card-header fw-bolder">Validation process</div>
+                            <div class="card-body">
+                                <div class="form-outline mb-4">
+                                    <label class="form-label" for="message"> Message </label>
+                                    <input type="text" id="message" required="" name="message" placeholder="comment if annotations are rejected" />
+                                </div>
+                                <input type="submit" name="Validate" value="Validate">
+                                <input type="submit" name="reject_validation" value="Reject">
+                            </div>
+                        </form>
+                    </div>
+                    {% endif %}
 
                     {% if request.user.groups.all.0.name == None %}
                     <form method="post" action="">

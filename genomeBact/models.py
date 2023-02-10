@@ -89,6 +89,7 @@ class Transcript(models.Model):
     status_date = models.DateTimeField(null = True)
     annotator = models.ForeignKey(Profile, null=True, on_delete=models.SET_NULL, related_name="to_annotate")
     validator = models.ForeignKey(Profile, null=True, on_delete=models.SET_NULL, related_name ="to_validate")
+    message = models.CharField(max_length=100, default = "")    
     
     FilterFields = ["length"]
 

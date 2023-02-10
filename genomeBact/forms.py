@@ -10,9 +10,15 @@ class GenomeForm(forms.ModelForm):
         fields = '__all__'
 
 class TranscriptForm(forms.ModelForm):
+    transcript = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'placeholder': 'Enter chromosome name'}))
+    seq_cds = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Enter protein sequence'}),
+                                validators=[RegexValidator(regex='^[ARNDCQEGHILKMFPSTWYV]+$', message = "Sequence must be ARNDCQEGHILKMFPSTWYV")])
+
+    seq_nt = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Enter NT sequence'}),
+                                validators=[RegexValidator(regex='^[ATCGN]+$', message = "Sequence must be ATGCN")])
     class Meta:
         model = Transcript
-        fields = ['seq_cds']
+        fields = ['transcript', 'seq_cds', 'seq_nt', 'length_nt', 'length_pep', 'start', 'stop']
 
 class AnnotForm(forms.ModelForm):
 
@@ -21,7 +27,7 @@ class AnnotForm(forms.ModelForm):
     transcript_biotype = forms.CharField(required=False)
     gene_symbol = forms.CharField(required=False)
     description = forms.CharField(required=False)
-    
+
     class Meta:
         model = Transcript
         fields = ['gene', 'gene_biotype', 'transcript_biotype', 'gene_symbol', 'description']

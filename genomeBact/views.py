@@ -420,12 +420,15 @@ def transcript_create(request):
         form = TranscriptForm(request.POST)  
         if form.is_valid():
             specie = request.POST.get("genome")
-            genome = Genome.objects.get(specie=specie)
-            form.instance.chromosome = genome
-            transcript = form.save(commit=False)
+            try : 
+                genome = Genome.objects.get(specie=specie)
+                form.instance.chromosome = genome
+                transcript = form.save()
 
-            messages.success(request, "The transcript "+ transcript.transcript + " wad added to "+specie)
-            return redirect('admin')
+                messages.success(request, "The transcript "+ transcript.transcript + " wad added to "+specie)
+                return redirect('admin')
+            except Genome.DoesNotExist:
+                messages.info(request, "Select the genome." )
     else:
         form = TranscriptForm()
 
@@ -450,7 +453,8 @@ def transcript_detail(request, specie, transcript):
             messages.success(request, 'Annotations were send for validation.')
             return HttpResponseRedirect(request.path_info)
         elif 'reject_validation' in request.POST:
-            Transcript.objects.filter(transcript=transcript).update(status = 'assigned', status_date = Now())
+            message = request.POST.get("message")
+            Transcript.objects.filter(transcript=transcript).update(status = 'assigned', status_date = Now(), message = message)
             messages.success(request, 'Annotations were send back to '+ cds.annotator.name )
             return HttpResponseRedirect(request.path_info)
         elif 'Delete' in request.POST:
