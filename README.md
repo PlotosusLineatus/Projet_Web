@@ -146,3 +146,12 @@ La page Home vous dirige vers la majorité (ou l'ensemble à corriger) des fonct
 Partez à la recherche d'un génome ou d'une séquence depuis le formulaire de recherche. Vous pouvez également cliquer sur `COLLECTION`si vous désirez avoir accès à l'ensemble de la base de données. 
 L'onglet `PARAMETERS` vous permet d'acceder aux paramètres de votre compte, et de changer vos informations.
 Si vous êtes connectés en tant qu'annotateur ou validateur, vous pouvez avoir accès l'onglet `WORKSPACE` qui vous relie aux travaux concernant les annotations.
+
+# Détails du génome
+![image](https://user-images.githubusercontent.com/75751225/218156782-ae7ff0b7-cd0f-430d-bd3e-05f8aeb355fa.png)
+
+# Détails d'un gène
+![image](https://user-images.githubusercontent.com/75751225/218156946-1105dc67-1286-4452-a181-06c0e75cad6e.png)
+
+# Espace de travail
+![image](https://user-images.githubusercontent.com/75751225/218157189-7caa244d-b4b1-4e45-9fb2-0e20e30251ba.png)
