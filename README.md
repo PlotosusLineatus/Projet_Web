@@ -3,20 +3,17 @@ ATIA Safiya - BOSSUT Noémie - HERMAN Simon
 
 Cette application web d'annotation et d'analyse fonctionnelle de génomes bactériens a été conçue au sein de l'UE "Projet Programmation Web" du Master AMI2B. 
 
-# Prérequis
 
-Afin de pouvoir faire tourner le projet, vous avez besoin de [Django](https://www.djangoproject.com/) (**version**) et **?**
+# Lancement de l'application :
 
+La liste des dépendances nécessaire au fonctionnement de l'application est disponible dans le fichier environment.yml.
+Un environnement conda peut être utilisé : 
 
-# Lancement de l'application
-Si les pré-requis sont satisfaits, placez vous dans le répertoire de travail désiré et récupérez le projet
 ```bash
-    git clone https://github.com/PlotosusLineatus/Projet_Web
+    git clone https://github.com/PlotosusLineatus/Projet_Web.git 
     cd Projet_Web
-```
-Ce répertoire contient l'ensemble des dossiers et fichiers nécessaire, selon l'architecture suivante :
-```bash
-    ceci est une arborescence
+    conda env create --file environment.yml
+    conda activate OUAF
 ```
 En vous plaçant à la base du dossier, lancez les commandes suivantes
 ```bash
