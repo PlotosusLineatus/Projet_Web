@@ -136,6 +136,13 @@
                         <div class="card-header">Commentaire de l'admin</div>
                         <div class="card-body">wow</div>
                     </div>
+                    <div class="card mb-4">
+                        <div class="card-header">Download genes and cds </div>
+                        <form method = "POST" action = "">
+                            {% csrf_token %}
+                            <input type="submit" value="Download annotated multifasta" name="Download" id="Download">
+                        </form>
+                    </div>
                     
                     {% if request.user.groups.all.0.name == 'Admin' %}
                     <form method="post" action="">
