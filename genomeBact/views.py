@@ -1,3 +1,4 @@
+from django import forms
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -101,13 +102,11 @@ def user_detail(request, user_id):
 
         user = User.objects.filter(id=user_id).get()
         profile = Profile.objects.filter(user = user).get()
-        '''
-        if( request.user.groups.all()[0].name == 'Admin'):
-        '''
+        user_group = user.profile.group
         username = user.username
-        #user = User.objects.get(username = 'r')
+
         if request.method == 'POST':
-            form_profile = ProfileForm(request.POST)  
+            form_profile = ProfileForm(user_group, request.POST) 
             form_user = ModifyUserForm(request.POST)
 
             if form_profile.is_valid() and form_user.is_valid() :
@@ -137,14 +136,16 @@ def user_detail(request, user_id):
                         if(first_name != ""):
                             Profile.objects.filter(name=username).update(first_name = first_name)
 
-                        group_name = profile2["group"]
-                        if(group_name != "" and group_name != "Admin"):
-                            group = Group.objects.get(name = group_name)
-                            group.user_set.add(User.objects.filter(username=username).get())
-                            Profile.objects.filter(name=username).update(group = group_name)
+
+                        # changing user role (admin only)
+                        if(request.user.groups.all()[0].name == 'Admin'):
+                            group_name = profile2["group"]
+                            if(group_name != "" and group_name != "Admin"):
+                                group = Group.objects.get(name = group_name)
+                                group.user_set.add(User.objects.filter(username=username).get())
+                                Profile.objects.filter(name=username).update(group = group_name)
 
                         messages.success(request, 'The profile was updated')
-                    
                         return HttpResponseRedirect(request.path_info)
                     
                 elif 'Update_password' in request.POST:
@@ -170,7 +171,7 @@ def user_detail(request, user_id):
                         user_logout(request)
                         return redirect('login')
         else:
-            form_profile = ProfileForm()
+            form_profile = ProfileForm(user_group = user_group)
             form_user = ModifyUserForm()
 
         context = {'profile' : profile, "form_profile":form_profile, "form_user":form_user}
@@ -261,6 +262,7 @@ def home(request):
 
     return render(request,'genomeBact/home.html')
 
+@login_required(login_url='login')
 def download_csv(request, transcripts = None, genomes = None):
 
     response = HttpResponse(content_type='text/csv')
