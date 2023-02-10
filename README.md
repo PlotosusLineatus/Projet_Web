@@ -9,10 +9,14 @@ Afin de pouvoir faire tourner le projet, vous avez besoin de [Django](https://ww
 
 
 # Lancement de l'application
-Si les pré-requis sont satisfaits, placez vous dans le répertoire de travail désiré et récupérez le projet
+La liste des dépendances nécessaire au fonctionnement de l'application est disponible dans le fichier environment.yml.
+Un environnement conda peut être utilisé : 
+
 ```bash
-    git clone https://github.com/PlotosusLineatus/Projet_Web
+    git clone https://github.com/PlotosusLineatus/Projet_Web.git 
     cd Projet_Web
+    conda env create --file environment.yml
+    conda activate OUAF
 ```
 Ce répertoire contient l'ensemble des dossiers et fichiers nécessaire, selon l'architecture suivante :
 ```bash
