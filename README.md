@@ -12,13 +12,13 @@ Si les pré-requis sont satisfaits, placez vous dans le répertoire de travail d
     conda activate OUAF
 ```
 
-En vous plaçant à la base du dossier, lancez les commandes suivantes
+En vous plaçant à la base du dossier, lancez la commande :
 ```bash
-    python manage.py migrate
-    python manage.py import my-data
-    python manage.py runserver
+    init_server.sh
 ```
-Ouvrez votre navigateur et rendez vous à l'adresse indiquée. 
+Ouvrez votre navigateur et rendez vous à l'adresse http://127.0.0.1:8000/
+
+Si init_server.sh ne parvient pas à créer les tables et y créer les données, se référer au document technique pour accéder aux commandes avancées.
 
 # Utilisation de OUAF
 ## Création d'un utilisateur
