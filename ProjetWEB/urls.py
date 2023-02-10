@@ -28,7 +28,7 @@ urlpatterns = [
     # USERS #
     path('admin_django/', admin.site.urls),
     path('admin/', views.admin, name = 'admin'),
-    path('settings/', views.settings, name = 'user_settings'),
+    path('user/<int:user_id>/', views.user_detail, name = 'user-detail'),
     path('workspace/', views.workspace, name = 'workspace'),
     path('validator/', views.validator, name='validator'),
     path('validator/assign/', views.assign_transcript, name='assign-transcript'),
@@ -39,9 +39,10 @@ urlpatterns = [
     path('annotator/transcripts/', views.transcript_to_annot, name='annot-list'),
 
     # BD #
+    path('sp/add/', views.genome_create, name='genome-create'),
     path('sp/<str:specie>/', views.genome_detail, name='genome-detail'),
     path('sp/<str:specie>/transcripts/', views.transcript_list, name='transcript-list'),
-    path('sp/<str:specie>/transcripts/add/', views.transcript_create, name='transcript-create'),
+    path('transcripts/add/', views.transcript_create, name='transcript-create'),
     path('sp/<str:specie>/<str:transcript>/', views.transcript_detail, name='transcript-detail'),
     path('sp/<str:specie>/<str:transcript>/annotations/', views.transcript_annot, name='transcript-annot'),
     path('download/', views.download_csv, name='download_csv'),

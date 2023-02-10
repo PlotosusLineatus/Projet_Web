@@ -14,7 +14,7 @@ from Bio import SeqIO
 from io import StringIO
 
 from .models import Genome,Transcript,Profile, Connexion
-from .forms import GenomeForm, TranscriptForm, UploadFileForm, CreateUserForm, AnnotForm, ProfileForm
+from .forms import GenomeForm, TranscriptForm, UploadFileForm, CreateUserForm, CreateProfileForm, AnnotForm, ProfileForm, ModifyUserForm
 from .decorators import unauthenticated_user, allowed_users, admin_only
 
 from scripts.utils import get_max_length
@@ -35,15 +35,15 @@ def user_login(request):
 
         if user is not None:
             login(request, user)
-            #Profile.objects.filter(name=username).last_connexion = Now()
+            Profile.objects.filter(name=username).update(last_connexion = Now())
             Connexion.objects.create(user = user, date=Now())
             return redirect('home')
         else :
             try:
-                username = User.objects.get(email=username)
-                user = authenticate(request, username= username.username, password= password )
+                user = User.objects.get(email=username)
+                user = authenticate(request, username= user.username, password= password )
                 login(request, user)
-                #Profile.objects.filter(email=username).last_connexion = Now()
+                Profile.objects.filter(user=user).update(last_connexion = Now())
                 Connexion.objects.create(user = user, date=Now())
                 return redirect('home')           
             except User.DoesNotExist:
@@ -53,30 +53,132 @@ def user_login(request):
     context = {}
     return render(request, 'genomeBact/login.html', context)
 
-@unauthenticated_user
+#@unauthenticated_user
 def register(request):
     if request.method == 'POST':
-        form = CreateUserForm(request.POST)  
-        if form.is_valid():
-            user = form.save()
+        form_user = CreateUserForm(request.POST)  
+        form_profile = CreateProfileForm(request.POST)  
 
-            group_name = request.POST.get('group')
-            group = Group.objects.get(name = group_name)
-            user.groups.add(group)
-            username = form.cleaned_data.get('username')
+        if form_user.is_valid() and form_profile.is_valid():
+            user = form_user.cleaned_data
+            profile = form_profile.cleaned_data
             
-            Profile.objects.create(user = user, name=user.username, group = group_name)
+            username = user['username']
+            email = user['email']
+            
+            if(user["password1"] != user["password2"]):
+                print("OUUUUUUUUUUUULAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+            
+            password = user['password1']
+
+            User.objects.create_user(username=username, email=email, password=password )
+
+            group_name = profile['group']
+            group = Group.objects.get(name = group_name)
+            user = User.objects.get(username=username)
+            user.groups.add(group)
+            
+            first_name = profile['first_name']
+            last_name = profile['last_name']
+            phone_number = profile['phone_number']
+
+            Profile.objects.create(user = user, name=username, first_name = first_name, last_name=last_name, phone_number=phone_number,
+                                    group = group_name, last_connexion = Now())
 
             messages.success(request, 'Account was created for ' + username)
             
+            #if( request.user.groups.all()[0].name == None):
+            return redirect('admin')
+            #else :
             return redirect('login')
-        else:
-            messages.error(request, form.errors)
     else:
-        form = CreateUserForm()
+        form_user = CreateUserForm()
+        form_profile = CreateProfileForm()
 
-    context = {'form':form}
+    context = {'form_user':form_user, 'form_profile':form_profile}
     return render(request, 'genomeBact/register.html', context)
+
+@login_required(login_url='login')
+def user_detail(request, user_id):
+
+    user = User.objects.filter(id=user_id).get()
+    profile = Profile.objects.filter(user = user).get()
+    '''
+    if( request.user.groups.all()[0].name == 'Admin'):
+    '''
+    username = user.username
+    #user = User.objects.get(username = 'r')
+    if request.method == 'POST':
+        form_profile = ProfileForm(request.POST)  
+        form_user = ModifyUserForm(request.POST)
+
+        if form_profile.is_valid() and form_user.is_valid() :
+            if 'Update' in request.POST:
+                user = form_user.cleaned_data
+                profile2 = form_profile.cleaned_data
+                
+                if profile2["group"] == profile.group :
+                    profile2["group"] = ""
+
+                ## test if there's some changes or none
+                x = list(user.values())
+                y = list(profile2.values())
+                if ( [x[0]]*len(x) != x and [y[0]]*len(y) != y):
+                    email = user["email"]
+                    if(email != ""):
+                        User.objects.filter(username=username).update(email=email)
+
+                    phone = profile2["phone_number"]
+                    if(phone != ""):
+                        Profile.objects.filter(name=username).update(phone_number = phone)
+                        
+                    last_name = profile2["last_name"]
+                    if(last_name != ""):
+                        Profile.objects.filter(name=username).update(last_name = last_name)
+                    first_name = profile2["first_name"]
+                    if(first_name != ""):
+                        Profile.objects.filter(name=username).update(first_name = first_name)
+
+                    group_name = profile2["group"]
+                    if(group_name != "" and group_name != "Admin"):
+                        group = Group.objects.get(name = group_name)
+                        group.user_set.add(User.objects.filter(username=username).get())
+                        Profile.objects.filter(name=username).update(group = group_name)
+
+                    messages.success(request, 'The profile was updated')
+                
+                    return HttpResponseRedirect(request.path_info)
+                
+            elif 'Update_password' in request.POST:
+
+                user = form_user.cleaned_data
+                password1 = user["password1"]
+                password2 = user["password2"]
+
+                if( password1 == password2 and password1!=""):
+                    User.objects.get(username=username).set_password(password1)
+                
+                    messages.success(request, 'The password was updated')
+                
+                    return HttpResponseRedirect(request.path_info)
+                    return redirect('admin')
+            elif 'Delete' in request.POST:
+                user = User.objects.filter(username = username).get()
+                user.delete()
+
+                #if(request.user.profile == "Admin" and request.user.id != user.id)
+                if(request.user.id != user.id) :
+                    messages.success(request, "The user " + username +" was deleted.")
+                    return redirect('admin')
+                else:
+                    user_logout(request)
+                    return redirect('login')
+    else:
+        form_profile = ProfileForm()
+        form_user = ModifyUserForm()
+
+    context = {'profile' : profile, "form_profile":form_profile, "form_user":form_user}
+    return render(request, 'genomeBact/user_detail.html', context)
 
 @login_required(login_url='login')
 def home(request):
@@ -288,14 +390,33 @@ def results(request):
     return render(request,'genomeBact/results.html', {'genomes': genomes, "transcripts" : transcripts}) 
 
 
-       
+
+@login_required(login_url='login')
+@admin_only
+def genome_create(request):
+
+    if request.method == 'POST':
+        form = GenomeForm(request.POST)  
+        if form.is_valid():
+            genome = form.save()
+            #return redirect('transcript-list', genome.specie)
+            return redirect('genome-detail', genome.specie)
+    else:
+        form = GenomeForm()
+
+    return render(request,'genomeBact/genome_create.html',{'form': form}) 
+
+
 @login_required(login_url='login')
 def genome_detail(request, specie):
     genome = Genome.objects.get(specie=specie)
     transcripts = Transcript.objects.filter(chromosome = genome.chromosome)
 
-    sequence = genome.sequence
-
+    if request.method == 'POST' and 'Delete' in request.POST:
+        genome.delete()
+        messages.success(request, "The genome "+ genome.specie + " was deleted.")
+        return redirect('results')
+    
     return render(request,'genomeBact/genome_detail.html',{'genome': genome, 'transcripts' : transcripts})
     
 @login_required(login_url='login')
@@ -310,21 +431,28 @@ def transcript_list(request, specie):
 
 
 @login_required(login_url='login')
-@allowed_users(allowed_roles=['Admin','Validateur'])
-def transcript_create(request, specie):
-    genome = Genome.objects.get(specie=specie)
+#@admin_only
+def transcript_create(request):
+    genomes = Genome.objects.all
 
     if request.method == 'POST':
         form = TranscriptForm(request.POST)  
         if form.is_valid():
-            form.instance.chromosome = genome
-            form.save()
-            #return redirect('transcript-list', genome.specie)
-            return redirect('genome-detail', genome.specie)
+            specie = request.POST.get("genome")
+            try : 
+                genome = Genome.objects.get(specie=specie)
+                form.instance.chromosome = genome
+                transcript = form.save()
+
+                messages.success(request, "The transcript "+ transcript.transcript + " wad added to "+specie)
+                return redirect('admin')
+            except Genome.DoesNotExist:
+                messages.info(request, "Select the genome." )
     else:
         form = TranscriptForm()
 
-    return render(request,'genomeBact/transcript_create.html',{'form': form, 'genome' : genome}) 
+    context = {'form': form, "genomes" : genomes}
+    return render(request,'genomeBact/transcript_create.html', context) 
 
 @login_required(login_url='login')
 def transcript_detail(request, specie, transcript):
@@ -344,9 +472,14 @@ def transcript_detail(request, specie, transcript):
             messages.success(request, 'Annotations were send for validation.')
             return HttpResponseRedirect(request.path_info)
         elif 'reject_validation' in request.POST:
-            Transcript.objects.filter(transcript=transcript).update(status = 'assigned', status_date = Now())
+            message = request.POST.get("message")
+            Transcript.objects.filter(transcript=transcript).update(status = 'assigned', status_date = Now(), message = message)
             messages.success(request, 'Annotations were send back to '+ cds.annotator.name )
             return HttpResponseRedirect(request.path_info)
+        elif 'Delete' in request.POST:
+            cds.delete()
+            messages.success(request, "The transcript "+ cds.transcript + " from "+ specie +" was deleted.")
+            return redirect('results')
         elif form.is_valid():
             annotations = form.save(commit=False)
             gene = annotations.gene
@@ -375,6 +508,15 @@ def transcript_annot(request, transcript):
 @login_required(login_url='login')
 @admin_only
 def admin(request):
+
+    if request.method == 'POST':
+        if "add_genome" in request.POST:
+            return redirect('genome-create')
+        elif "add_transcript" in request.POST:
+            return redirect('transcript-create')
+        elif "add_user" in request.POST:
+            return redirect('register')
+
     nb_val = User.objects.filter(groups__name = "Validateur").count()
     nb_annot  = User.objects.filter(groups__name = "Annotateur").count()
     nb_read = User.objects.filter(groups__name = "Lecteur").count()
@@ -397,8 +539,14 @@ def workspace(request):
     transcripts_to_annotate = request.user.profile.to_annotate.all()
     #transcripts_to_annotate = request.user.profile.transcript_set.all()
     transcripts_to_assign = Transcript.objects.filter(status = 'empty')
-    transcripts_to_validate = Transcript.objects.filter(status = 'annotated')
+    transcripts_to_validate = Transcript.objects.filter(status = 'annotated', validator = request.user.profile)
     annotators = User.objects.filter(groups__name='Annotateur')
+
+    nb_to_assign = Transcript.objects.filter(status = 'empty').count()
+    nb_to_val =  Transcript.objects.filter(status = 'annotated', validator = request.user.profile).count()
+    nb_to_annot = request.user.profile.to_annotate.count()
+    nb_send = '?'
+    #nb_send = Transcript.objects.filter(status = 'empty').count()
 
     if request.method == 'POST':
         annotator_chosen = request.POST.get('annotator')
@@ -420,17 +568,9 @@ def workspace(request):
                 messages.info(request, " Please select an Annotator AND a Transcript" )
 
 
-    context = {'transcripts_to_annotate':transcripts_to_annotate, 'transcripts_to_assign':transcripts_to_assign, 'annotators':annotators,'transcripts_to_validate':transcripts_to_validate}
+    context = {'transcripts_to_annotate':transcripts_to_annotate, 'transcripts_to_assign':transcripts_to_assign, 'annotators':annotators,
+               'transcripts_to_validate':transcripts_to_validate, "nb_to_assign":nb_to_assign, "nb_to_val":nb_to_val, "nb_to_annot":nb_to_annot, "nb_send":nb_send}
     return render(request,'genomeBact/workspace.html', context)
-
-@login_required(login_url='login')
-def settings(request):
-    all_con = request.user.connexion_set.all()
-
-    context = {'connexions': all_con}
-    return render(request, 'genomeBact/user_settings.html', context)
-
-
 
 @login_required(login_url='login')
 def validator(request):

@@ -31,16 +31,16 @@ class Genome(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
-    name = models.CharField(max_length=30 , unique=True)
+    name = models.CharField(max_length=30 , unique=True) ## A SUPP
 
 
-    STATUS = ( ('Admin','Admin'), ('Annotateur','Annotateur'), ('Validateur','Validateur'))
+    STATUS = ( ('Admin','Admin'), ('Annotateur','Annotateur'), ('Validateur','Validateur'), ('Lecteur','Lecteur'))
     group = models.CharField(max_length=40, choices=STATUS, default='Lecteur')
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=150, blank=True)
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
     phone_number = models.CharField(validators=[phone_regex], max_length=17, blank=True) 
-    #last_connexion = models.DateTimeField();
+    last_connexion = models.DateTimeField()
 
     def __str__(self):
         return self.name
@@ -63,10 +63,10 @@ class Connexion(models.Model):
 '''                                                                  
 class Transcript(models.Model):
     STATUS = ( ('assigned','assigned'), ('annotated','annotated'), ('validated','validated'), ('empty','empty'))    
-
+    chromosome = models.ForeignKey(Genome, related_name = "transcript", on_delete = models.CASCADE)
+    
     # One unique ID per CDS / Protein 
     transcript = models.CharField(max_length=50, unique = True, help_text='Chromosome version name')
-    chromosome = models.ForeignKey(Genome, related_name = "transcript", on_delete = models.CASCADE)
     seq_cds = models.TextField(default = "",
                                 validators=[RegexValidator(regex='^[ARNDCQEGHILKMFPSTWYV]+$')])
 
@@ -88,7 +88,8 @@ class Transcript(models.Model):
     status = models.CharField(max_length=200, choices=STATUS, default='empty')
     status_date = models.DateTimeField(null = True)
     annotator = models.ForeignKey(Profile, null=True, on_delete=models.SET_NULL, related_name="to_annotate")
-    validator = models.ForeignKey(Profile, null=True, on_delete=models.SET_NULL)
+    validator = models.ForeignKey(Profile, null=True, on_delete=models.SET_NULL, related_name ="to_validate")
+    message = models.CharField(max_length=100, default = "")    
     
     FilterFields = ["length"]
 

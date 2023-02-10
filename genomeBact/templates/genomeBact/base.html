@@ -36,7 +36,7 @@
                         {% if request.user.groups.all.0.name == None %}
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/admin">Admin</a></li>
                         {% endif %}
-                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/settings">Parameters</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="{% url 'user-detail' request.user.id %}">Parameters</a></li>
                         {% if request.user.groups.all.0.name != 'Lecteur' %}
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/workspace">Work space</a></li>
                         {% endif %}

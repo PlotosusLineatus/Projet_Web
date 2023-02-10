@@ -35,7 +35,7 @@
                         {% if request.user.groups.all.0.name == None %}
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/admin">Admin</a></li>
                         {% endif %}
-                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/settings"> Parameters</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="{% url 'user-detail' request.user.id %}"> Parameters</a></li>
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/results">Collection</a></li>
                     </ul>
                 </div>
@@ -52,10 +52,12 @@
             </div>
         </header>
 
+        <!-- Page content-->   
         <div class="container px-4 px-lg-5">
             {% for message in messages %}
                 <p id="messages"> {{ message }}</p>
             {% endfor %}
+
             <div class="tab">
                 {% if request.user.groups.all.0.name == 'Annotateur' %}
                 <button class="tablinks" onclick="openTab(event, 'toannot')">Liste des CDS</button>
@@ -66,60 +68,114 @@
                 {% endif %}
             </div>
             
-            <!-- Tab content -->
-            <div id="toannot" class="tabcontent">
-                <h3>A Annoter</h3>
-                <p>woof</p>
-                {% for transcript in transcripts_to_annotate %}
-                    {% if transcript.status == "assigned" %}
-                    <a href="{% url 'transcript-detail' specie=transcript.chromosome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a>
-                    {% else %}
-                    <h3>En attente de validation</h3>
-                    <a href="{% url 'transcript-detail' specie=transcript.chromosome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a>
-                    {% endif %}
-                {% endfor %}
-            </div>
-            
-            <div id="assign" class="tabcontent">
-                <h3>A assigner</h3>
-                <p>ouaf</p>
-                <div class="col-lg-12 col-md-3 col-sm-12 p-0">
-                    <form action="" method="POST" name="form_content">
-                        {% csrf_token %}
-                        <style>
-                            select:invalid { color: gray; }
-                        </style>
-                        <select class="form-control search-slt" name="transcript_annot" required >
-                            <option value="" disabled selected hidden> Select transcript</option>
-                            {% for transcript in transcripts_to_assign %}
-                                <option value="{{ transcript.transcript }}">{{ transcript.transcript }}</option>
+            <div class="container mt-5">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <!-- Tab content -->
+                        <div id="toannot" class="tabcontent">
+                            <h3>A Annoter</h3>
+                            <p>woof</p>
+                            {% for transcript in transcripts_to_annotate %}
+                                {% if transcript.status == "assigned" %}
+                                <a href="{% url 'transcript-detail' specie=transcript.chromosome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a>
+                                {% else %}
+                                <h3>En attente de validation</h3>
+                                <a href="{% url 'transcript-detail' specie=transcript.chromosome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a>
+                                {% endif %}
                             {% endfor %}
-                        </select>
-                        <select class="form-control search-slt" name="annotator" required>
-                            <option value="" disabled selected hidden>Select User</option>
-                            {% for annotator in annotators %}
-                                <option value="{{ annotator.username }}">{{ annotator.username }}</option>
-                            {% endfor %}
-                        </select>
-                        <div class="col-lg-12 col-md-3 col-sm-12 p-0">
-                            <input type="submit" value="Assign">
                         </div>
-                    </form>
+                        
+                        <div id="assign" class="tabcontent">
+                            <h3>A assigner</h3>
+                            <div class="col-lg-12 col-md-3 col-sm-12 p-0">
+                                <form action="" method="POST" name="form_content">
+                                    {% csrf_token %}
+                                    <style>
+                                        select:invalid { color: gray; }
+                                    </style>
+                                    <select class="form-control search-slt" name="transcript_annot" required >
+                                        <option value="" disabled selected hidden> Select transcript</option>
+                                        {% for transcript in transcripts_to_assign %}
+                                            <option value="{{ transcript.transcript }}">{{ transcript.transcript }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <select class="form-control search-slt" name="annotator" required>
+                                        <option value="" disabled selected hidden>Select User</option>
+                                        {% for annotator in annotators %}
+                                            <option value="{{ annotator.username }}">{{ annotator.username }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="col-lg-12 col-md-3 col-sm-12 p-0">
+                                        <input type="submit" value="Assign">
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <div id="validate" class="tabcontent">
+                            <h3>A valider</h3>
+                            {% for transcript in transcripts_to_validate %}
+                            <a href="{% url 'transcript-detail' specie=transcript.chromosome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a>                    
+                            {{ transcript.status_date }}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Side widgets-->
+                    <div class="col-lg-4">
+                        <!--  widget -->
+                        <div class="card-deck">
+                            <div class = "col mb-3">
+                                {% if request.user.groups.all.0.name == 'Validateur' %}
+                                <div class="card d-flex mx-auto mb-3" style="width: 220px; height: 180px;">
+                                    <div class="card-header text-white" style="background-color: #45425A;">
+                                                To validate
+                                    </div>
+                                    <div class="card-body align-items-center d-flex justify-content-center" style="font-size: 50px; ">
+                                            <p class="card-text" style="color:#45425A;"> {{ nb_to_val }} </p>
+                                    </div>                                          
+                                </div>
+
+                                    <div class="card d-flex mx-auto mb-3" style="width: 220px; height: 180px;">
+                                        <div class="card-header text-white" style="background-color: #45425A;">
+                                                    Not assigned
+                                        </div>
+                                        <div class="card-body align-items-center d-flex justify-content-center" style="font-size: 50px; ">
+                                                <p class="card-text text-center" style="color:#45425A;"> {{ nb_to_assign }} </p>
+                                        </div>                                          
+                                    </div>
+                                {% endif %}
+                                {% if request.user.groups.all.0.name == 'Annotateur' %}
+                                <div class="card d-flex mx-auto mb-3" style="width: 220px; height: 180px;">
+                                    <div class="card-header text-white" style="background-color: #45425A;">
+                                                Send for validation
+                                    </div>
+                                    <div class="card-body align-items-center d-flex justify-content-center" style="font-size: 50px; ">
+                                            <p class="card-text" style="color:#45425A;"> {{ nb_send }} </p>
+                                    </div>                                          
+                                </div>
+                                <div class="card d-flex mx-auto mb-3" style="width: 220px; height: 180px;">
+                                    <div class="card-header text-white" style="background-color: #45425A;">
+                                                To Annotate
+                                    </div>
+                                    <div class="card-body align-items-center d-flex justify-content-center" style="font-size: 50px; ">
+                                            <p class="card-text" style="color:#45425A;"> {{ nb_to_annot }} </p>
+                                    </div>                                          
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            
-            <div id="validate" class="tabcontent">
-                <h3>A valider</h3>
-                <p>grouf</p>
-                {% for transcript in transcripts_to_validate %}
-                <a href="{% url 'transcript-detail' specie=transcript.chromosome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a>                    
-                {{ transcript.status_date }}
-                {% endfor %}
+        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
     
-
-
+        <!-- Footer-->
         <footer class="border-top">
             <div class="container px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">

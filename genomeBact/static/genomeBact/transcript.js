@@ -1,74 +1,72 @@
+//     Copyright (C) 2020  Sandra Dérozier (INRAE)
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+let seq_start = urlParams.get('start');
+let seq_size = urlParams.get('size');
+
+let seqlen = length;
+
+if(seq_start == null ){
+  seq_start=1;
+}
+if(seq_size == null){
+  seq_size=10000;
+}
+check_size(seq_size);
+check_start(seq_start);
+
+/*
+// Size
+if ( seq_size !== null ) {
+  seq_size = check_size( parseInt(seq_size) );
+
+  let url = location.href;
+  url = url.toString().replace('size='+parseInt(seq_size).toString() , 'size=' + s_size.toString());
+  history.replaceState(null,"", url);
+}
+else {
+    seq_size = 10000;
+}
+*/
 
 var width = 1200;
 var height = 200;
-var s_size = 10000;
 var width_svg = 1200-60;
-var seqlen = length;
 let background = "#FBF5F3"
-let cds_color = "#8DAA9D";
+let color = "#8DAA9D";
 let over_color = "#45425A";
+let list =list_cds;
+let seq_stop = seq_start+seq_size-1;
 
-
+/*
+let seqlen = parseInt(sessionStorage.getItem("seqlen"));
+let size = parseInt(sessionStorage.getItem("size"));
+let l_start = parseInt(sessionStorage.getItem("start"));
 let list = list_cds;
+*/
 
 var svg= d3.select("#svg_genomic_view").append("svg")
               .attr("width", width)
               .attr("height", height)
               .attr("id", "svg")
-              .style("background", background)
+              .style("background", background);
               ;
 
-genomic_view(s_size);
-function genomic_view(s_size){
-  
-  var svg_rect = svg.append("g").attr("id", "rectangle");
-  rectangle(0,30, svg_rect);
-  rectangle(width-30,width, svg_rect);
+genomic_view();
+function genomic_view(){
+  var svg_transcript = svg.append("g").attr("id", "transcript")
+                    .style('fill', color)
+                    ;
 
-  axis(1, s_size);
-  //fleche();
-  //d3.select("[id=fleche]")
-  //.attr("transform",'translate(30,0)');
-  
-
-  var svg_cds = svg.append("g").attr("id", "cds")
-  .style('fill', cds_color);
-
-
-  //let list_cds = {"cds_1" :cds_1, "cds_2" :cds_2};
-  let list_coord_cds = {};
-  for(i in list){    
-    list_coord_cds["cds_"+list[i].id] = cds(list[i], 1, s_size, svg_cds);
-  }
-  d3.select("[id=cds]")
-  .attr("transform",'translate(30,0)')
+  get_axis(seq_start, seq_size, width); 
+  d3.select("#genomic_axis").attr("transform",'translate(30,0)');  
+ //CDS
+ for(cds in list){
+  draw_transcript(list[cds], seq_start, seq_stop, width_svg, 100, seq_size, svg_transcript);
+ }
 }
 
-//----------------------AXIS----------------------------
-
-function axis(start, s_size){
-  stop = start+s_size-1;
-  
-  var xscale = d3.scaleLinear()
-    .domain([start, stop])
-    .rangeRound([0, width-60]); // rangeRound makes sure there's no decimals ?
-    //.range([0, width-60]);
-
-  let t = (stop-start)/5;
-var x_axis = d3.axisBottom()
-        .tickFormat(d3.format("d")) // pas de virgule pour les milliers
-        .tickValues(d3.range(start,stop+1,((stop-start)/5)))
-        //.tickValues([start, Math.round((start+t)/1000)*1000, Math.round((start+2*t)/1000)*1000 , Math.round((start+3*t)/1000)*1000, Math.round((start+4*t)/1000)*1000,stop+1])
-        //.ticks(5) // nombre de graduation sur l'axe
-        .scale(xscale);
-    
-  d3.select("#genomic_ax").remove();
-  var svg_grad = svg.append("g").attr("id", "genomic_ax")
-            .attr("transform", "translate(30, " + 30  +")")
-            .call(x_axis)
-}
-
-//--------------------PREVIOUS AXIS---------------------
+//-------------------- AXIS---------------------
 
 function axis_graduation(x0, x1) {
 
@@ -161,258 +159,321 @@ function get_axis(d_start, s_size, width) {
       genomic_axis(d_start, s_size, width, g_axis);
 }
 
-//-------------------FORMES VARIÉES --------------------
+//-------------------FORMES CDS --------------------
 
+function draw_transcript(transcript, seq_start, seq_stop, w_size, startY, seq_size, g_transcript){
+  let y = 0; //if ( transcript.complement == '-1' ) { y = 25; }
+  let transcript_coord = {}; 
+  transcript_coord["tail"]= 0;
+  transcript_coord["tip"] = 0;
 
-function rectangle(start, stop, svg_rect){
-  let width_r = (stop - start);
-  //width_r = width_r* (width_svg/(s_size-1));
-  let r_svg = svg_rect.append("rect")
-                        .attr("x", start)
-                        .attr("y", 0)
-                        .attr("width", width_r)
-                        .attr("height", height)
-                        .style("fill", background)
-}
+  let y_axis = new Array(5);
+  y_axis[0]= startY+20+y;
+  y_axis[1]=startY+10+y;
+  y_axis[2]=startY+5+y;
+  y_axis[3]=startY+15+y;
+  y_axis[4]=startY+25+y;
+  transcript_coord["y_axis"] = y_axis;
+  transcript_coord["startY"] = startY +y;
 
-function cds(cds, seq_start, seq_stop, svg_cds){
-  let startY=120
-  let startX = cds.start *(width_svg/(s_size-1));
-  let stopX = cds.stop *(width_svg/(s_size-1));
-  //let length = stopX - startX
-  let coord = "";
+  transcript["coord"] = transcript_coord;
+  let g_feat = g_transcript.append("g").attr("id", "transcript_"+transcript.id);
 
-  //pas de CDS < 5 pour le moment
-  //que sens +
-  coord += (startX)+","+(startY+20)+" ";
-  coord += (startX)+","+(startY+10)+" ";
-  coord += (stopX-5)+","+(startY+10)+" ";
-  coord += (stopX-5)+","+(startY+5)+" ";
-  coord += (stopX)+","+(startY+15)+" ";
-  coord += (stopX-5)+","+(startY+25)+" ";
-  coord += (stopX-5)+","+(startY+20);
-  
-  
-  let g_feat = svg_cds.append("g").attr("id", "cds_"+cds.id);
+  var points = g_feat.append("g").attr("id", "dots_"+transcript.id);
 
+  // CDS name
   var name = g_feat.append("text");
-  let y_name = 102;
-  name.attr("x", startX+5)
+  let y_name = startY+2+y; 
+  //if ( transcript.complement == '-1' ) { y_name += 35; }
+  name.attr("id", "name_"+transcript.id)
       .attr("y", y_name)
       .attr("class", "name")
-      .attr("id", cds.id)
-      .style("fill", cds_color)
+      .style("fill", color)
       .attr("visibility", "hidden")
       .attr("font-size", "13")
-      .text(cds.id);
+      .text(transcript.id);
 
-  g_feat.append("polygon")
-      .attr("points", coord)
-      .attr("id", "cds_"+cds.id)
-      .on("click", function() { click(cds, seqlen); })
-      .on("mouseover", function() { over(name, g_feat); })
-      .on("mouseout", function() { out(name, g_feat, cds); });
+  // SVG writing
+  var f_feat = g_feat.append("polygon").attr("id", transcript.id)
+                     .style("fill", color)
+                     .on("click", function() { click(transcript, seq_size); })
+                     .on("mouseover", function() { over(name, f_feat, points); })
+                     .on("mouseout", function() { out(transcript, name, f_feat, points); });
 
-  return coord;
+  check_transcript(transcript, seq_start, seq_size, width_svg);
+  
 }
 
-//---------------------EVENTS----------------------------
+function check_transcript(transcript, l_start, s_size, w_size){
+  d3.select("#dots_l_"+transcript.id).remove();
+  d3.select("#dots_r_"+transcript.id).remove();
 
-var zoom = 1; //zoom
-var decalage = s_size/2;
-var conversion = (width_svg/(s_size-1))
-var l_start = 1;
+  let seq_stop = l_start+s_size-1;
+  let startX; let stopX =0;
 
-//------------------------ZOOM-----------------------
+  startX = ((transcript.start - l_start) * w_size) / (s_size-1);
+  stopX = ((transcript.stop - l_start) * w_size) / (s_size-1);
 
-document.getElementById("zoom_small_in").onclick = function(){
-  if(s_size*0.75 < 10){move = 10/(s_size-1);}
-  else{ move = 0.75}
+  let s_length = stopX - startX;
+  startX+=30;
+  stopX+=30;
+  //1st case: start & stop out (transcript hidden)
+  if( (transcript.stop > seq_stop && transcript.start > seq_stop) ||  (transcript.stop <l_start && transcript.start < l_start)){
+    transcript.coord["tail"]= -1;  
+    transcript.coord["tip"] = -1;
+    transcript.coord["middle"] = -1;
+  }
+  //2nd case: (transcript visible)
+  else{
+    //start in 
+    if(transcript.start >= l_start && transcript.stop > l_start){
+      transcript.coord["tail"]= startX;  
+      if(transcript.start==seq_stop){
+        transcript.coord["tail"] -=1; 
+      }
+    }
+    //start out 
+    if(transcript.start < l_start){
+      transcript.coord["tail"] = 30;
 
-  zoom /= move;
-  s_size = Math.floor(s_size*move);
-
-  change_svg(l_start,zoom,s_size);
+      // Start points if start is out
+      var points = d3.select("#dots_"+transcript.id);
+      points.append("text").attr("id", "dots_l_"+transcript.id)
+            .attr("x", 15)
+            .attr("y", transcript.coord["startY"] +15)
+            //.style("fill", transcript.new_color)
+            .text("...");
+  
+    }
+    //stop in 
+    if(transcript.stop <= seq_stop && transcript.start < seq_stop) {
+      transcript.coord["tip"] = stopX;
       
-}
+      if(transcript.stop==l_start){
+        transcript.coord["tip"] = 1; 
+      }
+    }
+    //stop out 
+    if(transcript.stop > seq_stop){
+      transcript.coord["tip"] = w_size+30;
 
-document.getElementById("zoom_small_out").onclick = function(){
-
-  if(Math.floor(s_size*1.5) <= seqlen){ // dézoom possible
-    zoom/= 1.5;
-    s_size = Math.floor(s_size*1.5);
-
-    if(l_start+s_size-1 > seqlen){  //décaler le start   
-      move = l_start - seqlen-s_size+1;
-      l_start= seqlen-s_size+1;
+      // Stop points if stop is out
+      var points = d3.select("#dots_"+transcript.id);
+      points.append("text").attr("id","dots_r_"+transcript.id)
+            .attr("x", w_size + 35)
+            .attr("y", transcript.coord["startY"] +15)
+            //.style("fill", transcript.new_color)
+            .text("...");
     }
   }
-  else{ //dézoom trop puissant
-    zoom=1;
-    s_size =seqlen;
-    l_start=1;
-  }
-  
-  change_svg(l_start,zoom,s_size);
-  
-}
-
-document.getElementById("zoom_in").onclick = function(){
-  move=2;
-  if(s_size/2 < 10){move = s_size/10;}
-
-  zoom *= move;
-  s_size = Math.floor(s_size/move);
-
-
-  change_svg(l_start,zoom,s_size);
     
-}
+  var x = transcript.coord["tail"];
+  s_length = transcript.coord["tip"] - transcript.coord["tail"];
 
-document.getElementById("zoom_out").onclick = function(){
-  move=2;
-
-  if(Math.floor(s_size*move) <= seqlen){ // dézoom possible
-    zoom/= move;
-    s_size = Math.floor(s_size*move);
-    if(l_start+s_size-1 > seqlen){ //décaler le start
-      move = l_start - seqlen-s_size+1;
-      l_start= seqlen-s_size+1;
-    }
+  //SENS +
+  if(transcript.stop > seq_stop){ // (real)tip out
+      transcript.coord["middle"] = transcript.coord["tip"];
+  }else{
+      // Arrow
+      if ( s_length >= 5 ) {
+        transcript.coord["middle"] = transcript.coord["tip"]-5;
+      }// Triangle
+      else if(s_length == 5){
+        transcript.coord["middle"] = transcript.coord["tail"];
+      }//Rectangle
+      else{
+        transcript.coord["middle"] = transcript.coord["tip"];
+      }
   }
-  else{ //dézoom trop puissant
-    zoom=1;
-    s_size =seqlen;
-    l_start=1;
+  
+  let y1_middle = transcript.coord["y_axis"][2];
+  let y2_middle = transcript.coord["y_axis"][4];
+  if( transcript.coord["middle"] == transcript.coord["tip"] ){
+    y1_middle = transcript.coord["y_axis"][1];
+    y2_middle = transcript.coord["y_axis"][0];
   }
 
 
-  change_svg(l_start,zoom,s_size);
+  let coord = "";
+  coord += transcript.coord["tail"]   +","+ transcript.coord["y_axis"][0]+" ";
+  coord += transcript.coord["tail"]   +","+ transcript.coord["y_axis"][1]+" ";
 
-}
+  coord += transcript.coord["middle"] +","+ transcript.coord["y_axis"][1]+" ";
+  coord += transcript.coord["middle"] +","+ y1_middle+" ";
 
-//-----------------Neutral ZOOM-----------------
+  coord += transcript.coord["tip"]    +","+ transcript.coord["y_axis"][3]+" ";
 
-document.getElementById("zoom_neutral").onclick = function(){
-  s_size = 10000;
-  zoom=1;
+  coord += transcript.coord["middle"] +","+ y2_middle+" ";
+  coord += transcript.coord["middle"] +","+ transcript.coord["y_axis"][0];
 
-  change_svg(l_start,zoom,s_size);
+  d3.select('#'+ transcript.id)
+          .attr('points', coord);
   
-}
-
-//----------------DECALAGE---------------------
-document.getElementById("small_left").onclick = function(){ 
-   
-  if((l_start-decalage) < 1){ move = l_start-1;}
-  else{ move = decalage}
-
-  l_start-=move;
-
-
-  change_svg(l_start,zoom,s_size);
+  d3.select('#name_'+ transcript.id)
+          .attr('x', x);
   
+  d3.select('#dots_'+ transcript.id)
+        .attr("stroke", color);
 }
 
-document.getElementById("small_right").onclick = function() {
-
-  if((l_start+s_size+decalage-1) >= seqlen){ move = seqlen-(l_start+s_size-1);}
-  else{ move = decalage}
-
-  l_start+=move;
-
-
-  change_svg(l_start,zoom,s_size);
-}
-
-document.getElementById("big_left").onclick = function(){
-  
-  if((l_start-2*decalage) < 1){ move = l_start-1;}
-  else{ move = 2*decalage}
-
-  l_start-=move;
-
-
-  change_svg(l_start,zoom,s_size);
-}
-
-document.getElementById("big_right").onclick = function() {
-
-  if((l_start+s_size+2*decalage-1) >= seqlen){ move = seqlen-(l_start+s_size-1);}
-  else{ move = 2*decalage}
-
-  l_start+=move;
-
-  change_svg(l_start,zoom, s_size);
-  
-}
-            
-//--------VERIFICATION START ET STOP-----------
-function check_size(l_size) {
-  if ( l_size < 10 )            { l_size = 10; }
-  else if ( l_size > seqlen )   { l_size = seqlen; }
-  return l_size;
-}
-
-function check_start(l_start, start) {
-  if ( l_start <= 0 )           { return(-start+1); } //start=1
-  //else if ( start >= seqlen ) { return(-(start-seqlen - s_size + 1));}
-  return -4;
-}
-
-
-//--------MOUSE CLICK--------------------------
-let g_name = genome_name;
 // Mouse click event
-function click(cds, seq_size) {
-  location.assign("/sp/"+g_name+"/"+cds.id +'/');
-  //location.assign("/results/?id="+cds.name+"&size="+seq_size);
+let g_name = genome_name;
+function click(transcript, seq_size) {
+  location.assign("/sp/"+g_name+"/"+transcript.id +'/');
 }
 
 // Mouse over event
-function over(name, f_feat) {
+function over(name, f_feat, points) {
 
   name.attr("visibility","visible");
   name.style("fill", over_color);
   f_feat.style("fill", over_color);
-
+  if ( points != undefined ) {
+    points.attr("stroke", over_color);
+  }
 }
 
 // Mouse out event
-function out(name, f_feat, cds) {
-  
-    name.attr("visibility","hidden");
-    name.style("fill", cds_color);
-    f_feat.style("fill", cds_color);
+function out(transcript, name, f_feat, points) {
+  name.attr("visibility","hidden");
+  name.style("fill", color);
+  f_feat.style("fill", color);
+  if ( points != undefined ) {
+        points.attr("stroke", color);
+  }
 }
 
+// Navigation buttons
+document.getElementById("big_left").onclick = function(){
+  if( seq_start != 1){
+    seq_start = seq_start - size;
+    seq_start = check_start(seq_start);
 
-//---------------------------------------------
-function change_svg(l_start, zoom, s_size){
-  d3.select("[id=rectangle]").remove();
-  var svg_rect = svg.append("g").attr("id", "rectangle");
-  rectangle(0,30, svg_rect);
-  rectangle(width-30,width, svg_rect);
-
-  axis(l_start, s_size);
-  
-  position=-l_start*(width_svg/(s_size-1));
-
- d3.select("[id=cds]")
- .attr("transform", "translate("+ (position+30) +",0), scale(+"+ zoom +",1)")
+    let url = "/sp/"+g_name+"/?start="+seq_start+"&size="+seq_size;
+    history.replaceState(null,"", url);
+    resize_svg();
+  }
 }
+document.getElementById("small_left").onclick = function(){
+  if(seq_start != 1){
+    seq_start = seq_start - seq_size/2;
+    seq_start = check_start(seq_start);
 
-function check_cds(cds, coord, l_start, s_size){
-  // let seq_stop = l_start+s_size-1;
-  // //start out
-  // if(cds.stop < l_start){
+    let url = "/sp/"+g_name+"/?start="+seq_start+"&size="+seq_size;
     
-  // }
-  // //stop out
-  // if(cds.start > seq_stop){
+    history.replaceState(null,"", url);
+    resize_svg();
+  }
+}
+document.getElementById("big_right").onclick = function(){
+  let seq_stop = seq_start+ seq_size-1;
+  if(seq_stop != seqlen){
+    seq_start = seq_start + seq_size;
+    seq_start = check_start(seq_start);
 
-  // }
-  d3.select("[id=cds_first]")
-      .style("fill", "green")
-      .attr("points", coord);
+    let url = "/sp/"+g_name+"/?start="+seq_start+"&size="+seq_size;
+    history.replaceState(null,"", url);
+    resize_svg();
+  }
+}
+document.getElementById("small_right").onclick = function(){
+  let seq_stop = seq_start+ seq_size-1;
+  if(seq_stop != seqlen){
+    seq_start = seq_start + seq_size/2;
+    seq_start = check_start(seq_start);
+
+    let url = "/sp/"+g_name+"/?start="+seq_start+"&size="+seq_size;
+
+    history.replaceState(null,"", url);
+    resize_svg();
+
+  }
+}
+
+// Zoom buttons
+document.getElementById("zoom_in").onclick = function(){
+  if(check_size(seq_size*0.5) != seq_size){
+    seq_size = seq_size * 0.5;
+    seq_size = check_size(seq_size);
+
+    let url = "/sp/"+g_name+"/?"+"start="+seq_start+ "&size="+seq_size;
+
+    history.replaceState( null,"", url);
+    resize_svg();
+  }
+}
+document.getElementById("zoom_small_in").onclick = function(){
+  if(check_size(seq_size*0.75) != seq_size){
+    seq_size = seq_size * 0.75;
+    seq_size = check_size(seqlen);
+
+    let url = "/sp/"+g_name+"/?"+"start="+seq_start+"&size="+seq_size;
+    history.replaceState( null,"", url);
+    resize_svg();
+  }
+}
+document.getElementById("zoom_neutral").onclick = function(){
+  if(seq_size != 10000){
+    let s_start = seq_start+ seq_size-1;
+        
+    seq_size = 10000;
+
+    let url = "/sp/"+g_name+"/?"+"start="+seq_start+"&size="+seq_size;
+
+    history.replaceState( null,"", url);
+    resize_svg();
+  }
+}
+document.getElementById("zoom_small_out").onclick = function(){
+  if(check_size(seq_size*1.5) != seq_size){
+    let s_start = seq_start+ seq_size-1;
+    seq_size = seq_size * 1.5;
+    seq_size = check_size(seq_size);
+
+    let url = "/sp/"+g_name+"/?"+"start="+seq_start+"&size="+seq_size;
+
+    history.replaceState( null,"", url);
+    resize_svg();
+  }
+}
+document.getElementById("zoom_out").onclick = function(){
+  if(check_size(seq_size*2) != seq_size){
+    seq_size = seq_size * 2;
+    seq_size = check_size(seq_size);
+
+    let url = "/sp/"+g_name+"/?"+"start="+seq_start+"&size="+seq_size;
+
+    history.replaceState( null,"", url);
+    resize_svg();
+  }
+}
+
+function resize_svg(){
+
+    get_axis(seq_start, seq_size, width);
+    d3.select("#genomic_axis").attr("transform",'translate(30,0)');
+
+    //CDS
+    for(cds in list){
+      check_transcript(list[cds], seq_start, seq_size, width_svg);
+    }
+}
+
+
+function check_size(l_size) {
+  if ( l_size < 10 )                     { l_size = 10; }
+  else if ( l_size > seqlen )            { l_size = seqlen; }
+  
+  let l_start = seq_start;
+  if ( (l_start + l_size-1) > seqlen )   { l_start = seqlen - l_size + 1;}
+  seq_size=l_size;
+  return l_size;
+}
+
+function check_start(start) {
+  if ( start <= 0 )                     { start = 1; }
+  else if ( start >= seqlen )           { start = seqlen - seq_size + 1; }
+  if ( (start + seq_size-1) > seqlen )  { start = seqlen - seq_size + 1; }
+  seq_start=start;
+  return start;
 }
