@@ -110,6 +110,7 @@ def user_detail(request, user_id):
             form_user = ModifyUserForm(request.POST)
 
             if form_profile.is_valid() and form_user.is_valid() :
+                print(request.POST)
                 if 'Update' in request.POST:
                     user = form_user.cleaned_data
                     profile2 = form_profile.cleaned_data
@@ -117,39 +118,36 @@ def user_detail(request, user_id):
                     if profile2["group"] == profile.group :
                         profile2["group"] = ""
 
-                    ## test if there's some changes or none
-                    x = list(user.values())
-                    y = list(profile2.values())
-                    if ( [x[0]]*len(x) != x and [y[0]]*len(y) != y):
-                        email = user["email"]
-                        if(email != ""):
-                            User.objects.filter(username=username).update(email=email)
+                    email = user["email"]
+                    if(email != ""):
+                        User.objects.filter(username=username).update(email=email)
 
-                        phone = profile2["phone_number"]
-                        if(phone != ""):
-                            Profile.objects.filter(name=username).update(phone_number = phone)
+                    phone = profile2["phone_number"]
+                    if(phone != ""):
+                        Profile.objects.filter(name=username).update(phone_number = phone)
                             
-                        last_name = profile2["last_name"]
-                        if(last_name != ""):
-                            Profile.objects.filter(name=username).update(last_name = last_name)
-                        first_name = profile2["first_name"]
-                        if(first_name != ""):
-                            Profile.objects.filter(name=username).update(first_name = first_name)
+                    last_name = profile2["last_name"]
+                    if(last_name != ""):
+                        Profile.objects.filter(name=username).update(last_name = last_name)
+                    
+                    first_name = profile2["first_name"]
+                    if(first_name != ""):
+                        Profile.objects.filter(name=username).update(first_name = first_name)
 
 
-                        # changing user role (admin only)
-                        if(request.user.groups.all()[0].name == 'Admin'):
-                            group_name = profile2["group"]
-                            if(group_name != "" and group_name != "Admin"):
-                                group = Group.objects.get(name = group_name)
-                                group.user_set.add(User.objects.filter(username=username).get())
-                                Profile.objects.filter(name=username).update(group = group_name)
+                    # changing user role (admin only)
+                    if(request.user.groups.all()[0].name == 'Admin'):
+                        group_name = profile2["group"]
+                        if(group_name != "" and group_name != "Admin"):
+                            group = Group.objects.get(name = group_name)
+                            group.user_set.add(User.objects.filter(username=username).get())
+                            Profile.objects.filter(name=username).update(group = group_name)
 
-                        messages.success(request, 'The profile was updated')
-                        return HttpResponseRedirect(request.path_info)
+                    messages.success(request, 'The profile was updated')
+                    return HttpResponseRedirect(request.path_info)
                     
                 elif 'Update_password' in request.POST:
-
+                    print("èèèèèèè----------------------------------")
                     user = form_user.cleaned_data
                     password1 = user["password1"]
                     password2 = user["password2"]

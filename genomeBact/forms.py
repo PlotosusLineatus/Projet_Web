@@ -73,7 +73,7 @@ class ProfileForm(forms.Form):
           super().__init__(*args,**kwargs)
           #extend __init__
           self.fields['group'] =    forms.ChoiceField(widget = forms.Select(), 
-                 choices = ([('Reader','Reader'), ('Annotator','Annotator'), ('Validator','Validator'), ]), initial= user_group )
+                 choices = ([('Reader','Reader'), ('Annotator','Annotator'), ('Validator','Validator'), ]), initial= user_group, required=False )
     
 
     first_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Enter first name'}), max_length=30, required=False)
