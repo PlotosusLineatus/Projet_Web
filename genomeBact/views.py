@@ -508,9 +508,8 @@ def workspace(request):
 
     nb_to_assign = Transcript.objects.filter(status = 'empty').count()
     nb_to_val =  Transcript.objects.filter(status = 'annotated', validator = request.user.profile).count()
-    nb_to_annot = request.user.profile.to_annotate.count()
-    nb_send = '?'
-    #nb_send = Transcript.objects.filter(status = 'empty').count()
+    nb_to_annot = Transcript.objects.filter(status = 'assigned', annotator = request.user.profile).count()
+    nb_send = Transcript.objects.filter(status = 'annotated', annotator =request.user.profile).count()
 
     if request.method == 'POST':
         annotator_chosen = request.POST.get('annotator')

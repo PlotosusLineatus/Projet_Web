@@ -209,14 +209,14 @@
                     </div>
                     <!-- Side widget-->
                     {% if request.user.groups.all.0.name != 'Reader' %}
-                    <div class="card mb-4">
+                    <div class="card mb-4" style="margin-top: 360px;">
                         <div class="card-header fw-bolder">Status</div>
                             <div class="card-body">{{ transcript.status }}</div>
                             {% if transcript.status == 'validated' %}
                             <span class="text-secondary"> validated by : {{ transcript.validator }}</span>
                             {% endif %}
                             {% if transcript.status != 'validated' and request.user.username == transcript.annotator.name %}
-                            <span class="text-center"> {{ transcript.message }}</span>
+                            <span class="text-center" style="color: orangered;"> {{ transcript.message }}</span>
                             {% endif %}
                     </div>
                     {% endif %}
@@ -230,7 +230,7 @@
                             <div class="card-body">
                                 <div class="form-outline mb-4">
                                     <label class="form-label" for="message"> Message </label>
-                                    <input type="text" id="message" required="" name="message" placeholder="comment if annotations are rejected" />
+                                    <input type="text" id="message" required="false" name="message" placeholder="comment if annotations are rejected (put a space if validated)" />
                                 </div>
                                 <input type="submit" name="Validate" value="Validate">
                                 <input type="submit" name="reject_validation" value="Reject">
