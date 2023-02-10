@@ -9,6 +9,19 @@ def handle_uploaded_file(f):
 
 # Penser à regarder la disposition management/commands comme alternative à runscript
 
+def get_annotation(description):
+
+    import re
+
+    annot = {}
+    annot["gene"] = re.search(r"gene:(\w+)", description).group(1) if re.search(r"gene:(\w+)", description) else ""
+    annot["gene_biotype"] = re.search(r"gene_biotype:(\w+)", description).group(1) if re.search(r"gene_biotype:(\w+)", description) else ""
+    annot["transcript_biotype"] = re.search(r"transcript_biotype:(\w+)", description).group(1) if re.search(r"transcript_biotype:(\w+)", description) else ""
+    annot["gene_symbol"] = re.search(r"gene_symbol:(\w+)", description).group(1) if re.search(r"gene_symbol:(\w+)", description) else ""
+    annot["description"] = re.search(r"description:([\w*\s]*)", description).group(1) if re.search(r"description:([\w*\s]*)", description) else ""
+
+    return annot
+
 def get_start_stop(description):
     
     import re
@@ -43,7 +56,11 @@ def get_chromosome(description):
         print("Mauvais parsing du header du génome de  : %s" % description)
         return None
 
+
+
 def get_data(absolute_path = "/home/sherman/Documents/M2/WEB/data"):
+#def get_data(absolute_path = "/home/noemie/Documents/data"):
+#def get_data(absolute_path = "/home/sherman/Documents/M2/WEB/data"):
 
 
     import os
@@ -88,11 +105,19 @@ def get_data(absolute_path = "/home/sherman/Documents/M2/WEB/data"):
             seq_dict[seq.name] = {}
         
             terms = get_start_stop(seq.description)
+            annot = get_annotation(seq.description)
+
             
             seq_dict[seq.name]["start"] = terms[0]
             seq_dict[seq.name]["stop"] = terms[1]
             seq_dict[seq.name]["NT"] = str(seq.seq)
             seq_dict[seq.name]["specie"] = strain
+            seq_dict[seq.name]["gene"] = annot["gene"]
+            seq_dict[seq.name]["gene_biotype"] = annot["gene_biotype"]
+            seq_dict[seq.name]["transcript_biotype"] = annot["transcript_biotype"]
+            seq_dict[seq.name]["gene_symbol"] = annot["gene_symbol"]
+            seq_dict[seq.name]["description"] = annot["description"]
+            
             
             
     

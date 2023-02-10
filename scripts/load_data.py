@@ -4,94 +4,6 @@ from django.db import transaction
 from scripts.utils import *
 
 
-def get_data(absolute_path = "/Users/Soeur/Documents/ECOLE/ORSAY/M2/9.web/PROJET/data_less"):
-#def get_data(absolute_path = "/home/noemie/Documents/data"):
-#def get_data(absolute_path = "/home/sherman/Documents/M2/WEB/data"):
-
-
-    import os
-    from Bio import SeqIO
-
-    os.chdir(absolute_path)
-        
-    file_list = os.listdir()
-
-    cds_files = [file for file in file_list if "_cds" in file]
-    pep_files = [file for file in file_list if "_pep" in file]
-    other_files = [file for file in file_list if "_cds" not in file and "_pep" not in file]
-
-
-
-    genome_dict = {}
-
-    for file in other_files: 
-
-        strain = file.replace(".fa","")
-        sequence = SeqIO.parse(file,"fasta")
-
-        for seq in sequence:
-
-            
-            genome_dict[strain] = {}
-            genome_dict[strain]["chromosome"] = get_chromosome(seq.description)
-            genome_dict[strain]["sequence"] = str(seq.seq)
-            
-
-
-
-    seq_dict = {}
-
-    for file in cds_files :
-        
-        strain = file.replace("_cds.fa", "" )
-        sequences = SeqIO.parse(file, "fasta")
-        
-        for seq in sequences:
-                
-            seq_dict[seq.name] = {}
-        
-            terms = get_start_stop(seq.description)
-            
-            seq_dict[seq.name]["start"] = terms[0]
-            seq_dict[seq.name]["stop"] = terms[1]
-            seq_dict[seq.name]["NT"] = str(seq.seq)
-            seq_dict[seq.name]["specie"] = strain
-            
-            
-    
-    for file in pep_files :
-        
-        strain = file.replace("_pep.fa", "" )
-        
-        
-        sequences = SeqIO.parse(file, "fasta")
-        for seq in sequences:
-            
-            if seq.name not in seq_dict:
-                
-                raise Exception("Peptide without CDS : %s of %s" % (seq.description, strain))
-
-            else :
-                
-                
-                if seq_dict[seq.name]["specie"] == strain : 
-                                
-                    seq_dict[seq.name]["AA"] = str(seq.seq)
-                    
-                else : 
-                    
-                    raise Exception("Same transcr_ID for different strains")
-
-    
-    full_dict = {}
-    full_dict["genomes"] = genome_dict
-    full_dict["transcripts"] = seq_dict
-
-    return full_dict
-
-	
-
-
 def run():
 
     try:
@@ -142,6 +54,12 @@ def run():
                                                                 start = transcripts_dict[tsc_name]["start"],
                                                                 stop = transcripts_dict[tsc_name]["stop"],
                                                                 length_nt = int(len(transcripts_dict[tsc_name]["NT"])),
-                                                                length_pep = int(len(transcripts_dict[tsc_name]["AA"]))))
+                                                                length_pep = int(len(transcripts_dict[tsc_name]["AA"])),
+                                                                gene = transcripts_dict[tsc_name]["gene"],
+                                                                gene_biotype = transcripts_dict[tsc_name]["gene_biotype"],
+                                                                transcript_biotype = transcripts_dict[tsc_name]["transcript_biotype"],
+                                                                gene_symbol = transcripts_dict[tsc_name]["gene_symbol"],
+                                                                description = transcripts_dict[tsc_name]["description"]))
+                                     
 
         Transcript.objects.bulk_create(transcripts_of_current_genome)
