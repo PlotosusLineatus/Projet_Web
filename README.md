@@ -64,9 +64,8 @@ Il est possible de télécharger un fasta avec tous les gènes à annoter.
 
 # Paramètres Utilisateurs
 Tout utilisateur peut changer ses informations, son mot de passe et même supprimer son compte. Attention c'est irreversible !
-L'administrateur peut également changer les rôles de tous les utilisateurs.
 
 # Page Admin
-En tant qu'administrateur, vous pouvez assigner des gènes à annoter, les valider, les annoter. Vous pouvez également accéder à la page paramètres de tous utilisateurs ou encore ajouter/supprimer des génomes, des utilisateurs ou des gènes.
-
+En tant qu'administrateur, vous pouvez assigner des gènes à annoter, les valider, les annoter. Vous pouvez également accéder à la page paramètres de tous utilisateurs, modifier leur rôle ou encore ajouter/supprimer des génomes, des utilisateurs ou des gènes.
+#
 Enfin, la barre de navigation vous permet de retourner sur la page principale à tout moment, tout comme d'accéder à vos parametres utilisateur et modifier vos informations personneles et mot de passe.
