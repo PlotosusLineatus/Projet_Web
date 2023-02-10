@@ -47,6 +47,15 @@ def run():
 
             if ( transcripts_dict[tsc_name]["specie"] == temp_strain ):
 
+                if ( transcripts_dict[tsc_name]["gene"] != "" and transcripts_dict[tsc_name]["gene_biotype"] != "" and 
+                transcripts_dict[tsc_name]["gene_symbol"] != "" and transcripts_dict[tsc_name]["description"] != ""):
+
+                    status = "annotated"
+
+                else:
+                    
+                    status = "empty"
+                    
                 transcripts_of_current_genome.append(Transcript(transcript = tsc_name, 
                                                                 chromosome = current_chromosome,
                                                                 seq_cds = transcripts_dict[tsc_name]["AA"],
@@ -59,7 +68,8 @@ def run():
                                                                 gene_biotype = transcripts_dict[tsc_name]["gene_biotype"],
                                                                 transcript_biotype = transcripts_dict[tsc_name]["transcript_biotype"],
                                                                 gene_symbol = transcripts_dict[tsc_name]["gene_symbol"],
-                                                                description = transcripts_dict[tsc_name]["description"]))
+                                                                description = transcripts_dict[tsc_name]["description"],
+                                                                status = status))
                                      
 
         Transcript.objects.bulk_create(transcripts_of_current_genome)
