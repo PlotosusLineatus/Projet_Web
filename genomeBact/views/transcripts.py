@@ -30,8 +30,14 @@ def genome_create(request):
 
 @login_required(login_url='login')
 def genome_detail(request, specie):
-    genome = Genome.objects.get(specie=specie)
-    transcripts = Transcript.objects.filter(chromosome = genome.chromosome)
+    try:
+        genome = Genome.objects.get(specie=specie)
+    except Genome.DoesNotExist:
+        return redirect('home')
+    try:
+        transcripts = Transcript.objects.filter(chromosome = genome.chromosome)
+    except Transcript.DoesNotExist:
+        return redirect('home')
 
     if request.method == 'POST' and 'Delete' in request.POST:
         genome.delete()
@@ -80,8 +86,15 @@ def transcript_create(request):
 @login_required(login_url='login')
 def transcript_detail(request, specie, transcript):
 
-    genome = Genome.objects.get(specie=specie)
-    cds = Transcript.objects.get(transcript=transcript)
+    try:
+        genome = Genome.objects.get(specie=specie)
+    except Genome.DoesNotExist:
+        return redirect('home')
+    try:
+        cds = Transcript.objects.get(transcript=transcript)
+    except Transcript.DoesNotExist:
+        return redirect('home')
+
 
     if request.method == 'POST':
         form = AnnotForm(request.POST)  

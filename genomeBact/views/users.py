@@ -78,7 +78,7 @@ def register(request):
             
             if( request.user.is_anonymous ):
                 return redirect('login')
-            elif(request.user.profile.name == 'Admin' ):
+            elif(request.user.profile.group == 'Admin' ):
                 return redirect('admin')
             else :
                 return redirect('login')
@@ -140,7 +140,6 @@ def user_detail(request, user_id):
                     return HttpResponseRedirect(request.path_info)
                     
                 elif 'Update_password' in request.POST:
-                    print("èèèèèèè----------------------------------")
                     user = form_user.cleaned_data
                     password1 = user["password1"]
                     password2 = user["password2"]
@@ -152,20 +151,21 @@ def user_detail(request, user_id):
                     
                         return HttpResponseRedirect(request.path_info)
                 elif 'Delete' in request.POST:
-                    user = User.objects.filter(username = username).get()
-                    user.delete()
-
-                    if(request.user.profile == "Admin" and request.user.id != user.id):
+                    if(request.user.profile.group == "Admin" and request.user.id != user.id):
+                        user = User.objects.filter(username = username).get()
+                        user.delete()
                         messages.success(request, "The user " + username +" was deleted.")
                         return redirect('admin')
                     else:
+                        user = User.objects.filter(username = username).get()
+                        user.delete()
                         user_logout(request)
                         return redirect('login')
         else:
             form_profile = ProfileForm(user_group = user_group)
             form_user = ModifyUserForm()
 
-        context = {'profile' : profile, "form_profile":form_profile, "form_user":form_user}
+        context = {'profile' : profile, "form_profile":form_profile, "form_user":form_user, 'user_id':user_id}
         return render(request, 'genomeBact/user_detail.html', context)
     return redirect('home')
 
@@ -204,11 +204,11 @@ def workspace(request):
     transcripts_to_annotate = request.user.profile.to_annotate.all()
     #transcripts_to_annotate = request.user.profile.transcript_set.all()
     transcripts_to_assign = Transcript.objects.filter(status = 'empty')
-    transcripts_to_validate = Transcript.objects.filter(status = 'annotated', validator = request.user.profile)
+    transcripts_to_validate = Transcript.objects.filter(status = 'annotated', validator = request.user.username)
     annotators = User.objects.filter(groups__name='Annotator')
 
     nb_to_assign = Transcript.objects.filter(status = 'empty').count()
-    nb_to_val =  Transcript.objects.filter(status = 'annotated', validator = request.user.profile).count()
+    nb_to_val =  Transcript.objects.filter(status = 'annotated', validator = request.user.username).count()
     nb_to_annot = Transcript.objects.filter(status = 'assigned', annotator = request.user.profile).count()
     nb_send = Transcript.objects.filter(status = 'annotated', annotator =request.user.profile).count()
 
@@ -223,7 +223,7 @@ def workspace(request):
                 #transcript_chosen = Transcript.objects.get(transcript=transcript_chosen)
                 
                 Transcript.objects.filter(transcript=transcript_chosen).update(annotator = Profile.objects.get(name=annotator_chosen))
-                Transcript.objects.filter(transcript=transcript_chosen).update(validator = Profile.objects.get(name=request.user.username))
+                Transcript.objects.filter(transcript=transcript_chosen).update(validator = request.user.username)
                 Transcript.objects.filter(transcript=transcript_chosen).update(status = 'assigned')
                 
                 messages.success(request, transcript_chosen +' was assigned for ' + annotator_chosen + ".")

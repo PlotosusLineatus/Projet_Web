@@ -50,7 +50,7 @@ def run():
                 if ( transcripts_dict[tsc_name]["gene"] != "" and transcripts_dict[tsc_name]["gene_biotype"] != "" and 
                 transcripts_dict[tsc_name]["gene_symbol"] != "" and transcripts_dict[tsc_name]["description"] != ""):
 
-                    status = "annotated"
+                    status = "validated"
 
                 else:
                     

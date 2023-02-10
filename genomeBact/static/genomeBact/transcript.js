@@ -392,7 +392,6 @@ document.getElementById("small_right").onclick = function(){
 
 // Zoom buttons
 document.getElementById("zoom_in").onclick = function(){
-  if(check_size(seq_size*0.5) != seq_size){
     seq_size = seq_size * 0.5;
     seq_size = check_size(seq_size);
 
@@ -400,17 +399,14 @@ document.getElementById("zoom_in").onclick = function(){
 
     history.replaceState( null,"", url);
     resize_svg();
-  }
 }
 document.getElementById("zoom_small_in").onclick = function(){
-  if(check_size(seq_size*0.75) != seq_size){
     seq_size = seq_size * 0.75;
     seq_size = check_size(seqlen);
 
     let url = "/sp/"+g_name+"/?"+"start="+seq_start+"&size="+seq_size;
     history.replaceState( null,"", url);
     resize_svg();
-  }
 }
 document.getElementById("zoom_neutral").onclick = function(){
   if(seq_size != 10000){
@@ -425,7 +421,6 @@ document.getElementById("zoom_neutral").onclick = function(){
   }
 }
 document.getElementById("zoom_small_out").onclick = function(){
-  if(check_size(seq_size*1.5) != seq_size){
     let s_start = seq_start+ seq_size-1;
     seq_size = seq_size * 1.5;
     seq_size = check_size(seq_size);
@@ -434,10 +429,8 @@ document.getElementById("zoom_small_out").onclick = function(){
 
     history.replaceState( null,"", url);
     resize_svg();
-  }
 }
 document.getElementById("zoom_out").onclick = function(){
-  if(check_size(seq_size*2) != seq_size){
     seq_size = seq_size * 2;
     seq_size = check_size(seq_size);
 
@@ -445,7 +438,6 @@ document.getElementById("zoom_out").onclick = function(){
 
     history.replaceState( null,"", url);
     resize_svg();
-  }
 }
 
 function resize_svg(){
