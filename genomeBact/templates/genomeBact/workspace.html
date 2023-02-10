@@ -87,7 +87,6 @@
                         
                         <div id="assign" class="tabcontent">
                             <h3>A assigner</h3>
-                            <p>ouaf</p>
                             <div class="col-lg-12 col-md-3 col-sm-12 p-0">
                                 <form action="" method="POST" name="form_content">
                                     {% csrf_token %}
@@ -115,7 +114,6 @@
                         
                         <div id="validate" class="tabcontent">
                             <h3>A valider</h3>
-                            <p>grouf</p>
                             {% for transcript in transcripts_to_validate %}
                             <a href="{% url 'transcript-detail' specie=transcript.chromosome.specie transcript=transcript.transcript %}">{{ transcript.transcript }}</a>                    
                             {{ transcript.status_date }}
@@ -126,15 +124,6 @@
                     <!-- Side widgets-->
                     <div class="col-lg-4">
                         <!--  widget -->
-                        <div class="card mb-4">
-                            <div class="card-header"> MSG </div>
-                            <div class="card-body">
-                                <div class="input-group">
-                                    
-                                </div>
-                            </div>
-                        </div>
-                        
                         <div class="card-deck">
                             <div class = "col mb-3">
                                 {% if request.user.groups.all.0.name == 'Validateur' %}
