@@ -137,7 +137,7 @@
                         <div class="card-body">wow</div>
                     </div>
                     
-                    {% if request.user.groups.all.0.name == None %}
+                    {% if request.user.groups.all.0.name == 'Admin' %}
                     <form method="post" action="">
                         {% csrf_token %}
                         <div class="text-right" style="float: right; margin-top: 200px;">

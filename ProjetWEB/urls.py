@@ -26,24 +26,14 @@ urlpatterns = [
     path('results/', views.results, name='results'),
 
     # USERS #
-    path('admin_django/', admin.site.urls),
     path('admin/', views.admin, name = 'admin'),
     path('user/<int:user_id>/', views.user_detail, name = 'user-detail'),
     path('workspace/', views.workspace, name = 'workspace'),
-    path('validator/', views.validator, name='validator'),
-    path('validator/assign/', views.assign_transcript, name='assign-transcript'),
-    path('validator/transcripts/', views.transcript_list_state, name='transcript-state'),
-    path('validator/validation/', views.transcript_to_validate, name='transcript-validation'),
-
-    path('annotator/', views.annotator, name='annotator'),
-    path('annotator/transcripts/', views.transcript_to_annot, name='annot-list'),
 
     # BD #
     path('sp/add/', views.genome_create, name='genome-create'),
     path('sp/<str:specie>/', views.genome_detail, name='genome-detail'),
-    path('sp/<str:specie>/transcripts/', views.transcript_list, name='transcript-list'),
     path('transcripts/add/', views.transcript_create, name='transcript-create'),
     path('sp/<str:specie>/<str:transcript>/', views.transcript_detail, name='transcript-detail'),
-    path('sp/<str:specie>/<str:transcript>/annotations/', views.transcript_annot, name='transcript-annot'),
     path('download/', views.download_csv, name='download_csv'),
 ]

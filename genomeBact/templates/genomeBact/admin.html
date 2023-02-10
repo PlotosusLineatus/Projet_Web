@@ -37,7 +37,8 @@
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ms-auto py-4 py-lg-0">
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/home">Home</a></li>
-                        {% if request.user.groups.all.0.name != 'Lecteur' %}
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="{% url 'user-detail' request.user.id %}">Parameters</a></li>
+                        {% if request.user.groups.all.0.name != 'Reader'  and request.user.groups.all.0.name != 'Admin' %}
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/workspace">Work space</a></li>
                         {% endif %}
                         <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/results">Collection</a></li>
@@ -146,7 +147,7 @@
                                                     <tbody>
                                                         {% for user in all_val %}
                                                         <tr>
-                                                        <td> <a href="{% url 'user-detail' user.id %}">{{ user.name}}</a></td>
+                                                        <td> <a href="{% url 'user-detail' user.id %}">{{ user.user.email}}</a></td>
                                                         <td>{{ user.first_name }}</td>
                                                         <td>{{ user.last_name }}</td>
                                                         <td> {{ user.last_connexion }} </td>
@@ -169,7 +170,7 @@
                                                     <tbody>
                                                     {% for user in all_annot %}
                                                     <tr>
-                                                        <td> <a href="{% url 'user-detail' user.id %}">{{ user.name}}</a> </td>
+                                                        <td> <a href="{% url 'user-detail' user.id %}">{{ user.user.email}}</a> </td>
                                                         <td>{{ user.first_name }}</td>
                                                         <td>{{ user.last_name }}</td>
                                                         <td> {{user.last_connexion }} </td>
@@ -191,7 +192,7 @@
                                                     <tbody>
                                                         {% for user in all_read %}
                                                         <tr>
-                                                        <td> <a href="{% url 'user-detail' user.id %}">{{ user.name}}</a> </td>
+                                                        <td> <a href="{% url 'user-detail' user.id %}">{{ user.user.email}}</a> </td>
                                                         <td>{{ user.first_name }}</td>
                                                         <td>{{ user.last_name }}</td>
                                                         <td> {{ user.last_connexion }} </td>
