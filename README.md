@@ -16,7 +16,109 @@ Si les pré-requis sont satisfaits, placez vous dans le répertoire de travail d
 ```
 Ce répertoire contient l'ensemble des dossiers et fichiers nécessaire, selon l'architecture suivante :
 ```bash
-    ceci est une arborescence
+    .
+├── db.sqlite3
+├── genomeBact
+│   ├── admin.py
+│   ├── apps.py
+│   ├── decorators.py
+│   ├── forms.py
+│   ├── __init__.py
+│   ├── migrations
+│   │   ├── 0001_initial.py
+│   │   ├── __init__.py
+│   │   └── __pycache__
+│   │       ├── 0001_initial.cpython-39.pyc
+│   │       ├── 0002_remove_genome_id_alter_genome_chromosome_profile.cpython-39.pyc
+│   │       ├── 0002_remove_genome_start_alter_genome_chromosome_and_more.cpython-39.pyc
+│   │       ├── 0002_transcript_description_transcript_gene_and_more.cpython-39.pyc
+│   │       ├── 0003_transcript_annotator_transcript_status.cpython-39.pyc
+│   │       ├── 0003_transcript_length_nt_transcript_length_pep.cpython-39.pyc
+│   │       ├── 0004_genome_length.cpython-39.pyc
+│   │       └── __init__.cpython-39.pyc
+│   ├── models.py
+│   ├── __pycache__
+│   │   ├── admin.cpython-39.pyc
+│   │   ├── apps.cpython-39.pyc
+│   │   ├── decorators.cpython-39.pyc
+│   │   ├── forms.cpython-39.pyc
+│   │   ├── __init__.cpython-39.pyc
+│   │   ├── models.cpython-39.pyc
+│   │   └── views.cpython-39.pyc
+│   ├── static
+│   │   └── genomeBact
+│   │       ├── admin.css
+│   │       ├── img
+│   │       │   ├── big_straf_left_seb.png
+│   │       │   ├── big_straf_right_seb.png
+│   │       │   ├── small_straf_left_seb.png
+│   │       │   ├── small_straf_right_seb.png
+│   │       │   ├── zoom_default_seb.png
+│   │       │   ├── zoom_in_seb.png
+│   │       │   ├── zoom_out_seb.png
+│   │       │   ├── zoom_small_in_seb.png
+│   │       │   └── zoom_small_out_seb.png
+│   │       ├── logo_OUAF.png
+│   │       ├── ouaf_b.png
+│   │       ├── ouaf_g.png
+│   │       ├── styleshome.css
+│   │       ├── styleslogin.css
+│   │       ├── stylestab.css
+│   │       ├── tab.js
+│   │       ├── transcript.js
+│   │       └── user_detail.css
+│   ├── templates
+│   │   └── genomeBact
+│   │       ├── admin.html
+│   │       ├── base.html
+│   │       ├── download_csv.html
+│   │       ├── genome_create.html
+│   │       ├── genome_detail.html
+│   │       ├── home.html
+│   │       ├── login.html
+│   │       ├── register.html
+│   │       ├── results.html
+│   │       ├── strand_error.html
+│   │       ├── transcript_create.html
+│   │       ├── transcript_detail.html
+│   │       ├── transcript_list.html
+│   │       ├── upload.html
+│   │       ├── user_detail.html
+│   │       └── workspace.html
+│   ├── tests
+│   │   ├── __init__.py
+│   │   ├── test_forms.py
+│   │   ├── test_models.py
+│   │   ├── test_users.py
+│   │   └── test_views.py
+│   └── views.py
+├── manage.py
+├── ProjetWEB
+│   ├── asgi.py
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   ├── __init__.cpython-39.pyc
+│   │   ├── settings.cpython-39.pyc
+│   │   ├── urls.cpython-39.pyc
+│   │   └── wsgi.cpython-39.pyc
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+├── README.md
+└── scripts
+    ├── create_groups.py
+    ├── dev.py
+    ├── __init__.py
+    ├── load_data.py
+    ├── __pycache__
+    │   ├── create_groups.cpython-39.pyc
+    │   ├── __init__.cpython-39.pyc
+    │   ├── load_data.cpython-39.pyc
+    │   ├── reset_db.cpython-39.pyc
+    │   └── utils.cpython-39.pyc
+    ├── reset_db.py
+    └── utils.py
+
 ```
 En vous plaçant à la base du dossier, lancez les commandes suivantes
 ```bash
