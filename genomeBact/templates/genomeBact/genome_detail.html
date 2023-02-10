@@ -18,7 +18,7 @@
         <!-- Page content-->
         <div class="container mt-5">
 
-            <a href="{% url 'results' %}"> < Résultats précédents</a>
+            <a href="{% url 'results' %}"> < Previous results</a>
             <h2 class="fw-bolder mb-4 mt-5">Visualisation</h2>
 
         </div>
@@ -79,7 +79,7 @@
                             
                             <div class="card-body">
 
-                                <h2 class="fw-bolder mb-4 mt-2">Liste des annotations </h2>
+                                <h2 class="fw-bolder mb-4 mt-2">Transcripts list </h2>
                                 <!-- Single comment-->
                                 <div class="d-flex navbar-nav-scroll">
                                     <div class="ms-3 ">
@@ -98,7 +98,7 @@
                 <div class="col-lg-4">
                     <!-- Widget BLAST-->
                     <div class="card mb-4">
-                        <div class="card-header">Autre ressource :</div>
+                        <div class="card-header">Other ressources :</div>
                         <div class="card-body">
                             <div class="input-group">
 
@@ -132,11 +132,12 @@
                         </div>
                     </div>
                     <!-- Side widget-->
+                    <!--
                     <div class="card">
-                        <div class="card-header">Commentaire de l'admin</div>
-                        <div class="card-body">wow</div>
+                        <div class="card-header">Admin comment</div>
+                        <div class="card-body">....</div>
                     </div>
-                    
+                    -->
                     {% if request.user.groups.all.0.name == 'Admin' %}
                     <form method="post" action="">
                         {% csrf_token %}
