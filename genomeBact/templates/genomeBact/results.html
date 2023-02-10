@@ -1,7 +1,7 @@
 {% extends 'genomeBact/base.html' %}
 
 {% block content %}
-<header class="masthead" style="background-color: #8DAA9D">
+<header class="masthead" style="background: url('/static/genomeBact/ouaf_b.png')">
     <div class="container position-relative px-4 px-lg-5">
         <div class="post-heading">
             <h1>Results : </h1>
@@ -13,7 +13,7 @@
 
 {% if genomes %}
 <div class="container px-4 px-lg-5">
-    <form method = "POST">
+    <form class="mb-4" method = "POST">
         {% csrf_token %}
         <input type="submit" value="Download annotated multifasta" style="background-color: #C97064; color: #fff;">
     </form>
