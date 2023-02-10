@@ -1,23 +1,86 @@
 {% extends 'genomeBact/base.html' %}
 
 {% block content %}
+<header class="masthead" style="background-color: #8DAA9D">
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="post-heading">
+            <h1>Database : </h1>
+            <h2 class="subheading">Add a transcript.</h2>
+        </div>
+    </div>
+</header>
 
-    <p>Add a transcript for {{ genome.chromosome }} ({{ genome.specie }}).</p>
 
-    <form action="" method="post">
+    <section class="h-100 h-custom" >
+        <div class="container py-5 h-100">
+          <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-lg-8 col-xl-6">
+              <div class="card rounded-3">
+                <div class="card-body p-4 p-md-5">
+      
+                  <form class="px-md-2" method="post">
+      
+                    {% csrf_token %}
+    
+                    {% for message in messages %}
+                      <p id="messages"> {{ message }}</p>
+                    {% endfor %}
+    
+                    <div class="form-outline mb-4">
+                      <label class="form-label"> Transcript name </label>
+                      {{ form.transcript.errors }}
+                      {{ form.transcript }}
+                    </div>
+      
+                    <div class="form-outline mb-4">
+                        <label class="form-label"> Protein sequence </label>
+                        {{ form.seq_cds.errors }}
+                        {{ form.seq_cds }}                  
+                      </div>
+      
+                    <div class="mb-4">
+                        <label class="form-label" > Nucleotide sequence : </label>
+                        {{ form.seq_nt.errors }}
+                        {{ form.seq_nt }}
+                    </div>
+      
+                    <div class="row mb-4 pb-2 pb-md-0 mb-md-5">
+                      <div class="col-md-6">
+                        <div class="form-outline">
+                          <label class="form-label" > Size of nucleotide sequence </label>
+                          {{ form.length_nt.errors }}
+                          {{ form.length_nt }}
+                        </div>
+                        <div class="form-outline">
+                          <label class="form-label" > Size of protein sequence </label>
+                          {{ form.length_pep.errors }}
+                          {{ form.length_pep }}                    
+                        </div>
+                      </div>
+                    </div>
+    
+                    <div class="form-outline mb-4">
+                      <label class="form-label" > Start </label>
+                      {{ form.start.errors }}
+                      {{ form.start }}                  
+                    </div>
+    
+                    <div class="form-outline mb-4">
+                      <label class="form-label"> Stop </label>
+                      {{ form.stop.errors }}
+                      {{ form.stop }}                
+                    </div>
+                  
+                    <button type="submit" class="btn btn-success btn-lg mb-1" name="Create User">Submit</button>
+      
+                  </form>
+      
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-    {% csrf_token %}   
-    <div class="form-select">
-        <select class="form-control" name="genome" required>
-            <option value="" disabled selected hidden> Select genome</option>                          
-            {% for genome in genomes %}
-            <option value="{{ genome.specie }}">{{ genome.specie }}</option>
-            {% endfor %}
-        </select>
-    </div> 
-    {{  form.as_p }} 
-
-    <input type="submit" value="Envoyer">
-    </form>
 
 {% endblock %}

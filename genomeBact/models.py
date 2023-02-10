@@ -31,7 +31,7 @@ class Genome(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
-    name = models.CharField(max_length=30 , unique=True) ## A SUPP
+    name = models.CharField(max_length=30 , unique=True)
 
 
     STATUS = ( ('Admin','Admin'), ('Annotateur','Annotateur'), ('Validateur','Validateur'), ('Lecteur','Lecteur'))
