@@ -50,23 +50,23 @@ Cette liste de gène est également accessible sans visualisation, en scrollant 
 
 # Détails d'un gène
 ![image](https://user-images.githubusercontent.com/75751225/218156946-1105dc67-1286-4452-a181-06c0e75cad6e.png)
-La page détaillée de chaque gène comprend : les séquence nucléotidique (et le bouton `BLASTn` associé), la séquence peptidique (et le bouton `BLASTp`associé). Le bouton `Uniprot` redirige vers le site éponyme, avec une recherche par numéro d'accession, essayez! Les différentes annotations si elles existent, sont visibles dans le cadre dédié. S'il ne s'agit pas d'annotations qui vous ont été confiées, il est impossible de les modifier. 
-Vous pourrez aussi télécharger le fasta associé à ce gène.
+La page détaillée de chaque gène comprend : les séquence nucléotidique (et le bouton `BLASTn` associé), la séquence peptidique (et le bouton `BLASTp`associé). Le bouton `Uniprot` redirige vers le site éponyme, avec une recherche par numéro d'accession, essayez! 
+Vous pourrez télécharger le fasta associé à ce gène.
 
-Si vous êtes l'annotateur associé à ce gène, vous pourrez librement modifier les annotations. Attention, une fois que vous décidez des les envoyer pour validation, vous ne pourrez plus y toucher avant la réponse du validateur ! 
-Si vous êtes validateur et que vous devez vérifier les annotations, il vous sera possible de les valider définitevement ou bien de les renvoyer pour plus de précisions à l'annotateur associé, en lui laissant un message.
+Les différentes annotations si elles existent, sont visibles dans le cadre dédié. 
+S'il s'agit d'annotations qui vous ont été confiées, vous pourrez librement les modifier. Attention, une fois que vous décidez des les envoyer pour validation, vous ne pourrez plus y toucher avant la réponse du validateur ! 
+
+Si vous êtes le validateur en charge de ce gène, il vous sera possible de valider les annotations définitivement ou bien de les renvoyer pour plus de précisions à l'annotateur associé, en lui laissant un message.
 
 # Espace de travail
 ![image](https://user-images.githubusercontent.com/55387021/218198938-32dabc23-d9ff-43c7-9b42-06f6cb10ddb8.png)
-En tant que validateur, c'est ici que vous pourrez assigner des séquences à des annotateurs et valider, ou non, leurs annotations.
-En tant qu'annotateur, l'espace `WORKSPACE` vous permet de connaitre les différents gènes qui vous ont été confiés, ainsi que les annotations en attente de validation.
-Il est possible de télécharger un fasta avec tous les gènes à annoter.
+En tant que validateur, c'est ici que vous pourrez assigner des séquences à des annotateurs et accéder aux annotations à valider.
+En tant qu'annotateur, l'espace `WORKSPACE` vous permet de connaitre les différents gènes qui vous ont été confiés, ainsi que les annotations en attente de validation. Il vous sera possible de télécharger un fasta avec tous les gènes à annoter.
 
 # Paramètres Utilisateurs
 Tout utilisateur peut changer ses informations, son mot de passe et même supprimer son compte. Attention c'est irreversible !
-L'administrateur peut également changer les rôles de tous les utilisateurs.
 
 # Page Admin
-En tant qu'administrateur, vous pouvez assigner des gènes à annoter, les valider, les annoter. Vous pouvez également accéder à la page paramètres de tous utilisateurs ou encore ajouter/supprimer des génomes, des utilisateurs ou des gènes.
-
+En tant qu'administrateur, vous pouvez assigner des gènes à annoter, les valider, les annoter. Vous pouvez également accéder à la page paramètres de tous utilisateurs, modifier leur rôle ou encore ajouter/supprimer des génomes, des utilisateurs ou des gènes.
+#
 Enfin, la barre de navigation vous permet de retourner sur la page principale à tout moment, tout comme d'accéder à vos parametres utilisateur et modifier vos informations personneles et mot de passe.
