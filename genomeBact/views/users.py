@@ -204,7 +204,8 @@ def workspace(request):
     transcripts_to_annotate = request.user.profile.to_annotate.all()
     transcripts_to_assign = Transcript.objects.filter(status = 'empty')
     transcripts_to_validate = Transcript.objects.filter(status = 'annotated', validator = request.user.username)
-    annotators = User.objects.filter(groups__name='Annotator') | User.objects.filter(groups__name='Admin')
+    #annotators = User.objects.filter(groups__name='Annotator') | User.objects.filter(groups__name='Admin')
+    annotators = User.objects.filter().exclude(groups__name='Reader')
 
     nb_to_assign = Transcript.objects.filter(status = 'empty').count()
     nb_to_val =  Transcript.objects.filter(status = 'annotated', validator = request.user.username).count()

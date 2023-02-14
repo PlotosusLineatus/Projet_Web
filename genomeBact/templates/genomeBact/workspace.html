@@ -151,7 +151,6 @@
 
 
                         <!-- ANNOTATORS -->
-                        {% if request.user.groups.all.0.name == 'Annotator' or request.user.groups.all.0.name == 'Admin' %}
                         <!-- Table Navigation-->
                         <div class="m-4">
                             <h3>To Annotate</h3>
@@ -226,7 +225,6 @@
                                 
                             </div>
                         </div>
-                        {% endif %}
                     </div>
 
                     <!-- Side widgets-->
@@ -253,7 +251,6 @@
                                         </div>                                          
                                     </div>
                                 {% endif %}
-                                {% if request.user.groups.all.0.name == 'Annotator' or request.user.groups.all.0.name == 'Admin' %}
                                 <div class="card d-flex mx-auto mb-3" style="width: 220px; height: 180px;">
                                     <div class="card-header text-white" style="background-color: #45425A;">
                                                 To Annotate
@@ -270,7 +267,6 @@
                                             <p class="card-text" style="color:#45425A;"> {{ nb_send }} </p>
                                     </div>                                          
                                 </div>
-                                {% endif %}
                             </div>
                         </div>
                     </div>

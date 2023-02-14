@@ -247,26 +247,24 @@
             </div>
         </div>
 
-
+        <script type="text/javascript">
+            function showDiv(){
+                let elements = document.querySelectorAll('[id^="modify_"]');
+                elements.forEach(element => {
+                    element.style.display = 'block';
+                });
+                document.getElementById('button_modify').style.display = 'none';
+                document.getElementById('button_validate').style.display = 'none';
+                document.getElementById('display-annot').style.display = 'none';
+            }
+            function hideDiv(){
+                let elements = document.querySelectorAll('[id^="modify_"]');
+                elements.forEach(element => {
+                    element.style.display = 'none';
+                });
+                document.getElementById('button_modify').style.display = 'Block';
+                document.getElementById('button_validate').style.display = 'Block';
+                document.getElementById('display-annot').style.display = 'Block';
+            }
+        </script>
 {% endblock %}
-
-<script type="text/javascript">
-    function showDiv(){
-        let elements = document.querySelectorAll('[id^="modify_"]');
-        elements.forEach(element => {
-            element.style.display = 'block';
-        });
-        document.getElementById('button_modify').style.display = 'none';
-        document.getElementById('button_validate').style.display = 'none';
-        document.getElementById('display-annot').style.display = 'none';
-    }
-    function hideDiv(){
-        let elements = document.querySelectorAll('[id^="modify_"]');
-        elements.forEach(element => {
-            element.style.display = 'none';
-        });
-        document.getElementById('button_modify').style.display = 'Block';
-        document.getElementById('button_validate').style.display = 'Block';
-        document.getElementById('display-annot').style.display = 'Block';
-    }
-</script>
